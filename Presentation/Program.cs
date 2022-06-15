@@ -3,7 +3,7 @@ using Persistence;
 
 Console.OutputEncoding = System.Text.Encoding.Unicode;
 Console.InputEncoding = System.Text.Encoding.Unicode;
-Console.WriteLine("Đây là code của Quylq");
+
 Console.WriteLine("1. Đăng Nhập: ");
 Console.WriteLine("2. Đăng Ký: ");
 Console.Write("Chọn: ");
