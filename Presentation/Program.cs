@@ -3,7 +3,7 @@ using Persistence;
 
 Console.OutputEncoding = System.Text.Encoding.Unicode;
 Console.InputEncoding = System.Text.Encoding.Unicode;
-
+Page();
 static void Page()
 {
     GUI gUI = new GUI();
@@ -32,11 +32,11 @@ static void Page()
                     switch (choice)
                     {
                         case 1:
-                            Page();
-                            break;
-                        case 2:
                             Console.WriteLine(" You Are Exit");
                             Environment.Exit(0);
+                            break;
+                        case 2:
+                            Page();
                             break;
                         default:
                             Console.WriteLine("Vui lòng chọn 1 hoặc 2!");
