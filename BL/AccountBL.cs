@@ -13,14 +13,17 @@ public class AccountBL
     public Account GetAccountByName(string acc_name)
     {
         Account account = accountDAL.GetAccountByName(acc_name);
-        account.AccountName = account.AccountName;
-        account.AccountPassword = account.AccountPassword;
         return account;
     }
 
-    public void SaveAccount(string acc_name, string acc_pass, string acc_role)
+    public void SaveAccount(Account account)
     {
-        accountDAL.SaveAccount(acc_name, acc_pass,  acc_role);
+        accountDAL.SaveAccount(account);
+    }
+
+    public void SaveUser(User user, Account account)
+    {
+        accountDAL.SaveUser(user, account);
     }
 }
 
