@@ -12,7 +12,7 @@ namespace DAL
             {
                 connection = new MySqlConnection
                 {
-                    ConnectionString = @"server=127.0.0.1;port=3306;user=root;password=Vietanh2302;database=Ecommerce"
+                    ConnectionString = @"server=localhost;port=3306;user=root;password=19072003;database=Ecommerce"
                 };
             }
 
