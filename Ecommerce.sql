@@ -7,46 +7,34 @@ create table Users (
 	UserID int not null auto_increment,
     UserName varchar(50) not null unique,
     Password varchar(200),
+    FullName varchar(100),
+    Birthday datetime,
+    Email varchar(100),
+    Phone varchar(20),
+    Address varchar(200),
     Role enum('Customer', 'Seller'),
     constraint Users_chk1 check (UserName not like '% %'),
     constraint Users_chk2 check (Password not like '% %'),
     constraint pk_Users primary key (UserID)
     );
-  
-create table Customers (
-	CustomerID int not null auto_increment,
-    UserID int,
-    Name varchar(100),
-    Email varchar(100),
-    Phone varchar(20),
-    Address varchar(200),
-    constraint Customers_chk1 check (Phone regexp '^[\0-9]+$'),
-    constraint fk_Customers_Users foreign key (UserID)
-		references Users (UserID),
-    constraint pk_Customers primary key (CustomerID)
-    );
-
-create table Sellers (
-	SellerID int not null auto_increment,
-    UserID int,
-    Name varchar(100),
-    Email varchar(100),
-    Phone varchar(20),
-    Address varchar(200),
-    constraint Sellers_chk1 check (Phone regexp '^[\0-9]+$'),
-    constraint fk_Sellers_Users foreign key (UserID)
-		references Users (UserID),
-    constraint pk_Sellers primary key (SellerID)
-    );
 
 create table Products (
 	ProductID int not null auto_increment,
-    SellerID int,
     ProductName varchar(50),
     Description varchar(500),
     Price int,
-    constraint fk_Products_Sellers foreign key (SellerID) references Sellers (SellerID),
     constraint pk_Products primary key (ProductID)
+    );
+
+
+create table Users_Product (
+	UserID int,
+    ProductID int,
+    constraint fk_Users foreign key (UserID)
+    references Users (UserID),
+    constraint fk_Products foreign key (ProductID)
+    references Products (ProductID),
+    constraint pk_Users_Product primary key (UserID, ProductID)
     );
 
 create table Category (
@@ -55,144 +43,118 @@ create table Category (
     constraint pk_Category primary key (CategoryID)
     );
 
-create table Sub_Category (
+create table Product_Categories (
 	ProductID int,
     CategoryID int,
-    constraint fk_SubCategory_Products foreign key (ProductID)
+    constraint fk_ProCat_Products foreign key (ProductID)
 		references Products (ProductID),
-	constraint fk_SubCategory_Category foreign key (CategoryID)
+	constraint fk_ProCat_Category foreign key (CategoryID)
 		references Category (CategoryID),
 	primary key (ProductID, CategoryID)
 	);
     
-create table Oders (
-	OderID int not null auto_increment,
-    CustomerID int,
-    SellerID int,
+create table Orders (
+	OrderID int not null auto_increment,
+    UserID int,
     CreateDate datetime,
     Status enum ('Reject', 'Accept', 'To Pay', 'To Receive'),
-    constraint fk_Oders_Customers foreign key (CustomerID)
-		references Customers (CustomerID),
-	constraint fk_Oders_Sellers foreign key (SellerID)
-		references Sellers (SellerID),
-	constraint pk_Users primary key(OderID)
+    constraint fk_Orders_Users foreign key (UserID)
+		references Users (UserID),
+	constraint pk_Users primary key(OrderID)
         );
 
-create table ProductDetails (
-	OderID int,
+create table OrderDetails (
+	OrderID int,
     ProductID int,
     ProductNumber int,
-    constraint fk_ProDet_Oders foreign key (OderID)
-		references Oders (OderID),
-	constraint fk_ProDet_Products foreign key (ProductID)
+    constraint fk_OrdDet_Orders foreign key (OrderID)
+		references Orders (OrderID),
+	constraint fk_OrdDet_Products foreign key (ProductID)
 		references Products (ProductID),
-	constraint pk_ProductDetails primary key (OderID, ProductID)
+	constraint pk_OrderDetails primary key (OrderID, ProductID)
         );
         
 select * from Users;
 
 
-insert into Users (UserName, Password, Role)
-VALUES ('QuangQuy', SHA2('123456', 256), 'Seller'),
-       ('TuanAnh', SHA2('123456', 256), 'Customer'),
-       ('NguyenDat', SHA2('123456', 256), 'Customer'),
-       ('LongTan', SHA2('123456', 256), 'Customer'),
-       ('CaoBac', SHA2('123456', 256), 'Customer'),
-       ('VietAnh', SHA2('123456', 256), 'Seller'),
-       ('CanhToan', SHA2('123456', 256), 'Customer'),
-       ('VanTam', SHA2('123456', 256), 'Customer');
-
-select * from Customers;
-
-insert into Customers (UserID, Name, Email, Phone, Address)
-VALUES (1, 'Quang Quy', 'QuangQuy@vtc.edu.vn', '0987654321', 'Thanh Hóa'),
-       (2, 'Tuan Anh', 'TuanAnh@vtc.edu.vn', '0987654322', 'Bắc Giang'),
-       (3, 'Nguyen Dat', 'NguyenDat@vtc.edu.vn', '0987654323', 'Hà Nội'),
-       (4, 'Long Tan', 'LongTan@vtc.edu.vn', '0987654324', 'Thái Bình'),
-       (5, 'Cao Bac', 'CaoBac@vtc.edu.vn', '0987654325', 'Nghệ An'),
-       (6, 'Viet Anh', 'VietAnh@vtc.edu.vn', '0987654326', 'Tiền Giang'),
-       (7, 'Canh Toan', 'CanhToan@vtc.edu.vn', '0987654327', 'Bắc Ninh'),
-       (8, 'Van Tam', 'VanTam@vtc.edu.vn', '0987654328', 'Ninh Bình');
-       
-select * from Sellers;
-
-insert into Sellers (UserID, Name, Email, Phone, Address)
-VALUES (1, 'Quang Quy', 'QuangQuy@vtc.edu.vn', '0987654321', 'Thanh Hóa'),
-       (6, 'Viet Anh', 'VietAnh@vtc.edu.vn', '0987654326', 'Thái Bình');
+insert into Users (UserName, Password, Role, FullName, Birthday, Email, Phone, Address)
+VALUES ('QuangQuy', SHA2('123456', 256), 'Seller', 'Lê Quang Quý', '1993-7-1', 'QuangQuy@vtc.edu.vn', '0987654321', 'Thanh Hóa'),
+       ('TuanAnh', SHA2('123456', 256), 'Customer', 'Ngô Tuấn Anh', '2003-7-3','TuanAnh@vtc.edu.vn', '0987654322', 'Bắc Giang'),
+       ('NguyenDat', SHA2('123456', 256), 'Customer', 'Nguyễn Tất Đạt', '2000-12-5','NguyenDat@vtc.edu.vn', '0987654323', 'Hà Nội'),
+       ('LongTan', SHA2('123456', 256), 'Customer', 'Đào Long Tân', '1996-4-3','LongTan@vtc.edu.vn', '0987654324', 'Thái Bình'),
+       ('CaoBac', SHA2('123456', 256), 'Customer', 'Cao Việt Bắc', '1996-2-14', 'CaoBac@vtc.edu.vn', '0987654325', 'Nghệ An'),
+       ('VietAnh', SHA2('123456', 256), 'Seller', 'Nguyễn Duyên Việt Anh', '2000-4-6', 'VietAnh@vtc.edu.vn', '0987654326', 'Tiền Giang'),
+       ('CanhToan', SHA2('123456', 256), 'Customer', 'Nguyễn Cảnh Toàn', '2002-3-4', 'CanhToan@vtc.edu.vn', '0987654327', 'Bắc Ninh'),
+       ('VanTam', SHA2('123456', 256), 'Customer', 'Lê Văn Tâm', '1999-3-12', 'VanTam@vtc.edu.vn', '0987654328', 'Ninh Bình');
  
 select * from Category;
 insert into Category (CategoryName)
-values ('Thời Trang Nam'),
-	   ('Thời Trang Nữ'),
-       ('Thời Trang Trẻ Em'),
-	   ('Túi Ví Nữ'),
-       ('Áo'),
-	   ('Giày Dép Nam'),
+values ('Ô tô'),
+	   ('Điện Thoại'),
+       ('Đồng Hồ'),
+	   ('Máy Giặt'),
        ('Xe'),
 	   ('Thiết Bị Điện Tử'),
        ('Máy Tính, LapTop'),
 	   ('Máy Ảnh'),
-       ('Đồng Hồ'),
-	   ('Giày'),
-       ('Xe'),
+	   ('Thời Trang'),
 	   ('Thiết Bị Điện Dân Dụng'),
-       ('Sách'),
-       ('Điện Thoại');
+       ('Sách');
 
 select * from Products;
 
-insert into Products (SellerID, ProductName, Price)
-VALUES (2, 'Toyota Raize 1.0 Turbo', '527000000'),
-	   (2, 'Kia Seltos', '719000000'),
-       (2, 'Ford Territory', '780000000'),
-	   (2, 'Toyota Venzao', '1100000000'),
-       (2, 'Samsung Galaxy Z Fold3 5G', '36990000'),
-	   (2, 'iPhone 13 Pro Max', '31190000'),
-       (2, 'Samsung Galaxy S22 Ultra 5G', '30990000'),
-	   (2, 'OPPO Find X5 Pro 5G', '30990'),
-       (1, 'Đồng Hồ ORIENT Cơ 41 mm Nam', '37458000'),
-       (1, 'Đồng Hồ ORIENT Cơ 38.7 mm Nam RE-AW0004S00B', '17640000'),
-       (1, 'Đồng Hồ TITONI Cơ kính sapphire 27 mm Nữ 729 G-306', '24720000'),
-       (1, 'Máy giặt Samsung Inverter 9 Kg', '11590000'),
-       (1, 'Máy giặt Aqua Inverter 10 Kg AQD', '8990000'),
-       (1, 'Máy giặt LG Inverter 10 Kg', '14390');
+insert into Products (ProductName, Price)
+VALUES ('Toyota Raize 1.0 Turbo', '527000000'),
+	   ('Kia Seltos', '719000000'),
+       ('Ford Territory', '780000000'),
+	   ('Toyota Venzao', '1100000000'),
+       ('Samsung Galaxy Z Fold3 5G', '36990000'),
+	   ('iPhone 13 Pro Max', '31190000'),
+       ('Samsung Galaxy S22 Ultra 5G', '30990000'),
+	   ('OPPO Find X5 Pro 5G', '30990'),
+       ('Đồng Hồ ORIENT Cơ 41 mm Nam', '37458000'),
+       ('Đồng Hồ ORIENT Cơ 38.7 mm Nam RE-AW0004S00B', '17640000'),
+       ('Đồng Hồ TITONI Cơ kính sapphire 27 mm Nữ 729 G-306', '24720000'),
+       ('Máy giặt Samsung Inverter 9 Kg', '11590000'),
+       ('Máy giặt Aqua Inverter 10 Kg AQD', '8990000'),
+       ('Máy giặt LG Inverter 10 Kg', '14390');
        
-select * from Sub_Category;
-insert into Sub_Category (CategoryID, ProductID)
-VALUES (7, 1),
-       (7, 2),
-       (7, 3),
-       (7, 4),
-       (16, 5),
-       (16, 6),
-       (16, 7),
-       (16, 8),
-       (8, 5),
-       (8, 6),
-       (8, 7),
-       (8, 8),  
-       (11, 9),
-       (11, 10),
-       (11, 11),
-       (14, 12),
-       (14, 13),
-       (14, 14);
+select * from Product_Categories;
+insert into Product_Categories (CategoryID, ProductID)
+VALUES (1, 1),
+       (1, 2),
+       (1, 3),
+       (1, 4),
+       (2, 5),
+       (2, 6),
+       (2, 7),
+       (2, 8),
+       (6, 5),
+       (6, 6),
+       (6, 7),
+       (6, 8),  
+       (3, 9),
+       (3, 10),
+       (3, 11),
+       (4, 12),
+       (4, 13),
+       (4, 14);
 
-select * from Oders;
+select * from Orders;
 
-insert into Oders (CustomerID, SellerID, CreateDate)
-values (1, 2, '2020-01-01 15:10:10', 'Accept'),
-	   (1, 1, '2020-11-01 12:10:10', 'Accept'),
-       (2, 2, '2020-02-01 5:10:10', 'Accept'),
-	   (3, 2, '2020-01-01 10:18:10', 'To Receive'),
-       (4, 2, '2020-01-09 11:19:10', 'To Receive'),
-	   (4, 1, '2020-01-08 16:10:10', 'To Receive');
+insert into Orders (UserID, CreateDate, Status)
+values (3, '2020-01-01 15:10:10', 'Accept'),
+	   (4, '2020-11-01 12:10:10', 'Accept'),
+       (5, '2020-02-01 5:10:10', 'Accept'),
+	   (6, '2020-01-01 10:18:10', 'To Receive'),
+       (6, '2020-01-09 11:19:10', 'To Receive'),
+	   (7, '2020-01-08 16:10:10', 'To Receive');
 
-select * from ProductDetails;
-insert into ProductDetails (OderID, ProductID, ProductNumber)
+select * from OrderDetails;
+insert into OrderDetails (OrderID, ProductID, ProductNumber)
 values (1, 1, 1),
        (3, 5, 1),
        (3, 6, 2),
        (3, 7, 1),
        (3, 8, 3),
-       (2, 10, 4);
+       (2, 1, 4);
