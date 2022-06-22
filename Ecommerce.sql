@@ -7,12 +7,12 @@ create table Users (
 	UserID int not null auto_increment,
     UserName varchar(50) not null unique,
     Password varchar(200),
-    Role varchar(50),
+    Role enum('Customer', 'Seller'),
     constraint Users_chk1 check (UserName not like '% %'),
     constraint Users_chk2 check (Password not like '% %'),
     constraint pk_Users primary key (UserID)
     );
-    
+  
 create table Customers (
 	CustomerID int not null auto_increment,
     UserID int,
@@ -70,6 +70,7 @@ create table Oders (
     CustomerID int,
     SellerID int,
     CreateDate datetime,
+    Status enum ('Reject', 'Accept', 'To Pay', 'To Receive'),
     constraint fk_Oders_Customers foreign key (CustomerID)
 		references Customers (CustomerID),
 	constraint fk_Oders_Sellers foreign key (SellerID)
@@ -180,13 +181,13 @@ VALUES (7, 1),
 select * from Oders;
 
 insert into Oders (CustomerID, SellerID, CreateDate)
-values (1, 2, '2020-01-01 15:10:10'),
-	   (1, 1, '2020-11-01 12:10:10'),
-       (2, 2, '2020-02-01 5:10:10'),
-	   (3, 2, '2020-01-01 10:18:10'),
-       (4, 2, '2020-01-09 11:19:10'),
-	   (4, 1, '2020-01-08 16:10:10');
-       
+values (1, 2, '2020-01-01 15:10:10', 'Accept'),
+	   (1, 1, '2020-11-01 12:10:10', 'Accept'),
+       (2, 2, '2020-02-01 5:10:10', 'Accept'),
+	   (3, 2, '2020-01-01 10:18:10', 'To Receive'),
+       (4, 2, '2020-01-09 11:19:10', 'To Receive'),
+	   (4, 1, '2020-01-08 16:10:10', 'To Receive');
+
 select * from ProductDetails;
 insert into ProductDetails (OderID, ProductID, ProductNumber)
 values (1, 1, 1),
