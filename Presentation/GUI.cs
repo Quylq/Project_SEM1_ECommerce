@@ -1,27 +1,30 @@
 using BL;
-using Persistence;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Persistence
 {
     public class GUI
     {
-        private AccountBL accountBL;
+        private UserBL userBL;
 
         public GUI()
         {
-            accountBL = new AccountBL();
+            userBL = new UserBL();
         }
+
         public void Login()
         {
             Console.Write("Nhập Tên Đăng Nhập: ");
-            string acc_name = Console.ReadLine();
+            string _UserName = Console.ReadLine();
             Console.Write("Nhập Mật Khẩu: ");
-            string acc_pass = Console.ReadLine();
-            Account account =  accountBL.GetAccountByName(acc_name);
+            string _Password = Console.ReadLine();
 
-            if (account != null)
+            User user =  userBL.GetUserByName(_UserName);
+
+            if (user.UserName != null)
             {
-                if (acc_pass == account.AccountPassword)
+                if (_Password == user.Password)
                 {
                     Console.WriteLine($"Đăng nhập thành công");
                 }
@@ -36,58 +39,146 @@ namespace Persistence
             }
         }
 
-        public void SigUp()
+        public void Menu()
         {
-            string acc_role = "";
-            Console.WriteLine("Bạn muốn ?");
-            Console.WriteLine("1. Mua hàng.");
-            Console.WriteLine("2. Bán hàng.");
+            Console.WriteLine("1. Đăng Nhập: ");
+            Console.WriteLine("2. Đăng Ký: ");
             Console.Write("Chọn: ");
-            int choice = Convert.ToInt32(Console.ReadLine());
+            string? choice = Console.ReadLine();
             switch (choice)
             {
-                case 1: 
-                    acc_role = "Customer";
+                case "1": 
+                    Login();
                     break;
-                case 2: 
-                    acc_role = "Seller";
+                case "2": 
                     break;
                 default:
                     break;
             }
-            string acc_name;
-            Account account1 = new Account();
-            do
+        }
+        public void SellerPage ()
+        {
+            Console.Write("1. Management Orders.");
+            Console.Write("2. List of products.");
+            Console.Write("3. Category Management.");
+            Console.Write("Chọn: ");
+            string? choice = Console.ReadLine();
+            switch (choice)
             {
-                Console.Write("Nhập Tên Đăng Nhập: ");
-                acc_name = Console.ReadLine();
-                account1 = accountBL.GetAccountByName(acc_name);
-                Console.WriteLine($"{account1.AccountName} {account1.AccountPassword} {account1.Role}");
-                if (account1.AccountName != null)
-                {
-                    Console.WriteLine("Tên Đăng Nhập đã tồn tại, vui lòng chọn tên khác! ");
-                }
-            } while (account1.AccountName != null);
+                case "1": 
+                    break;
+                case "2": 
+                    break;
+                case "3": 
+                    break;  
+                default:
+                    break;
+            }
+        }
+
+        public void CustomerPage()
+        {
+            Console.Write("1. My order.");
+            Console.Write("2. Cart.");
+            Console.Write("3. Show Category.");
+            Console.Write("4. Search product.");
+            Console.Write("Chọn: ");
+            string? choice = Console.ReadLine();
+            switch (choice)
+            {
+                case "1": 
+                    break;
+                case "2": 
+                    break;
+                case "3": 
+                    break; 
+                case "4": 
+                    break; 
+                default:
+                    break;
+            }
+        }
+        public void ManagementOrders()
+        {
+            Console.Write("1. Confirmed.");
+            Console.Write("2. Wait for confirmation.");
+            Console.Write("Chọn: ");
+            string? choice = Console.ReadLine();
+            switch (choice)
+            {
+                case "1": 
+                    break; 
+                case "2": 
+                    break;
+                default:
+                    break;
+            }
+        }
+        public void ListOfProduct()
+        {
+            Console.Write("1. SearchProduct.");
+            Console.Write("2. View product information.");
+            Console.Write("Chọn: ");
+            string? choice = Console.ReadLine();
+            switch (choice)
+            {
+                case "1": 
+                    break; 
+                case "2": 
+                    break;
+                default:
+                    break;
+            }
+        }
+        public void CategoryManagement()
+        {
+            Console.Write("1. View category.");
+            Console.Write("Chọn: ");
+            string? choice = Console.ReadLine();
+            switch (choice)
+            {
+                case "1": 
+                    break; 
+                default:
+                    break;
+            }
+        }
+        public void Cart()
+        {
+            Console.Write("1. Remove from cart.");
+            Console.Write("2. Pay the bill.");
+            Console.Write("Chọn: ");
+            string? choice = Console.ReadLine();
+            switch (choice)
+            {
+                case "1": 
+                    break; 
+                case "2": 
+                    break;
+                default:
+                    break;
+            }
+        }
+        public void ShowCategory()
+        {
+            Console.Write("1. View product information.");
+            Console.Write("Chọn: ");
+            string? choice = Console.ReadLine();
+            switch (choice)
+            {
+                case "1": 
+                    break; 
+                default:
+                    break;
+            }
+        }
+        public void SearchProduct()
+        {
             
-            Console.Write("Nhập Mật Khẩu: ");
-            string acc_pass = Console.ReadLine();
-            Account account = new Account(acc_name, acc_pass, acc_role);
-            accountBL.SaveAccount(account);
-            account.AccountId = accountBL.GetAccountByName(acc_name).AccountId;
-
-            Console.Write("Tên của bạn: ");
-            string name = Console.ReadLine();
-            Console.Write("Email: ");
-            string email = Console.ReadLine();
-            Console.Write("Ngày sinh: ");
-            DateTime birthday = Convert.ToDateTime(Console.ReadLine());
-            Console.Write("Số điện thoại: ");
-            string phone = Console.ReadLine();
-            Console.Write("Địa chỉ: ");
-            string address = Console.ReadLine();
-
-            User user = new User(name, email, birthday, phone, address);
-            accountBL.SaveUser(user, account);
+        }
+        public void Myorder()
+        {
+            
         }
     }
 }
