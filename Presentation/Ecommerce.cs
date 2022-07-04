@@ -38,22 +38,65 @@ namespace Persistence
                 Console.WriteLine($"Tài khoản không tồn tại");
             }
         }
-
+        public void SigUp()
+        {}
         public void Menu()
         {
+            Ecommerce ecommerce = new Ecommerce();
             Console.WriteLine("1. Đăng Nhập: ");
             Console.WriteLine("2. Đăng Ký: ");
+            Console.WriteLine("3. Thoát");
             Console.Write("Chọn: ");
-            string? choice = Console.ReadLine();
-            switch (choice)
+            int choice = Convert.ToInt32(Console.ReadLine());
+            try
             {
-                case "1": 
-                    Login();
-                    break;
-                case "2": 
-                    break;
-                default:
-                    break;
+                switch (choice)
+                {
+                    case 1:
+                        Login();
+                        break;
+                    case 2:
+                        SigUp();
+                        break;
+                    case 3:
+                        Console.WriteLine("Bạn xác nhận muốn thoát?");
+                        Console.WriteLine("1. Yes       2. No");
+                        Console.Write("Chọn: ");
+                        choice = Convert.ToInt32(Console.ReadLine());
+                        try
+                        {
+                            switch (choice)
+                            {
+                                case 1:
+                                    Console.WriteLine(" You Are Exit");
+                                    Environment.Exit(0);
+                                    break;
+                                case 2:
+                                    Menu();
+                                    break;
+                                default:
+                                    Console.WriteLine("Vui lòng chọn 1 hoặc 2!");
+                                    Menu();
+                                    break;
+                            }
+                        }
+                        catch (System.Exception)
+                        {
+                            Console.WriteLine("Vui lòng chọn 1, 2 hoặc 3!");
+                            throw;
+                        }
+                        break;
+                    default:
+                        Console.WriteLine("Vui lòng chọn 1, 2 hoặc 3!");
+                        Menu();
+                        break;
+                }
+            }
+            catch (System.Exception)
+            {
+                Console.WriteLine("Vui lòng chọn 1, 2 hoặc 3!");
+                Menu();
+                throw;
             }
         }
         public void SellerPage ()
