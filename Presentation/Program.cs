@@ -3,6 +3,6 @@ using Persistence;
 
 Console.OutputEncoding = System.Text.Encoding.Unicode;
 Console.InputEncoding = System.Text.Encoding.Unicode;
-GUI gUI = new GUI();
+Ecommerce ecommerce = new Ecommerce();
 
-gUI.Menu();
+ecommerce.Menu();

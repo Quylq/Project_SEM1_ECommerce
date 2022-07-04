@@ -4,11 +4,11 @@ using System.Text;
 
 namespace Persistence
 {
-    public class GUI
+    public class Ecommerce
     {
         private UserBL userBL;
 
-        public GUI()
+        public Ecommerce()
         {
             userBL = new UserBL();
         }

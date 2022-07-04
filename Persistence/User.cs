@@ -2,20 +2,25 @@ namespace Persistence
 {
     public class User
     {
-        public int CustomerId{get;set;}
+        public int UserId{get;set;}
+        public string UserName{get;set;}
+        public string Password{get;set;}
         public string? FullName{get;set;}
-        public string? Email{get;set;}
         public DateTime Birthday{get;set;}
+        public string? Email{get;set;}
         public string? Phone{get;set;}
         public string? Address{get;set;}
-
-        public User(string _FullName, string _Email, DateTime _Birthday, string _Phone, string _Address)
+        public string? Role{get;set;}
+        public User(string _UserName, string _Password, string _FullName, DateTime _Birthday, string _Email, string _Phone, string _Address, string _Role)
         {
+            UserName = _UserName;
+            Password = _Password;
             FullName = _FullName;
-            Email = _Email;
             Birthday = _Birthday;
+            Email = _Email;
             Phone = _Phone;
             Address = _Address;
+            Role = _Role;
         }
 
         public User(){}
