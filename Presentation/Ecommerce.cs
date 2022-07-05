@@ -7,12 +7,14 @@ namespace Persistence
     public class Ecommerce
     {
         private UserBL userBL;
+        private ProductBL productBL;
 
         public Ecommerce()
         {
             userBL = new UserBL();
+            productBL = new ProductBL();
         }
-
+        
         public void Login()
         {
             Console.Write("Nhập Tên Đăng Nhập: ");
@@ -200,6 +202,7 @@ namespace Persistence
             switch (choice)
             {
                 case "1": 
+                    SearchProduct();
                     break; 
                 case "2": 
                     break;
@@ -274,11 +277,25 @@ namespace Persistence
         }
         public void SearchProduct()
         {
-            
+            Console.WriteLine("1. Nhập sản phẩm bạn muốn tìm: ");
+            string _ProductName = Console.ReadLine();
+            List<Product> productList = new List<Product>();
+            productList = productBL.GetProductListByName(_ProductName);
+            Console.Clear();
+            Console.WriteLine("|----------------------------------------------------------------------|");
+            Console.WriteLine("| Tên sản Phẩm                                       |       Giá       |");
+            Console.WriteLine("|----------------------------------------------------------------------|");
+            foreach (Product product in productList) 
+            { 
+                Console.WriteLine("| {0,-50} | {1, 15} |", product.ProductName, product.Price.ToString("C0"));
+            }
+            Console.WriteLine("|----------------------------------------------------------------------|");
+
         }
         public void Myorder()
         {
             
         }
+        
     }
 }
