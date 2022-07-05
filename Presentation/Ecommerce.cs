@@ -194,7 +194,7 @@ namespace Persistence
         {
             Console.WriteLine("1. Tìm kiếm sản phẩm.");
             Console.WriteLine("2. Thông tin sản phẩm.");
-            Console.WriteLine("2. Quay lại.");
+            Console.WriteLine("3. Quay lại.");
             Console.Write("Chọn: ");
             string? choice = Console.ReadLine();
             switch (choice)
