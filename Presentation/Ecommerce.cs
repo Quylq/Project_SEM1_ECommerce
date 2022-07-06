@@ -28,10 +28,10 @@ namespace Persistence
             {
                 if (_Password == user.Password)
                 {
-                    Console.WriteLine($"Đăng nhập thành công");
+                    Console.WriteLine($"Đăng nhập thành công {user.UserId}");
                     if (user.Role == "Seller")
                     {
-                        SellerPage();
+                        SellerPage(user);
                     }
                     else if (user.Role == "Customer")
                     {
@@ -113,7 +113,7 @@ namespace Persistence
                 throw;
             }
         }
-        public void SellerPage ()
+        public void SellerPage (User user)
         {
             Console.WriteLine("1. Quản lý đơn đặt hàng.");
             Console.WriteLine("2. Danh sách sản phẩm.");
@@ -127,7 +127,7 @@ namespace Persistence
                     ManagementOrders();
                     break;
                 case "2": 
-                    ListOfProduct();
+                    ListOfProduct(user);
                     break;
                 case "3": 
                     CategoryManagement();
@@ -137,7 +137,7 @@ namespace Persistence
                     break;
                 default:
                     Console.WriteLine("Vui lòng chọn 1, 2, 3 hoặc 4!");
-                    SellerPage ();
+                    SellerPage (user);
                     break;
             }
         }
@@ -184,7 +184,7 @@ namespace Persistence
                 case "2": 
                     break;
                 case "3":
-                    SellerPage();
+                    // SellerPage();
                     break;
                 default:
                     Console.WriteLine("Vui lòng chọn 1, 2 hoặc 3!");
@@ -192,7 +192,7 @@ namespace Persistence
                     break;
             }
         }
-        public void ListOfProduct()
+        public void ListOfProduct(User user)
         {
             Console.WriteLine("1. Tìm kiếm sản phẩm.");
             Console.WriteLine("2. Thông tin sản phẩm.");
@@ -202,16 +202,16 @@ namespace Persistence
             switch (choice)
             {
                 case "1": 
-                    SearchProduct();
+                    SearchProductOfShop(user);
                     break; 
                 case "2": 
                     break;
                 case "3": 
-                    SellerPage();
+                    SellerPage(user);
                     break;
                 default:
                     Console.WriteLine("Vui lòng chọn 1, 2 hoặc 3!");
-                    ListOfProduct();
+                    ListOfProduct(user);
                     break;
             }
         }
@@ -226,7 +226,7 @@ namespace Persistence
                 case "1": 
                     break; 
                 case "2": 
-                    SellerPage();
+                    // SellerPage();
                     break; 
                 default:
                     Console.WriteLine("Vui lòng chọn 1 hoặc 2!");
@@ -275,6 +275,24 @@ namespace Persistence
                     break;
             }
         }
+        public void SearchProductOfShop(User user)
+        {
+            Console.WriteLine("1. Nhập sản phẩm bạn muốn tìm: ");
+            string _ProductName = Console.ReadLine();
+            List<Product> productList = new List<Product>();
+            productList = productBL.GetProductListByName(_ProductName, user);
+            Console.Clear();
+            Console.WriteLine("|----------------------------------------------------------------------|");
+            Console.WriteLine("| Tên sản Phẩm                                       |       Giá       |");
+            Console.WriteLine("|----------------------------------------------------------------------|");
+            foreach (Product product in productList) 
+            { 
+                Console.WriteLine("| {0,-50} | {1, 15} |", product.ProductName, product.Price.ToString("C0"));
+            }
+            Console.WriteLine("|----------------------------------------------------------------------|");
+
+        }
+
         public void SearchProduct()
         {
             Console.WriteLine("1. Nhập sản phẩm bạn muốn tìm: ");
@@ -292,6 +310,7 @@ namespace Persistence
             Console.WriteLine("|----------------------------------------------------------------------|");
 
         }
+
         public void Myorder()
         {
             
