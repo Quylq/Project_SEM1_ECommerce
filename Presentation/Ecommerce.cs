@@ -15,6 +15,8 @@ namespace Persistence
 
         public void Login()
         {
+            Console.WriteLine(" --- ECOMMERCE --- ");
+            Console.WriteLine();
             Console.Write("Nhập Tên Đăng Nhập: ");
             string _UserName = Console.ReadLine();
             Console.Write("Nhập Mật Khẩu: ");
@@ -29,11 +31,11 @@ namespace Persistence
                     Console.WriteLine($"Đăng nhập thành công");
                     if (user.Role == "Seller")
                     {
-                        SellerPage();
+                        SellerPage(user.UserId);
                     }
                     else if (user.Role == "Customer")
                     {
-                        CustomerPage();
+                        CustomerPage(user.UserId);
                     }
                     else
                     {
@@ -50,69 +52,10 @@ namespace Persistence
                 Console.WriteLine($"Tài khoản không tồn tại");
             }
         }
-        public void SigUp()
-        {}
-        public void Menu()
+        public void SellerPage (int ID)
         {
-            Ecommerce ecommerce = new Ecommerce();
-            Console.WriteLine("1. Đăng Nhập: ");
-            Console.WriteLine("2. Đăng Ký: ");
-            Console.WriteLine("3. Thoát");
-            Console.Write("Chọn: ");
-            string? choice = Console.ReadLine();
-            try
-            {
-                switch (choice)
-                {
-                    case "1":
-                        Login();
-                        break;
-                    case "2":
-                        SigUp();
-                        break;
-                    case "3":
-                        Console.WriteLine("Bạn xác nhận muốn thoát?");
-                        Console.WriteLine("1. Yes       2. No");
-                        Console.Write("Chọn: ");
-                        string? choice1 = Console.ReadLine();
-                        try
-                        {
-                            switch (choice1)
-                            {
-                                case "1":
-                                    Console.WriteLine(" You Are Exit");
-                                    Environment.Exit(0);
-                                    break;
-                                case "2":
-                                    Menu();
-                                    break;
-                                default:
-                                    Console.WriteLine("Vui lòng chọn 1 hoặc 2!");
-                                    Menu();
-                                    break;
-                            }
-                        }
-                        catch (System.Exception)
-                        {
-                            Console.WriteLine("Vui lòng chọn 1, 2 hoặc 3!");
-                            throw;
-                        }
-                        break;
-                    default:
-                        Console.WriteLine("Vui lòng chọn 1, 2 hoặc 3!");
-                        Menu();
-                        break;
-                }
-            }
-            catch (System.Exception)
-            {
-                Console.WriteLine("Vui lòng chọn 1, 2 hoặc 3!");
-                Menu();
-                throw;
-            }
-        }
-        public void SellerPage ()
-        {
+            User user = userBL.GetUserByID(ID);
+            Console.WriteLine("Chào " + user.FullName);
             Console.WriteLine("1. Quản lý đơn đặt hàng.");
             Console.WriteLine("2. Danh sách sản phẩm.");
             Console.WriteLine("3. Quản lý danh mục sản phẩm.");
@@ -122,26 +65,27 @@ namespace Persistence
             switch (choice)
             {
                 case "1":
-                    ManagementOrders();
+                    ManagementOrders(user.UserId);
                     break;
                 case "2": 
-                    ListOfProduct();
+                    ListOfProduct(user.UserId);
                     break;
                 case "3": 
-                    CategoryManagement();
+                    CategoryManagement(user.UserId);
                     break;
                 case "4": 
                     Environment.Exit(0);
                     break;
                 default:
                     Console.WriteLine("Vui lòng chọn 1, 2, 3 hoặc 4!");
-                    SellerPage ();
+                    SellerPage (user.UserId);
                     break;
             }
         }
 
-        public void CustomerPage()
+        public void CustomerPage(int ID)
         {
+            User user = userBL.GetUserByID(ID);
             Console.WriteLine("1. Đơn hàng của tôi.");
             Console.WriteLine("2. Giỏ hàng.");
             Console.WriteLine("3. Danh mục.");
@@ -164,12 +108,13 @@ namespace Persistence
                     break;
                 default:
                     Console.WriteLine("Vui lòng chọn 1, 2, 3, 4 hoặc 5!");
-                    CustomerPage();
+                    CustomerPage(user.UserId);
                     break;
             }
         }
-        public void ManagementOrders()
+        public void ManagementOrders(int ID)
         {
+            User user = userBL.GetUserByID(ID);
             Console.WriteLine("1. Đã xác nhận.");
             Console.WriteLine("2. Chờ xác nhận.");
             Console.WriteLine("3. Quay lại.");
@@ -182,16 +127,17 @@ namespace Persistence
                 case "2": 
                     break;
                 case "3":
-                    SellerPage();
+                    SellerPage(user.UserId);
                     break;
                 default:
                     Console.WriteLine("Vui lòng chọn 1, 2 hoặc 3!");
-                    ManagementOrders();
+                    ManagementOrders(user.UserId);
                     break;
             }
         }
-        public void ListOfProduct()
+        public void ListOfProduct(int ID)
         {
+            User user = userBL.GetUserByID(ID);
             Console.WriteLine("1. Tìm kiếm sản phẩm.");
             Console.WriteLine("2. Thông tin sản phẩm.");
             Console.WriteLine("3. Quay lại.");
@@ -204,16 +150,17 @@ namespace Persistence
                 case "2": 
                     break;
                 case "3": 
-                    SellerPage();
+                    SellerPage(user.UserId);
                     break;
                 default:
                     Console.WriteLine("Vui lòng chọn 1, 2 hoặc 3!");
-                    ListOfProduct();
+                    ListOfProduct(user.UserId);
                     break;
             }
         }
-        public void CategoryManagement()
+        public void CategoryManagement(int ID)
         {
+            User user = userBL.GetUserByID(ID);
             Console.WriteLine("1. Xem danh mục.");
             Console.WriteLine("2. Quay lại.");
             Console.Write("Chọn: ");
@@ -223,16 +170,17 @@ namespace Persistence
                 case "1": 
                     break; 
                 case "2": 
-                    SellerPage();
+                    SellerPage(user.UserId);
                     break; 
                 default:
                     Console.WriteLine("Vui lòng chọn 1 hoặc 2!");
-                    CategoryManagement();
+                    CategoryManagement(user.UserId);
                     break;
             }
         }
-        public void Cart()
+        public void Cart(int ID)
         {
+            User user = userBL.GetUserByID(ID);
             Console.WriteLine("1. Loại bỏ khỏi giỏ hàng.");
             Console.WriteLine("2. Thanh Toán.");
             Console.WriteLine("3. Quay lại.");
@@ -245,16 +193,17 @@ namespace Persistence
                 case "2": 
                     break;
                 case "3":
-                    CustomerPage();
+                    CustomerPage(user.UserId);
                     break;
                 default:
                     Console.WriteLine("Vui lòng chọn 1, 2 hoặc 3!");
-                    Cart();
+                    Cart(user.UserId);
                     break;
             }
         }
-        public void ShowCategory()
+        public void ShowCategory(int ID)
         {
+            User user = userBL.GetUserByID(ID);
             Console.WriteLine("1. Xem thông tin sản phẩm.");
             Console.WriteLine("2. Quay lại.");
             Console.Write("Chọn: ");
@@ -264,11 +213,11 @@ namespace Persistence
                 case "1": 
                     break;
                 case "2":
-                    CustomerPage();
+                    CustomerPage(user.UserId);
                     break; 
                 default:
                     Console.WriteLine("Vui lòng chọn 1 hoặc 2!");
-                    ShowCategory();
+                    ShowCategory(user.UserId);
                     break;
             }
         }
