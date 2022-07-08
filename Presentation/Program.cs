@@ -7,9 +7,13 @@ Console.InputEncoding = System.Text.Encoding.Unicode;
 
 Ecommerce ecommerce = new Ecommerce();
 UserBL userBL = new UserBL();
-ecommerce.Menu();
+ProductBL productBL = new ProductBL();
+CategoryBL categoryBL = new CategoryBL();
 
+// ecommerce.Menu();
+// int _ProductID = productBL.ProductIDMax();
+// Console.WriteLine($"{_ProductID}");
 // ecommerce.SearchProduct();
-User user = userBL.GetUserByName("vietanh");
-Console.WriteLine($"{user.Birthday}");
-// ecommerce.SellerPage(user);
+User user = userBL.GetUserByName("quangquy");
+// Console.WriteLine($"{user.Birthday}");
+ecommerce.SellerPage(user);

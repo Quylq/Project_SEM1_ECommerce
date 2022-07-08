@@ -9,17 +9,18 @@ namespace Persistence
         private UserBL userBL;
         private ProductBL productBL;
         private OrderBL orderBL;
-
+        private CategoryBL categoryBL;
         public Ecommerce()
         {
             userBL = new UserBL();
             productBL = new ProductBL();
             orderBL = new OrderBL();
+            categoryBL = new CategoryBL();
         }
         
         public void Menu()
         {
-            Console.Clear();
+            // Console.Clear();
             Ecommerce ecommerce = new Ecommerce();
             Console.WriteLine("1. Đăng Nhập: ");
             Console.WriteLine("2. Đăng Ký: ");

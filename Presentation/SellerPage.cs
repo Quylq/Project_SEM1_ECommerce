@@ -9,12 +9,14 @@ namespace Persistence
         private UserBL userBL;
         private ProductBL productBL;
         private OrderBL orderBL;
+        private CategoryBL categoryBL;
         Ecommerce ecommerce = new Ecommerce();
         public SellerPage()
         {
             userBL = new UserBL();
             productBL = new ProductBL();
             orderBL = new OrderBL();
+            categoryBL = new CategoryBL();
         }
         
         public void OrderManagement(User user)
@@ -61,7 +63,7 @@ namespace Persistence
                     DisplayProductList(user, productList);
                     break;
                 case "3": 
-                    
+                    MoreProduct(user);
                     break;
                 case "0": 
                     ecommerce.SellerPage(user);
@@ -108,16 +110,16 @@ namespace Persistence
         public void DisplayProductList(User user, List<Product> productList)
         {
             Console.Clear();
-            Console.WriteLine("|----------------------------------------------------------------------------|----------|");
+            Console.WriteLine("|---------------------------------------------------------------------------------------|");
             Console.WriteLine("| STT | Tên sản phẩm                                       |       Giá       | Số lượng |");
-            Console.WriteLine("|----------------------------------------------------------------------------|----------|");
+            Console.WriteLine("|---------------------------------------------------------------------------------------|");
             int count = 1;
             foreach (Product product in productList) 
             { 
                 Console.WriteLine("| {0,3 } | {1,-50} | {2, 15} | {3,8} |", count++, product.ProductName, product.Price.ToString("C0"), product.Quantity);
                 
             }
-            Console.WriteLine("|----------------------------------------------------------------------------|----------|");
+            Console.WriteLine("|---------------------------------------------------------------------------------------|");
             
             Console.Write("Nhập số thứ tự để xem thông tin chi tiết hoặc \"0\" để quay lại: ");
             try
@@ -151,6 +153,7 @@ namespace Persistence
             ProductInformation:
             Console.WriteLine("1. Cập nhật mô tả sản phẩm.");
             Console.WriteLine("2. Cập nhật số lượng sản phẩm.");
+            Console.WriteLine("3. Thêm ngành hàng cho sản phẩm.");
             Console.WriteLine("0. Quay lại.");
             Console.Write("Chọn: ");
             string? choice = Console.ReadLine();
@@ -161,6 +164,12 @@ namespace Persistence
                     break;
                 case "2":
                     UpdateQuantity(user, product);
+                    break; 
+                case "3":
+                    List<Category> categoryList = new List<Category>();
+                    categoryList = categoryBL.GetCategories();
+                    categoryBL.DisplayCategories(product, categoryList);
+                    ProductManagement(user);
                     break; 
                 case "0":
                     ProductManagement(user);
@@ -197,19 +206,42 @@ namespace Persistence
             ProductInformation(user, product);
         }
         
+        public void MoreProduct(User user)
+        {
+            Console.Clear();
+            Console.WriteLine("Tên sản phẩm: ");
+            string? _ProductName = Console.ReadLine();
+            Console.WriteLine("Giá sản phẩm: ");
+            int _Price = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Số lượng sản phẩm: ");
+            int _Quantity = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Mô tả: ");
+            string? _Description = Console.ReadLine();
+            int _ProductID = productBL.ProductIDMax() + 1;
+            Product product = new Product(_ProductID, _ProductName, _Price, _Description, _Quantity);
+            productBL.SaveProduct(product);
+            productBL.SaveUsers_Product(user, product);
+
+            List<Category> categoryList = categoryBL.GetCategories();
+            categoryBL.DisplayCategories(product, categoryList);
+            Console.WriteLine("Thêm sản phẩm thành công !");
+            Console.WriteLine("Nhấn phím bất kỳ để tiếp tục !");
+            Console.ReadKey();
+            ProductManagement(user);
+        }
         public void DisplayOrderList(User user, List<Order> orderList)
         {
             Console.Clear();
-            Console.WriteLine("|----------------------------------------------------------------------------|----------|");
+            Console.WriteLine("|---------------------------------------------------------------------------------------|");
             Console.WriteLine("| STT |   Khách Hàng     | Thời gian đặt hàng |              Địa chỉ         |  Tổng tiền  |");
-            Console.WriteLine("|----------------------------------------------------------------------------|----------|");
+            Console.WriteLine("|---------------------------------------------------------------------------------------|");
             int count = 1;
             foreach (Order order in orderList) 
             { 
                 Console.WriteLine("| {0,3 } | {1,-50} | {2, 15} | {3,8} |", count++, order.CustomerID, order.CreateDate, order.Address);
                 
             }
-            Console.WriteLine("|----------------------------------------------------------------------------|----------|");
+            Console.WriteLine("|---------------------------------------------------------------------------------------|");
             
             Console.Write("Nhập số thứ tự để xem thông tin sản phẩm hoặc \"0\" để quay lại: ");
             try
@@ -235,5 +267,6 @@ namespace Persistence
         {
 
         }
+
     }
 }
