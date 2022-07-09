@@ -15,5 +15,6 @@ CategoryBL categoryBL = new CategoryBL();
 // Console.WriteLine($"{_ProductID}");
 // ecommerce.SearchProduct();
 User user = userBL.GetUserByName("quangquy");
-// Console.WriteLine($"{user.Birthday}");
 ecommerce.SellerPage(user);
+
+// Console.WriteLine($"{user.Birthday}");

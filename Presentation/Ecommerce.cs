@@ -134,7 +134,7 @@ namespace Persistence
                     sellerPage.ProductManagement(user);
                     break;
                 case "3": 
-                    sellerPage.CategoryManagement();
+                    sellerPage.CategoryManagement(user);
                     break;
                 case "0": 
                     Environment.Exit(0);

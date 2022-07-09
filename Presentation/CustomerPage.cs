@@ -66,8 +66,8 @@ namespace Persistence
             Console.Clear();
             Console.WriteLine("Nhập sản phẩm bạn muốn tìm: ");
             string? _ProductName = Console.ReadLine();
-            List<Product> productList = new List<Product>();
-            productList = productBL.GetProductListByName(_ProductName);
+            List<Product> products = new List<Product>();
+            products = productBL.GetProductsByName(_ProductName);
             Console.Clear();
             
         }
