@@ -22,10 +22,10 @@ create table Products (
 	ProductID int not null auto_increment,
     ProductName varchar(50),
     Description varchar(500),
-    Price int,
+    Price int not null,
+    Quatity int not null,
     constraint pk_Products primary key (ProductID)
     );
-
 
 create table Users_Product (
 	UserID int,
@@ -39,7 +39,10 @@ create table Users_Product (
 
 create table Category (
 	CategoryID int not null auto_increment,
+    UserID int,
     CategoryName varchar(50),
+    constraint fk_Category_Users foreign key (UserID)
+    references Users(UserID),
     constraint pk_Category primary key (CategoryID)
     );
 
@@ -55,12 +58,15 @@ create table Product_Categories (
     
 create table Orders (
 	OrderID int not null auto_increment,
-    UserID int,
+    SellerID int,
+    CustomerID int,
     CreateDate datetime,
-    Status enum ('Reject', 'Accept', 'To Pay', 'To Receive'),
-    constraint fk_Orders_Users foreign key (UserID)
+    Status enum ('Processing', 'Confirm', 'Decline', 'Shipping', 'Finished'),
+    constraint fk1_Orders_Users foreign key (SellerID)
 		references Users (UserID),
-	constraint pk_Users primary key(OrderID)
+	constraint fk2_Orders_Users foreign key (CustomerID)
+		references Users (UserID),
+	constraint pk_Orders primary key(OrderID)
         );
 
 create table OrderDetails (
@@ -86,7 +92,10 @@ VALUES ('QuangQuy', SHA2('123456', 256), 'Seller', 'Lê Quang Quý', '1993-7-1',
        ('VietAnh', SHA2('123456', 256), 'Seller', 'Nguyễn Duyên Việt Anh', '2000-4-6', 'VietAnh@vtc.edu.vn', '0987654326', 'Tiền Giang'),
        ('CanhToan', SHA2('123456', 256), 'Customer', 'Nguyễn Cảnh Toàn', '2002-3-4', 'CanhToan@vtc.edu.vn', '0987654327', 'Bắc Ninh'),
        ('VanTam', SHA2('123456', 256), 'Customer', 'Lê Văn Tâm', '1999-3-12', 'VanTam@vtc.edu.vn', '0987654328', 'Ninh Bình');
- 
+
+update Users
+set password = '123456';
+
 select * from Category;
 insert into Category (CategoryName)
 values ('Ô tô'),
@@ -103,22 +112,25 @@ values ('Ô tô'),
 
 select * from Products;
 
-insert into Products (ProductName, Price)
-VALUES ('Toyota Raize 1.0 Turbo', '527000000'),
-	   ('Kia Seltos', '719000000'),
-       ('Ford Territory', '780000000'),
-	   ('Toyota Venzao', '1100000000'),
-       ('Samsung Galaxy Z Fold3 5G', '36990000'),
-	   ('iPhone 13 Pro Max', '31190000'),
-       ('Samsung Galaxy S22 Ultra 5G', '30990000'),
-	   ('OPPO Find X5 Pro 5G', '30990'),
-       ('Đồng Hồ ORIENT Cơ 41 mm Nam', '37458000'),
-       ('Đồng Hồ ORIENT Cơ 38.7 mm Nam RE-AW0004S00B', '17640000'),
-       ('Đồng Hồ TITONI Cơ kính sapphire 27 mm Nữ 729 G-306', '24720000'),
-       ('Máy giặt Samsung Inverter 9 Kg', '11590000'),
-       ('Máy giặt Aqua Inverter 10 Kg AQD', '8990000'),
-       ('Máy giặt LG Inverter 10 Kg', '14390');
+insert into Products (ProductName, Price, Quantity)
+VALUES ('Toyota Raize 1.0 Turbo', '527000000', 10),
+	   ('Kia Seltos', '719000000', 10),
+       ('Ford Territory', '780000000', 10),
+	   ('Toyota Venzao', '1100000000', 10),
+       ('Samsung Galaxy Z Fold3 5G', '36990000', 10),
+	   ('iPhone 13 Pro Max', '31190000', 10),
+       ('Samsung Galaxy S22 Ultra 5G', '30990000', 10),
+	   ('OPPO Find X5 Pro 5G', '30990', 10),
+       ('Đồng Hồ ORIENT Cơ 41 mm Nam', '37458000', 10),
+       ('Đồng Hồ ORIENT Cơ 38.7 mm Nam RE-AW0004S00B', '17640000', 10),
+       ('Đồng Hồ TITONI Cơ kính sapphire 27 mm Nữ 729 G-306', '24720000', 10),
+       ('Máy giặt Samsung Inverter 9 Kg', '11590000', 10),
+       ('Máy giặt Aqua Inverter 10 Kg AQD', '8990000', 10),
+       ('Máy giặt LG Inverter 10 Kg', '14390', 10);
        
+update Products 
+set Description = ' ';
+
 select * from Product_Categories;
 insert into Product_Categories (CategoryID, ProductID)
 VALUES (1, 1),
@@ -142,13 +154,13 @@ VALUES (1, 1),
 
 select * from Orders;
 
-insert into Orders (UserID, CreateDate, Status)
-values (3, '2020-01-01 15:10:10', 'Accept'),
-	   (4, '2020-11-01 12:10:10', 'Accept'),
-       (5, '2020-02-01 5:10:10', 'Accept'),
-	   (6, '2020-01-01 10:18:10', 'To Receive'),
-       (6, '2020-01-09 11:19:10', 'To Receive'),
-	   (7, '2020-01-08 16:10:10', 'To Receive');
+insert into Orders (SellerID, CustomerID, CreateDate, Status)
+values (1, 3, '2020-01-01 15:10:10', 'Processing'),
+	   (1, 4, '2020-11-01 12:10:10', 'Processing'),
+       (1, 5, '2020-02-01 5:10:10', 'Processing'),
+	   (6, 8, '2020-01-01 10:18:10', 'Processing'),
+       (6, 8, '2020-01-09 11:19:10', 'Processing'),
+	   (1, 7, '2020-01-08 16:10:10', 'Processing');
 
 select * from OrderDetails;
 insert into OrderDetails (OrderID, ProductID, ProductNumber)
@@ -158,3 +170,19 @@ values (1, 1, 1),
        (3, 7, 1),
        (3, 8, 3),
        (2, 1, 4);
+       
+insert into Users_Product (UserID, ProductID)
+values  (1, 1),
+		(1, 2),
+        (1, 3),
+        (1, 4),
+        (1, 5),
+        (1, 6),
+        (1, 7),
+        (1, 8),
+        (6, 9),
+        (6, 10),
+        (6, 11),
+        (6, 12),
+        (6, 13),
+        (6, 14);

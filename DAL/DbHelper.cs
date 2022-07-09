@@ -4,7 +4,7 @@ namespace DAL
 {
     public class DbHelper
     {
-        private static MySqlConnection connection;
+        private static MySqlConnection? connection;
 
         public static MySqlConnection GetConnection()
         {
@@ -25,7 +25,7 @@ namespace DAL
             {
                 GetConnection();
             }
-
+            
             connection.Open();
 
             return connection;
