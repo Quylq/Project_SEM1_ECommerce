@@ -10,7 +10,7 @@ namespace DAL
 
         public List<Order> GetOrdersByStatusOfSeller(string _Status, User seller)
         {
-            query = $"select * from Orders o inner join Users u on o.CustomerID = u.UserID where o.SellerID = {seller.UserID}";
+            query = $"select * from Orders o inner join Users u on o.CustomerID = u.UserID where o.SellerID = {seller.UserID} and o.Status = '{_Status}'";
             DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
 
@@ -26,7 +26,7 @@ namespace DAL
         }
         public List<User> GetUsersByStatusOfSeller(string _Status, User seller)
         {
-            query = $"select * from Orders o inner join Users u on o.CustomerID = u.UserID where o.SellerID = {seller.UserID}";
+            query = $"select * from Orders o inner join Users u on o.CustomerID = u.UserID where o.SellerID = {seller.UserID} and o.Status = '{_Status}'";
             DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
 
@@ -84,5 +84,33 @@ namespace DAL
             DbHelper.CloseConnection();
         }
 
+        private Product GetProductOfOrderDetails(MySqlDataReader reader)
+        {
+            Product product = new Product();
+
+            product.ProductID = reader.GetInt32("ProductID");
+            product.ProductName = reader.GetString("ProductName");
+            product.Price = reader.GetInt32("Price");
+            // product.Description = reader.GetString("Description");
+            product.Quantity = reader.GetInt32("ProductNumber");
+
+            return product;
+        }
+        public List<Product> GetOrderDetails(Order order)
+        {
+            query = $"select * from OrderDetails od inner join Products p on od.ProductID = p.ProductID where od.OrderID = {order.OrderID}";
+
+            DbHelper.OpenConnection();
+            reader = DbHelper.ExecQuery(query);
+            List<Product> products = new List<Product>();
+            Product product = new Product();
+            while (reader.Read())
+            {
+                product = GetProductOfOrderDetails(reader);
+                products.Add(product);
+            }
+            DbHelper.CloseConnection();
+            return products;
+        }
     }
 }

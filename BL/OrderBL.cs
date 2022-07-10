@@ -25,5 +25,16 @@ public class OrderBL
         orderDAL.SaveOrder(order);
     }
 
+    public List<Product> GetOrderDetails(Order order)
+    {
+        List<Product> products = new List<Product>();
+        products = orderDAL.GetOrderDetails(order);
+
+        return products;
+    }
+    public void UpdateStatus(Order order, string _Status)
+    {
+        orderDAL.UpdateStatus(order, _Status);
+    }
 }
 

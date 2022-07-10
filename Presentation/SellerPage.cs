@@ -10,6 +10,7 @@ namespace Persistence
         private ProductBL productBL;
         private OrderBL orderBL;
         private CategoryBL categoryBL;
+        // private OrderDetailsBL orderDetailsBL;
         Ecommerce ecommerce = new Ecommerce();
         public SellerPage()
         {
@@ -17,27 +18,41 @@ namespace Persistence
             productBL = new ProductBL();
             orderBL = new OrderBL();
             categoryBL = new CategoryBL();
+            // orderDetailsBL = new OrderDetailsBL();
         }
         
         public void OrderManagement(User user)
         {
             Console.Clear();
             Console.WriteLine("1. Chờ xác nhận.");
-            Console.WriteLine("2. Đã xác nhận.");
-            Console.WriteLine("3. Từ chối.");
+            Console.WriteLine("2. Đang giao.");
+            Console.WriteLine("3. Hoàn thành.");
+            Console.WriteLine("4. Thất bại.");
             Console.WriteLine("0. Quay lại.");
             Console.Write("Chọn: ");
             string? choice = Console.ReadLine();
             switch (choice)
             {
                 case "1": 
-                    ViewOrders("Processing", user);
+                    ViewOrdersProcessing(user);
                     break; 
                 case "2":
-                    ViewOrders("Confirm", user);
+                    ViewOrders("Shipping", user);
+                    Console.WriteLine("Nhấn phím bất kỳ để tiếp tục !");
+                    Console.ReadKey();
+                    OrderManagement(user);
                     break;
                 case "3":
-                    ViewOrders("Decline", user);
+                    ViewOrders("Finished", user);
+                    Console.WriteLine("Nhấn phím bất kỳ để tiếp tục !");
+                    Console.ReadKey();
+                    OrderManagement(user);
+                    break;
+                case "4":
+                    ViewOrders("Failed", user);
+                    Console.WriteLine("Nhấn phím bất kỳ để tiếp tục !");
+                    Console.ReadKey();
+                    OrderManagement(user);
                     break;
                 case "0":
                     ecommerce.SellerPage(user);
@@ -251,7 +266,6 @@ namespace Persistence
         }
         public void DisplayOrders(List<User> customers, List<Order> orders)
         {
-            Console.Clear();
             Console.WriteLine("|----------------------------------------------------------------------------------------------------------------------|");
             Console.WriteLine("| STT |           Khách Hàng           |    Thời gian đặt hàng    |                     Địa chỉ                        |");
             Console.WriteLine("|----------------------------------------------------------------------------------------------------------------------|");
@@ -268,14 +282,15 @@ namespace Persistence
             List<Order> orders = new List<Order>();
             customers = orderBL.GetUsersByStatusOfSeller(status, seller);
             orders = orderBL.GetOrdersByStatusOfSeller(status, seller);
+            Console.Clear();
             DisplayOrders(customers, orders);
-            Console.Write("Nhập số thứ tự để xem thông tin sản phẩm hoặc \"0\" để quay lại: ");
+            Console.Write("Nhập số thứ tự để xem thông tin đơn hàng hoặc \"0\" để quay lại: ");
             try
             {
                 int choice = Convert.ToInt32(Console.ReadLine());
                 if (choice != 0)
                 {
-                    OrderInformation(customers[choice - 1], orders[choice - 1]);
+                    OrderDetails(customers[choice - 1], orders[choice - 1]);
                 }
                 else
                 {
@@ -289,12 +304,26 @@ namespace Persistence
             }
             
         }
-        public void OrderInformation(User customer, Order order)
+        public void OrderDetails(User customer, Order order)
         {
-            Console.WriteLine($"Tên khách hàng: {customer.FullName}");
-            Console.WriteLine($"Đia chỉ khách hàng: {customer.Address}");
+            Console.Clear();
+            Console.WriteLine($"Khách hàng: {customer.FullName}");
+            Console.WriteLine($"Đia chỉ: {customer.Address}");
             Console.WriteLine($"Số điện thoại: {customer.Phone}");
-            Console.WriteLine($"Tên khách hàng: {customer.FullName}");
+
+            List<Product> products = orderBL.GetOrderDetails(order);
+            Console.WriteLine("|--------------------------------------------------------------------------------------------|");
+            Console.WriteLine("| STT | Tên sản phẩm                        |       Giá       | Số lượng |    Thành Tiền     |");
+            Console.WriteLine("|--------------------------------------------------------------------------------------------|");
+            int count = 1;
+            int total = 0;
+            foreach (Product product in products)  
+            { 
+                Console.WriteLine("| {0,3 } | {1,-35} | {2, 15} | {3,8} | {4, 17} |", count++, product.ProductName, product.Price.ToString("C0"), product.Quantity, (product.Price * product.Quantity).ToString("C0"));
+                total += product.Price * product.Quantity;
+            }
+            Console.WriteLine("|--------------------------------------------------------------------------------------------|");
+            Console.WriteLine("Tổng Tiền:  {0, 17} ", total.ToString("C0"));
         }
         
         public void ViewProductsOfCategory(User user)
@@ -374,6 +403,44 @@ namespace Persistence
                 DeleteCategory(user);
             }
         }
+        public void ViewOrdersProcessing(User user)
+        {
+            ViewOrders("Processing", user);
+            Console.WriteLine("1. Xác nhận đơn hàng. ");
+            Console.WriteLine("2. Từ chối đơn hàng. ");
+            Console.WriteLine("0. Quay lại.");
+            Console.Write("Chọn: ");
+            try
+            {
+                int choice = Convert.ToInt32(Console.ReadLine());
+                if (choice == 0)
+                {
+                    ViewOrdersProcessing(user);
+                }
+                else if (choice == 1)
+                {
+                    List<Order> orders = orderBL.GetOrdersByStatusOfSeller("Processing", user);
+                    orderBL.UpdateStatus(orders[choice - 1], "Shipping");
+                    Console.WriteLine("Nhập phím bất kỳ để tiếp tục");
+                    Console.ReadKey();
+                    ViewOrdersProcessing(user);
+                }
+                else if (choice == 2)
+                {
+                    List<Order> orders = orderBL.GetOrdersByStatusOfSeller("Processing", user);
+                    orderBL.UpdateStatus(orders[choice - 1], "Failed");
+                    Console.WriteLine("Nhập phím bất kỳ để tiếp tục");
+                    Console.ReadKey();
+                    ViewOrdersProcessing(user);
+                }
+            }
+            catch (System.Exception)
+            {
+                Console.Clear();
+                ViewOrdersProcessing(user);
+            }
+        }
+
     }
     
 }
