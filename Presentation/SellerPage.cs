@@ -10,7 +10,6 @@ namespace Persistence
         private ProductBL productBL;
         private OrderBL orderBL;
         private CategoryBL categoryBL;
-        // private OrderDetailsBL orderDetailsBL;
         Ecommerce ecommerce = new Ecommerce();
         public SellerPage()
         {
@@ -18,7 +17,6 @@ namespace Persistence
             productBL = new ProductBL();
             orderBL = new OrderBL();
             categoryBL = new CategoryBL();
-            // orderDetailsBL = new OrderDetailsBL();
         }
         
         public void OrderManagement(User user)

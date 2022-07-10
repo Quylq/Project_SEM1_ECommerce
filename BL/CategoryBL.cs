@@ -19,7 +19,7 @@ public class CategoryBL
     public void CreateCategory(User user)
     {
         Console.WriteLine("Tên danh mục: ");
-        string _CategoryName = Console.ReadLine();
+        string? _CategoryName = Console.ReadLine();
         Category category = new Category(user.UserID, _CategoryName);
         categoryDAL.SaveCategory(category);
     }
