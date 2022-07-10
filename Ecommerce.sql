@@ -23,7 +23,7 @@ create table Products (
     ProductName varchar(50),
     Description varchar(500),
     Price int not null,
-    Quatity int not null,
+    Quantity int not null,
     constraint pk_Products primary key (ProductID)
     );
 
@@ -82,7 +82,6 @@ create table OrderDetails (
         
 select * from Users;
 
-
 insert into Users (UserName, Password, Role, FullName, Birthday, Email, Phone, Address)
 VALUES ('QuangQuy', SHA2('123456', 256), 'Seller', 'Lê Quang Quý', '1993-7-1', 'QuangQuy@vtc.edu.vn', '0987654321', 'Thanh Hóa'),
        ('TuanAnh', SHA2('123456', 256), 'Customer', 'Ngô Tuấn Anh', '2003-7-3','TuanAnh@vtc.edu.vn', '0987654322', 'Bắc Giang'),
@@ -95,20 +94,6 @@ VALUES ('QuangQuy', SHA2('123456', 256), 'Seller', 'Lê Quang Quý', '1993-7-1',
 
 update Users
 set password = '123456';
-
-select * from Categories;
-insert into Categories (CategoryName)
-values ('Ô tô'),
-	   ('Điện Thoại'),
-       ('Đồng Hồ'),
-	   ('Máy Giặt'),
-       ('Xe'),
-	   ('Thiết Bị Điện Tử'),
-       ('Máy Tính, LapTop'),
-	   ('Máy Ảnh'),
-	   ('Thời Trang'),
-	   ('Thiết Bị Điện Dân Dụng'),
-       ('Sách');
 
 select * from Products;
 
@@ -130,27 +115,6 @@ VALUES ('Toyota Raize 1.0 Turbo', '527000000', 10),
        
 update Products 
 set Description = ' ';
-
-select * from Product_Categories;
-insert into Product_Categories (CategoryID, ProductID)
-VALUES (1, 1),
-       (1, 2),
-       (1, 3),
-       (1, 4),
-       (2, 5),
-       (2, 6),
-       (2, 7),
-       (2, 8),
-       (6, 5),
-       (6, 6),
-       (6, 7),
-       (6, 8),  
-       (3, 9),
-       (3, 10),
-       (3, 11),
-       (4, 12),
-       (4, 13),
-       (4, 14);
 
 select * from Orders;
 
