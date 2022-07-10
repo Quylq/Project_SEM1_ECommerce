@@ -37,13 +37,13 @@ create table Users_Product (
     constraint pk_Users_Product primary key (UserID, ProductID)
     );
 
-create table Category (
+create table Categories (
 	CategoryID int not null auto_increment,
     UserID int,
     CategoryName varchar(50),
     constraint fk_Category_Users foreign key (UserID)
     references Users(UserID),
-    constraint pk_Category primary key (CategoryID)
+    constraint pk_Categories primary key (CategoryID)
     );
 
 create table Product_Categories (
@@ -52,7 +52,7 @@ create table Product_Categories (
     constraint fk_ProCat_Products foreign key (ProductID)
 		references Products (ProductID),
 	constraint fk_ProCat_Category foreign key (CategoryID)
-		references Category (CategoryID),
+		references Categories (CategoryID),
 	primary key (ProductID, CategoryID)
 	);
     
@@ -61,7 +61,7 @@ create table Orders (
     SellerID int,
     CustomerID int,
     CreateDate datetime,
-    Status enum ('Processing', 'Confirm', 'Decline', 'Shipping', 'Finished'),
+    Status enum ('Processing', 'Confirm', 'Failed', 'Shipping', 'Finished'),
     constraint fk1_Orders_Users foreign key (SellerID)
 		references Users (UserID),
 	constraint fk2_Orders_Users foreign key (CustomerID)
@@ -96,8 +96,8 @@ VALUES ('QuangQuy', SHA2('123456', 256), 'Seller', 'Lê Quang Quý', '1993-7-1',
 update Users
 set password = '123456';
 
-select * from Category;
-insert into Category (CategoryName)
+select * from Categories;
+insert into Categories (CategoryName)
 values ('Ô tô'),
 	   ('Điện Thoại'),
        ('Đồng Hồ'),
