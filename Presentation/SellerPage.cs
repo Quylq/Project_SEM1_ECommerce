@@ -18,7 +18,36 @@ namespace Persistence
             orderBL = new OrderBL();
             categoryBL = new CategoryBL();
         }
-        
+        public void Seller (User user)
+        {
+            
+            Console.Clear();
+            Console.WriteLine("1. Quản lý đơn đặt hàng.");
+            Console.WriteLine("2. Quản lý sản phẩm.");
+            Console.WriteLine("3. Quản lý danh mục sản phẩm.");
+            Console.WriteLine("0. Thoát");
+            Console.Write("Chọn: ");
+            string? choice = Console.ReadLine();
+            switch (choice)
+            {
+                case "1":
+                    OrderManagement(user);
+                    break;
+                case "2": 
+                    ProductManagement(user);
+                    break;
+                case "3": 
+                    CategoryManagement(user);
+                    break;
+                case "0": 
+                    Environment.Exit(0);
+                    break;
+                default:
+                    Console.WriteLine("Vui lòng chọn 0 - 3 !");
+                    Seller (user);
+                    break;
+            }
+        }
         public void OrderManagement(User user)
         {
             Console.Clear();
@@ -53,7 +82,7 @@ namespace Persistence
                     OrderManagement(user);
                     break;
                 case "0":
-                    ecommerce.SellerPage(user);
+                    Seller(user);
                     break;
                 default:
                     Console.WriteLine("Vui lòng chọn 0 - 3 !");
@@ -83,7 +112,7 @@ namespace Persistence
                     MoreProduct(user);
                     break;
                 case "0": 
-                    ecommerce.SellerPage(user);
+                    Seller(user);
                     break;
                 default:
                     Console.WriteLine("Vui lòng chọn 0 - 3 !");
@@ -112,7 +141,7 @@ namespace Persistence
                     DeleteCategory(user);
                     break;
                 case "0": 
-                    ecommerce.SellerPage(user);
+                    Seller(user);
                     break; 
                 default:
                     Console.WriteLine("Vui lòng chọn 0 - 1 !");

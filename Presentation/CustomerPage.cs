@@ -4,19 +4,47 @@ using System.Text;
 
 namespace Persistence
 {
-    public class Customer
+    public class CustomerPage
     {
         private UserBL userBL;
         private ProductBL productBL;
         private OrderBL orderBL;
         Ecommerce ecommerce = new Ecommerce();
-        public Customer()
+        public CustomerPage()
         {
             userBL = new UserBL();
             productBL = new ProductBL();
             orderBL = new OrderBL();
         }
-        
+        public void Customer(User user)
+        {
+            Console.Clear();
+            Console.WriteLine("1. Đơn hàng của tôi.");
+            Console.WriteLine("2. Giỏ hàng.");
+            Console.WriteLine("3. Danh mục.");
+            Console.WriteLine("4. Tìm kiếm sản phẩm.");
+            Console.WriteLine("0. Thoát.");
+            Console.Write("Chọn: ");
+            string? choice = Console.ReadLine();
+            switch (choice)
+            {
+                case "1": 
+                    break;
+                case "2": 
+                    break;
+                case "3": 
+                    break; 
+                case "4": 
+                    break;
+                case "0": 
+                    Environment.Exit(0);
+                    break;
+                default:
+                    Console.WriteLine("Vui lòng chọn 0 - 4 !");
+                    Customer(user);
+                    break;
+            }
+        }
         public void Cart(User user)
         {
             Console.Clear();
@@ -32,7 +60,7 @@ namespace Persistence
                 case "2": 
                     break;
                 case "0":
-                    ecommerce.CustomerPage(user);
+                    Customer(user);
                     break;
                 default:
                     Console.WriteLine("Vui lòng chọn 0 - 2!");
@@ -52,7 +80,7 @@ namespace Persistence
                 case "1": 
                     break;
                 case "2":
-                    ecommerce.CustomerPage(user);
+                    Customer(user);
                     break; 
                 default:
                     Console.WriteLine("Vui lòng chọn 1 hoặc 2!");
