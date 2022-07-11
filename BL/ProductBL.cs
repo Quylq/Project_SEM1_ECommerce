@@ -40,10 +40,6 @@ public class ProductBL
     {
         productDAL.SaveProduct(product);
     }
-    public void SaveUsers_Product(User user, Product product)
-    {
-        productDAL.SaveUsers_Product(user, product);
-    }
     public void UpdateDescription(Product product, string _Description)
     {
         productDAL.UpdateDescription(product, _Description);

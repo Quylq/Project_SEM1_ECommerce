@@ -107,6 +107,10 @@ namespace Persistence
                     break; 
                 case "2": 
                     categoryBL.CreateCategory(user);
+                    Console.WriteLine("Tạo Danh mục thành công!");
+                    Console.WriteLine("Nhấn phím bất kỳ để tiếp tục !");
+                    Console.ReadKey();
+                    CategoryManagement(user);
                     break;
                 case "3":
                     DeleteCategory(user);
@@ -249,11 +253,10 @@ namespace Persistence
             Console.WriteLine("Mô tả: ");
             string? _Description = Console.ReadLine();
             int _ProductID = productBL.ProductIDMax() + 1;
-            Product product = new Product(_ProductID, _ProductName, _Price, _Description, _Quantity);
+            int _UserID = user.UserID;
+            Product product = new Product(_ProductID, _UserID, _ProductName, _Price, _Description, _Quantity);
             // Lưu sản phẩm
             productBL.SaveProduct(product);
-            // Lưu Users_product
-            productBL.SaveUsers_Product(user, product);
             List<Category> categories = categoryBL.GetCategoriesByUser(user);
             // Lưu category
             AddCategories(product, user);
@@ -335,7 +338,7 @@ namespace Persistence
                 if (choice != 0)
                 {
                     List<Product> products = productBL.GetProductsByCategory(categories[choice - 1]);
-                    ViewProducts(user,products);
+                    ViewProducts(user, products);
                 }
                 else
                 {
@@ -438,7 +441,7 @@ namespace Persistence
                 ViewOrdersProcessing(user);
             }
         }
-
+        
     }
     
 }

@@ -148,29 +148,28 @@ namespace Persistence
 
         public void CustomerPage(User user)
         {
+            CustomerPage customerPage = new CustomerPage();
             Console.Clear();
-            Console.WriteLine("1. Đơn hàng của tôi.");
+            Console.WriteLine("1. Tìm kiếm sản phẩm.");
             Console.WriteLine("2. Giỏ hàng.");
-            Console.WriteLine("3. Danh mục.");
-            Console.WriteLine("4. Tìm kiếm sản phẩm.");
+            Console.WriteLine("3. Đơn hàng của tôi.");           
             Console.WriteLine("0. Thoát.");
             Console.Write("Chọn: ");
             string? choice = Console.ReadLine();
             switch (choice)
             {
-                case "1": 
+                case "1":
+                    customerPage.SearchProduct(user);
                     break;
                 case "2": 
                     break;
                 case "3": 
                     break; 
-                case "4": 
-                    break;
                 case "0": 
                     Environment.Exit(0);
                     break;
                 default:
-                    Console.WriteLine("Vui lòng chọn 0 - 4 !");
+                    Console.WriteLine("Vui lòng chọn 0 - 3 !");
                     CustomerPage(user);
                     break;
             }

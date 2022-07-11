@@ -23,7 +23,21 @@ namespace DAL
             DbHelper.CloseConnection();
             return user;
         }
+        public User GetUserByID(int _UserID)
+        {
+            query = $"select * from Users where UserID = '{_UserID}'";
 
+            DbHelper.OpenConnection();
+            reader = DbHelper.ExecQuery(query);
+
+            User user = new User();
+            if (reader.Read())
+            {
+                user = GetUserInfo(reader);
+            }
+            DbHelper.CloseConnection();
+            return user;
+        }
         private User GetUserInfo(MySqlDataReader reader)
         {
             User user = new User();

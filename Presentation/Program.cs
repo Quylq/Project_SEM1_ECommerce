@@ -14,7 +14,11 @@ CategoryBL categoryBL = new CategoryBL();
 // int _ProductID = productBL.ProductIDMax();
 // Console.WriteLine($"{_ProductID}");
 // ecommerce.SearchProduct();
-User user = userBL.GetUserByName("quangquy");
-ecommerce.SellerPage(user);
+
+// User user = userBL.GetUserByName("tuananh");
+// ecommerce.CustomerPage(user);
+
+// User user = userBL.GetUserByName("vietanh");
+// ecommerce.SellerPage(user);
 
 // Console.WriteLine($"{user.Birthday}");
