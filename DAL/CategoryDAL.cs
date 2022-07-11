@@ -13,7 +13,7 @@ namespace DAL
             query = $"select * from Categories where UserID = {user.UserID}";
 
 
-            DbHelper.OpenConnection();
+            DbHelper.OpenConnection("Seller");
             reader = DbHelper.ExecQuery(query);
             List<Category> categories = new List<Category>();
             Category category = new Category();
@@ -40,7 +40,7 @@ namespace DAL
         {
             query = $"Insert into Categories (UserID, CategoryName) value ('{category.UserID}', '{category.CategoryName}')";
 
-            DbHelper.OpenConnection();
+            DbHelper.OpenConnection("Seller");
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();
         }
@@ -49,7 +49,7 @@ namespace DAL
             // không xóa được 
             // query = $"Delete from Categories where categoryID = {category.CategoryID}";
             query = $"update Categories set UserID = null where CategoryID = {category.CategoryID}";
-            DbHelper.OpenConnection();
+            DbHelper.OpenConnection("Seller");
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();
         }

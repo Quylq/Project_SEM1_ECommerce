@@ -3,6 +3,24 @@ create database Ecommerce;
 
 use Ecommerce;
 
+CREATE user 'customer'@'localhost' identified by '123456';
+CREATE user 'seller'@'localhost' identified by '123456';
+
+grant select, update on ecommerce.users to 'customer'@'localhost';
+grant select on ecommerce.products to 'customer'@'localhost';
+grant select on ecommerce.category to 'customer'@'localhost';
+grant select, insert on ecommerce.orders to 'customer'@'localhost';
+grant select, insert on ecommerce.orderdetails to 'customer'@'localhost';
+grant select on ecommerce.product_categories to 'customer'@'localhost';
+
+grant SELECT, INSERT, UPDATE, DELETE on ecommerce.users to 'seller'@'localhost';
+grant SELECT, INSERT, UPDATE, DELETE on ecommerce.products to 'seller'@'localhost';
+grant SELECT, INSERT, UPDATE, DELETE on ecommerce.categories to 'seller'@'localhost';
+grant SELECT, INSERT, UPDATE, DELETE on ecommerce.orders to 'seller'@'localhost';
+grant SELECT, INSERT, UPDATE, DELETE on ecommerce.orderdetails to 'seller'@'localhost';
+grant SELECT, INSERT, UPDATE, DELETE on ecommerce.product_categories to 'seller'@'localhost';
+grant SELECT, INSERT, UPDATE, DELETE on ecommerce.users_product to 'seller'@'localhost';
+
 create table Users (
 	UserID int not null auto_increment,
     UserName varchar(50) not null unique,
@@ -61,7 +79,7 @@ create table Orders (
     SellerID int,
     CustomerID int,
     CreateDate datetime,
-    Status enum ('Processing', 'Confirm', 'Failed', 'Shipping', 'Finished'),
+    Status enum ('shopping', 'Processing', 'Confirm', 'Failed', 'Shipping', 'Finished'),
     constraint fk1_Orders_Users foreign key (SellerID)
 		references Users (UserID),
 	constraint fk2_Orders_Users foreign key (CustomerID)

@@ -1,5 +1,9 @@
 ﻿using BL;
 using Persistence;
+using System.Security.Cryptography;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 Console.OutputEncoding = System.Text.Encoding.Unicode;
 Console.InputEncoding = System.Text.Encoding.Unicode;
@@ -10,7 +14,7 @@ UserBL userBL = new UserBL();
 ProductBL productBL = new ProductBL();
 CategoryBL categoryBL = new CategoryBL();
 
-// ecommerce.Menu();
+ecommerce.Menu();
 // int _ProductID = productBL.ProductIDMax();
 // Console.WriteLine($"{_ProductID}");
 // ecommerce.SearchProduct();
@@ -22,3 +26,5 @@ CategoryBL categoryBL = new CategoryBL();
 // ecommerce.SellerPage(user);
 
 // Console.WriteLine($"{user.Birthday}");
+
+

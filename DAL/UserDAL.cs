@@ -12,7 +12,7 @@ namespace DAL
         {
             query = $"select UserID, UserName, Password, FullName, Birthday, Email, Phone, Address, Role from Users where UserName = '{_UserName}'";
 
-            DbHelper.OpenConnection();
+            DbHelper.OpenConnection("Seller");
             reader = DbHelper.ExecQuery(query);
 
             User user = new User();
@@ -27,7 +27,7 @@ namespace DAL
         {
             query = $"select * from Users where UserID = '{_UserID}'";
 
-            DbHelper.OpenConnection();
+            DbHelper.OpenConnection("Seller");
             reader = DbHelper.ExecQuery(query);
 
             User user = new User();
@@ -57,7 +57,7 @@ namespace DAL
         {
             query = $"Insert into Users (UserID, UserName, Password , FullName, Birthday, Email, Phone, Address, Role) value ('{user.UserID}', '{user.UserName}', '{user.Password}', '{user.FullName}', '{user.Birthday}', '{user.Email}', '{user.Phone}', '{user.Address}', '{user.Role}')";
 
-            DbHelper.OpenConnection();
+            DbHelper.OpenConnection("Seller");
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();
         }

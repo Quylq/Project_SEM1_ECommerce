@@ -84,7 +84,7 @@ namespace Persistence
             Console.Write("Nhập Tên Đăng Nhập: ");
             string? _UserName = Console.ReadLine();
             Console.Write("Nhập Mật Khẩu: ");
-            string? _Password = Console.ReadLine();
+            string? _Password = ReadPassword();
 
             User user =  userBL.GetUserByName(_UserName);
 
@@ -114,7 +114,9 @@ namespace Persistence
 
         }
         public void SigUp()
-        {}
+        {
+            
+        }
         public void SellerPage (User user)
         {
             SellerPage sellerPage = new SellerPage();
@@ -173,6 +175,26 @@ namespace Persistence
                     CustomerPage(user);
                     break;
             }
+        }
+        public string ReadPassword()
+        {
+            string temp = "";
+            ConsoleKeyInfo info = Console.ReadKey(true);
+            while (info.Key != ConsoleKey.Enter)
+            {
+                if (info.Key != ConsoleKey.Backspace && info.Key != ConsoleKey.Spacebar)
+                {
+                    temp += info.KeyChar;
+                    Console.Write("*");
+                }
+                else if (temp.Length > 0 && info.Key == ConsoleKey.Backspace)
+                {
+                    Console.Write("\b");
+                    temp = temp.Substring(0, temp.Length - 1);
+                }
+                info = Console.ReadKey(true);
+            }
+            return temp;
         }
     }
 }

@@ -11,7 +11,7 @@ namespace DAL
         public List<Order> GetOrdersByStatusOfSeller(string _Status, User seller)
         {
             query = $"select * from Orders o inner join Users u on o.CustomerID = u.UserID where o.SellerID = {seller.UserID} and o.Status = '{_Status}'";
-            DbHelper.OpenConnection();
+            DbHelper.OpenConnection("Seller");
             reader = DbHelper.ExecQuery(query);
 
             List<Order>? orders = new List<Order>();
@@ -27,7 +27,7 @@ namespace DAL
         public List<User> GetUsersByStatusOfSeller(string _Status, User seller)
         {
             query = $"select * from Orders o inner join Users u on o.CustomerID = u.UserID where o.SellerID = {seller.UserID} and o.Status = '{_Status}'";
-            DbHelper.OpenConnection();
+            DbHelper.OpenConnection("Seller");
             reader = DbHelper.ExecQuery(query);
 
             List<User>? customers = new List<User>();
@@ -70,7 +70,7 @@ namespace DAL
         {
             query = $"Insert into Orders (UserID, CreateDate , Status) value ( '{order.SellerID}', '{order.CreateDate}', '{order.Status}')";
 
-            DbHelper.OpenConnection();
+            DbHelper.OpenConnection("Seller");
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();
         }
@@ -79,7 +79,7 @@ namespace DAL
         {
             query = $"update Orders set Status = '{_Status}' where OrderID = {order.OrderID};";
 
-            DbHelper.OpenConnection();
+            DbHelper.OpenConnection("Seller");
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();
         }
@@ -100,7 +100,7 @@ namespace DAL
         {
             query = $"select * from OrderDetails od inner join Products p on od.ProductID = p.ProductID where od.OrderID = {order.OrderID}";
 
-            DbHelper.OpenConnection();
+            DbHelper.OpenConnection("Seller");
             reader = DbHelper.ExecQuery(query);
             List<Product> products = new List<Product>();
             Product product = new Product();

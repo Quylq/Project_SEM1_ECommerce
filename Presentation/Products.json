@@ -1,0 +1,26 @@
+[
+  {
+    "ProductID": 5,
+    "UserID": 1,
+    "ProductName": "Samsung Galaxy Z Fold3 5G",
+    "Description": " ",
+    "Price": 36990000,
+    "Quantity": 21
+  },
+  {
+    "ProductID": 11,
+    "UserID": 6,
+    "ProductName": "\u0110\u1ED3ng H\u1ED3 TITONI C\u01A1 k\u00EDnh sapphire 27 mm N\u1EEF 729 G-306",
+    "Description": " ",
+    "Price": 24720000,
+    "Quantity": 0
+  },
+  {
+    "ProductID": 16,
+    "UserID": 6,
+    "ProductName": "Vinfast Fadil ti\u00EAu chu\u1EA9n",
+    "Description": "\u00C1p d\u1EE5ng v\u1EDBi kh\u00E1ch h\u00E0ng tr\u1EA3 th\u1EB3ng 100% gi\u00E1 tr\u1ECB xe",
+    "Price": 373000000,
+    "Quantity": 89
+  }
+]

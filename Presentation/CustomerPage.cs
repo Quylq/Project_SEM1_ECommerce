@@ -104,39 +104,67 @@ namespace Persistence
             string? choice = Console.ReadLine();
             if (choice == "1")
             {
-                // Đến giỏ hàng
+                Console.WriteLine("Chọn 1 !");
+                Console.ReadKey();
             }
             else if (choice == "2")
             {
-                // mua thêm
+                Console.WriteLine("Chọn 2 !");
+                Console.ReadKey();
             }
             else if (choice == "0")
             {
+                Console.WriteLine("Chọn 0 !");
+                Console.ReadKey();
                 SearchProduct(customer);
             }
             else if (IsNumber(choice.ToLower().Replace(" ", "").Replace("add", "")))
             {
                 List<Product> products = jsonUtil.ProductsLoad();
+                if (products == null)
+                {
+                    products = new List<Product>();
+                }
                 int num = Convert.ToInt32(choice.ToLower().Replace(" ", "").Replace("add", "")) ;
+                
                 Product selectedProduct ;
-                if (!CheckProduct(products, product))
+                if (CheckProduct(products, product) == null)
                 {
                     selectedProduct = new Product(product.ProductID, product.UserID, product.ProductName, product.Price, product.Description, num);
                     products.Add(selectedProduct);
                 }
                 else
                 {
-                    
+                    products[Convert.ToInt32(CheckProduct(products, product))].Quantity += num;
                 }
-                
+                jsonUtil.ProductsSave(products);
+                Console.WriteLine("Thêm vào giỏ hàng thành công.");
+                ProductInformation(customer, product);
             }
             else if (IsNumber(choice.ToLower().Replace(" ", "").Replace("sub", "")))
             {
-                
+                List<Product> products = jsonUtil.ProductsLoad();
+                if (products == null)
+                {
+                    products = new List<Product>();
+                }
+                int num = Convert.ToInt32(choice.ToLower().Replace(" ", "").Replace("sub", "")) ;
+                if (CheckProduct(products, product) == null)
+                {
+                    Console.WriteLine("Sản phẩm không có trong giỏ hàng.");
+                }
+                else
+                {
+                    int i = products[Convert.ToInt32(CheckProduct(products, product))].Quantity;
+                    products[Convert.ToInt32(CheckProduct(products, product))].Quantity = i > num ? i - num : 0;
+                }
+                jsonUtil.ProductsSave(products);
+                ProductInformation(customer, product);
             }
             else
             {
                 Console.WriteLine("Lựa chọn không hợp lệ !");
+                Console.ReadKey();
                 ProductInformation(customer, product);
             }
             
@@ -193,24 +221,18 @@ namespace Persistence
             }
             return true;
         }
-        public bool CheckProduct(List<Product> products, Product product)
+        public string CheckProduct(List<Product> products, Product product)
         {
-            int result = 0;
-            foreach (Product product1 in products)
+            string result = null;
+
+            for (int i = 0; i < products.Count; i++)
             {
-                if (product1.ProductID == product.ProductID)
+                if (products[i].ProductID == product.ProductID)
                 {
-                    result = 1;
+                    result = Convert.ToString(i);
                 }
             }
-            if (result == 0)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return result;
         }
     }
 }

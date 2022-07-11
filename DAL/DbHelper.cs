@@ -6,24 +6,34 @@ namespace DAL
     {
         private static MySqlConnection? connection;
 
-        public static MySqlConnection GetConnection()
+        public static MySqlConnection GetConnection(string _Role)
         {
             if (connection == null)
             {
-                connection = new MySqlConnection
+                if (_Role == "Seller")
                 {
-                    ConnectionString = @"server=localhost;port=3306;user=root;password=19072003;database=Ecommerce"
-                };
+                    connection = new MySqlConnection
+                    {
+                        ConnectionString = @"server=localhost;port=3306;user=seller;password=123456;database=Ecommerce"
+                    };
+                }
+                else if (_Role == "Customer")
+                {
+                    connection = new MySqlConnection
+                    {
+                        ConnectionString = @"server=localhost;port=3306;user=customer;password=123456;database=Ecommerce"
+                    };
+                }
             }
 
             return connection;
         }
 
-        public static MySqlConnection OpenConnection()
+        public static MySqlConnection OpenConnection(string _Role)
         {
             if(connection == null)
             {
-                GetConnection();
+                GetConnection(_Role);
             }
             
             connection.Open();

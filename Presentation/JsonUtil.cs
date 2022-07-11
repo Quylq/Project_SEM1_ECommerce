@@ -17,9 +17,9 @@ namespace Persistence
         public List<Product>? ProductsLoad()
         {
             List<Product>? products;
-            if (!File.Exists("Product.json"))
+            if (!File.Exists("Products.json"))
             {
-                products = new List<Product>();
+                return null;
             }
             StreamReader reader = new StreamReader("Products.json");
             string jsonString = reader.ReadToEnd();
