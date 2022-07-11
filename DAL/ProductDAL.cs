@@ -12,7 +12,7 @@ namespace DAL
         {
             query = $"select ProductID, ProductName, Price, Description, Quantity from Products where ProductName like '%{_ProductName}%'";
 
-            DbHelper.OpenConnection();
+            DbHelper.OpenConnectionSeller();
             reader = DbHelper.ExecQuery(query);
 
             List<Product>? products = new List<Product>();
@@ -29,7 +29,7 @@ namespace DAL
         {
             
             query = $"select p.ProductID, p.ProductName, p.Price, p.Description, p.Quantity from Products p inner join Users_Product up on p.ProductID = up.ProductID where up.UserID = {user.UserID}";
-            DbHelper.OpenConnection();
+            DbHelper.OpenConnectionSeller();
             reader = DbHelper.ExecQuery(query);
 
             List<Product>? products = new List<Product>();
@@ -46,7 +46,7 @@ namespace DAL
         {
             
             query = $"select p.ProductID, p.ProductName, p.Price, p.Description, p.Quantity from Products p inner join Product_Categories pc on p.ProductID = pc.ProductID where pc.CategoryID = {category.CategoryID}";
-            DbHelper.OpenConnection();
+            DbHelper.OpenConnectionSeller();
             reader = DbHelper.ExecQuery(query);
 
             List<Product>? products = new List<Product>();
@@ -62,7 +62,7 @@ namespace DAL
         public List<Product> GetProductsByNameAndUser(string _ProductName, User user)
         {
             query = $"select p.ProductID, p.ProductName, p.Price, p.Description, p.Quantity from Products p inner join Users_Product up on p.ProductID = up.ProductID where p.ProductName like '%{_ProductName}%'  and up.UserID = {user.UserID}";
-            DbHelper.OpenConnection();
+            DbHelper.OpenConnectionSeller();
             reader = DbHelper.ExecQuery(query);
 
             List<Product>? products = new List<Product>();
@@ -93,21 +93,21 @@ namespace DAL
         {
             query = $"Insert into Products (ProductID, ProductName, Price , Description, Quantity) value ('{product.ProductID}', '{product.ProductName}', '{product.Price}', '{product.Description}', '{product.Quantity}')";
 
-            DbHelper.OpenConnection();
+            DbHelper.OpenConnectionSeller();
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();
         }
         public void SaveUsers_Product(User user, Product product)
         {
             query = $"Insert into Users_Product (UserID, ProductID) value ( '{user.UserID}', '{product.ProductID}')";
-            DbHelper.OpenConnection();
+            DbHelper.OpenConnectionSeller();
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();
         }
         public void SaveProduct_Categories(Product product, Category category)
         {
             query = $"Insert into Product_Categories (CategoryID, ProductID) value ( '{category.CategoryID}', '{product.ProductID}')";
-            DbHelper.OpenConnection();
+            DbHelper.OpenConnectionSeller();
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();
         }
@@ -115,7 +115,7 @@ namespace DAL
         {
             query = $"update Products set Description = '{_Description}' where ProductID = {product.ProductID};";
 
-            DbHelper.OpenConnection();
+            DbHelper.OpenConnectionSeller();
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();
         }
@@ -123,7 +123,7 @@ namespace DAL
         public void UpdateQuantity(Product product, int _Quantity)
         {
             query = $"update Products set Quantity = '{_Quantity}' where ProductID = {product.ProductID}";
-            DbHelper.OpenConnection();
+            DbHelper.OpenConnectionSeller();
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();
         }
@@ -131,7 +131,7 @@ namespace DAL
         public int ProductIDMax()
         {
             query = $"select  max(ProductID) from products";
-            DbHelper.OpenConnection();
+            DbHelper.OpenConnectionSeller();
             reader = DbHelper.ExecQuery(query);
 
             int _ProductID = 0;
