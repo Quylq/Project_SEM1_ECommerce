@@ -4,7 +4,7 @@ namespace DAL
 {
     public class DbHelper
     {
-        private static MySqlConnection connection;
+        private static MySqlConnection? connection;
 
         public static MySqlConnection GetConnection()
         {
@@ -12,7 +12,7 @@ namespace DAL
             {
                 connection = new MySqlConnection
                 {
-                    ConnectionString = @"server=192.168.1.6;port=3306;user=root;password=19072003;database=Ecommerce"
+                    ConnectionString = @"server=localhost;port=3306;user=root;password=19072003;database=Ecommerce"
                 };
             }
 
@@ -25,7 +25,7 @@ namespace DAL
             {
                 GetConnection();
             }
-
+            
             connection.Open();
 
             return connection;
