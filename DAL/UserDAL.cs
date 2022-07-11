@@ -25,12 +25,9 @@ namespace DAL
         }
         public User GetUserByID(int _UserID)
         {
-            query = $"select UserID, UserName, Password, FullName, Birthday, Email, Phone, Address, Role from Users where UserId = '{_UserID}'";
+            query = $"select * from Users where UserID = '{_UserID}'";
 
-            //Mở kết nối đến database
             DbHelper.OpenConnection();
-
-            //Thực thi lệnh
             reader = DbHelper.ExecQuery(query);
 
             User user = new User();

@@ -15,12 +15,11 @@ public class UserBL
         User user = userDAL.GetUserByName(_UserName);
         return user;
     }
-    public User GetUserByID(int _ID)
+    public User GetUserByID(int _UserID)
     {
-        User user = userDAL.GetUserByID(_ID);
+        User user = userDAL.GetUserByID(_UserID);
         return user;
     }
-
     public void SaveUser(User user)
     {
         userDAL.SaveUser(user);

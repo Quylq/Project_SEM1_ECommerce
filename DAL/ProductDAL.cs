@@ -10,7 +10,7 @@ namespace DAL
 
         public List<Product> GetProductsByName(string _ProductName)
         {
-            query = $"select ProductID, ProductName, Price, Description, Quantity from Products where ProductName like '%{_ProductName}%'";
+            query = $"select * from Products where ProductName like '%{_ProductName}%'";
 
             DbHelper.OpenConnectionSeller();
             reader = DbHelper.ExecQuery(query);
@@ -27,8 +27,8 @@ namespace DAL
         }
         public List<Product> GetProductsByUser(User user)
         {
-            
-            query = $"select p.ProductID, p.ProductName, p.Price, p.Description, p.Quantity from Products p inner join Users_Product up on p.ProductID = up.ProductID where up.UserID = {user.UserID}";
+
+            query = $"select * from Products where UserID = {user.UserID}";
             DbHelper.OpenConnectionSeller();
             reader = DbHelper.ExecQuery(query);
 
@@ -44,8 +44,7 @@ namespace DAL
         }
         public List<Product> GetProductsByCategory(Category category)
         {
-            
-            query = $"select p.ProductID, p.ProductName, p.Price, p.Description, p.Quantity from Products p inner join Product_Categories pc on p.ProductID = pc.ProductID where pc.CategoryID = {category.CategoryID}";
+            query = $"select p.ProductID, p.UserID, p.ProductName, p.Price, p.Description, p.Quantity from Products p inner join Product_Categories pc on p.ProductID = pc.ProductID where pc.CategoryID = {category.CategoryID}";
             DbHelper.OpenConnectionSeller();
             reader = DbHelper.ExecQuery(query);
 
@@ -61,7 +60,7 @@ namespace DAL
         }
         public List<Product> GetProductsByNameAndUser(string _ProductName, User user)
         {
-            query = $"select p.ProductID, p.ProductName, p.Price, p.Description, p.Quantity from Products p inner join Users_Product up on p.ProductID = up.ProductID where p.ProductName like '%{_ProductName}%'  and up.UserID = {user.UserID}";
+            query = $"select * from Products where ProductName like '%{_ProductName}%' and UserID = {user.UserID}";
             DbHelper.OpenConnectionSeller();
             reader = DbHelper.ExecQuery(query);
 
@@ -81,6 +80,7 @@ namespace DAL
             Product product = new Product();
 
             product.ProductID = reader.GetInt32("ProductID");
+            product.UserID = reader.GetInt32("UserID");
             product.ProductName = reader.GetString("ProductName");
             product.Price = reader.GetInt32("Price");
             product.Description = reader.GetString("Description");
@@ -91,15 +91,8 @@ namespace DAL
 
         public void SaveProduct(Product product)
         {
-            query = $"Insert into Products (ProductID, ProductName, Price , Description, Quantity) value ('{product.ProductID}', '{product.ProductName}', '{product.Price}', '{product.Description}', '{product.Quantity}')";
+            query = $"Insert into Products (ProductID, UserID, ProductName, Price , Description, Quantity) value ('{product.ProductID}', '{product.UserID}', '{product.ProductName}', '{product.Price}', '{product.Description}', '{product.Quantity}')";
 
-            DbHelper.OpenConnectionSeller();
-            reader = DbHelper.ExecQuery(query);
-            DbHelper.CloseConnection();
-        }
-        public void SaveUsers_Product(User user, Product product)
-        {
-            query = $"Insert into Users_Product (UserID, ProductID) value ( '{user.UserID}', '{product.ProductID}')";
             DbHelper.OpenConnectionSeller();
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();
