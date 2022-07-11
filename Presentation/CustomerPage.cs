@@ -193,29 +193,6 @@ namespace Persistence
             }
             
         }
-        public void Cart(User user)
-        {
-            Console.Clear();
-            Console.WriteLine("1. Loại bỏ khỏi giỏ hàng.");
-            Console.WriteLine("2. Thanh Toán.");
-            Console.WriteLine("0. Quay lại.");
-            Console.Write("Chọn: ");
-            string? choice = Console.ReadLine();
-            switch (choice)
-            {
-                case "1": 
-                    break; 
-                case "2": 
-                    break;
-                case "0":
-                    CustomerPage(user);
-                    break;
-                default:
-                    Console.WriteLine("Vui lòng chọn 0 - 2!");
-                    Cart(user);
-                    break;
-            }
-        }
         public void OrderDetails(User customer, List<Product> products)
         {
             User seller = userBL.GetUserByID(products[0].UserID);
