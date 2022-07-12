@@ -3,24 +3,6 @@ create database Ecommerce;
 
 use Ecommerce;
 
-CREATE user 'customer'@'localhost' identified by '123456';
-CREATE user 'seller'@'localhost' identified by '123456';
-
-grant select, update on ecommerce.users to 'customer'@'localhost';
-grant select on ecommerce.products to 'customer'@'localhost';
-grant select on ecommerce.category to 'customer'@'localhost';
-grant select, insert on ecommerce.orders to 'customer'@'localhost';
-grant select, insert on ecommerce.orderdetails to 'customer'@'localhost';
-grant select on ecommerce.product_categories to 'customer'@'localhost';
-
-grant SELECT, INSERT, UPDATE, DELETE on ecommerce.users to 'seller'@'localhost';
-grant SELECT, INSERT, UPDATE, DELETE on ecommerce.products to 'seller'@'localhost';
-grant SELECT, INSERT, UPDATE, DELETE on ecommerce.category to 'seller'@'localhost';
-grant SELECT, INSERT, UPDATE, DELETE on ecommerce.orders to 'seller'@'localhost';
-grant SELECT, INSERT, UPDATE, DELETE on ecommerce.orderdetails to 'seller'@'localhost';
-grant SELECT, INSERT, UPDATE, DELETE on ecommerce.product_categories to 'seller'@'localhost';
-grant SELECT, INSERT, UPDATE, DELETE on ecommerce.users_product to 'seller'@'localhost';
-
 create table Users (
 	UserID int not null auto_increment,
     UserName varchar(50) not null unique,
@@ -168,3 +150,23 @@ values  (1, 1),
         (6, 12),
         (6, 13),
         (6, 14);
+
+CREATE user 'customer'@'localhost' identified by '123456';
+CREATE user 'seller'@'localhost' identified by '123456';
+
+grant select, update on ecommerce.users to 'customer'@'localhost';
+grant select on ecommerce.products to 'customer'@'localhost';
+grant select on ecommerce.categories to 'customer'@'localhost';
+grant select, insert on ecommerce.orders to 'customer'@'localhost';
+grant select, insert on ecommerce.orderdetails to 'customer'@'localhost';
+grant select on ecommerce.product_categories to 'customer'@'localhost';
+
+grant SELECT, INSERT, UPDATE, DELETE on ecommerce.users to 'seller'@'localhost';
+grant SELECT, INSERT, UPDATE, DELETE on ecommerce.products to 'seller'@'localhost';
+grant SELECT, INSERT, UPDATE, DELETE on ecommerce.categories to 'seller'@'localhost';
+grant SELECT, INSERT, UPDATE, DELETE on ecommerce.orders to 'seller'@'localhost';
+grant SELECT, INSERT, UPDATE, DELETE on ecommerce.orderdetails to 'seller'@'localhost';
+grant SELECT, INSERT, UPDATE, DELETE on ecommerce.product_categories to 'seller'@'localhost';
+grant SELECT, INSERT, UPDATE, DELETE on ecommerce.users_product to 'seller'@'localhost';
+
+
