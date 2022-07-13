@@ -12,7 +12,7 @@ namespace DAL
         {
             query = $"select * from Products where ProductName like '%{_ProductName}%'";
 
-            DbHelper.OpenConnectionSeller();
+            DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
 
             List<Product>? products = new List<Product>();
@@ -29,7 +29,7 @@ namespace DAL
         {
 
             query = $"select * from Products where UserID = {user.UserID}";
-            DbHelper.OpenConnectionSeller();
+            DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
 
             List<Product>? products = new List<Product>();
@@ -45,7 +45,7 @@ namespace DAL
         public List<Product> GetProductsByCategory(Category category)
         {
             query = $"select p.ProductID, p.UserID, p.ProductName, p.Price, p.Description, p.Quantity from Products p inner join Product_Categories pc on p.ProductID = pc.ProductID where pc.CategoryID = {category.CategoryID}";
-            DbHelper.OpenConnectionSeller();
+            DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
 
             List<Product>? products = new List<Product>();
@@ -61,7 +61,7 @@ namespace DAL
         public List<Product> GetProductsByNameAndUser(string _ProductName, User user)
         {
             query = $"select * from Products where ProductName like '%{_ProductName}%' and UserID = {user.UserID}";
-            DbHelper.OpenConnectionSeller();
+            DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
 
             List<Product>? products = new List<Product>();
@@ -93,14 +93,14 @@ namespace DAL
         {
             query = $"Insert into Products (ProductID, UserID, ProductName, Price , Description, Quantity) value ('{product.ProductID}', '{product.UserID}', '{product.ProductName}', '{product.Price}', '{product.Description}', '{product.Quantity}')";
 
-            DbHelper.OpenConnectionSeller();
+            DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();
         }
         public void SaveProduct_Categories(Product product, Category category)
         {
             query = $"Insert into Product_Categories (CategoryID, ProductID) value ( '{category.CategoryID}', '{product.ProductID}')";
-            DbHelper.OpenConnectionSeller();
+            DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();
         }
@@ -108,7 +108,7 @@ namespace DAL
         {
             query = $"update Products set Description = '{_Description}' where ProductID = {product.ProductID};";
 
-            DbHelper.OpenConnectionSeller();
+            DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();
         }
@@ -116,7 +116,7 @@ namespace DAL
         public void UpdateQuantity(Product product, int _Quantity)
         {
             query = $"update Products set Quantity = '{_Quantity}' where ProductID = {product.ProductID}";
-            DbHelper.OpenConnectionSeller();
+            DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();
         }
@@ -124,7 +124,7 @@ namespace DAL
         public int ProductIDMax()
         {
             query = $"select  max(ProductID) from products";
-            DbHelper.OpenConnectionSeller();
+            DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
 
             int _ProductID = 0;

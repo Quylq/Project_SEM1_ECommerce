@@ -18,31 +18,6 @@ namespace DAL
 
             return connection;
         }
-        public static MySqlConnection GetConnectionSeller()
-        {
-            if (connection == null)
-            {
-                connection = new MySqlConnection
-                {
-                    ConnectionString = @"server=localhost;port=3306;user=seller;password=123456;database=Ecommerce"
-                };
-            }
-
-            return connection;
-        }
-        public static MySqlConnection GetConnectionCustomer()
-        {
-            if (connection == null)
-            {
-                connection = new MySqlConnection
-                {
-                    ConnectionString = @"server=localhost;port=3306;user=customer;password=123456;database=Ecommerce"
-                };
-            }
-
-            return connection;
-        }
-
         public static MySqlConnection OpenConnection()
         {
             if(connection == null)
@@ -54,31 +29,6 @@ namespace DAL
 
             return connection;
         }
-
-        public static MySqlConnection OpenConnectionSeller()
-        {
-            if(connection == null)
-            {
-                GetConnectionSeller();
-            }
-            
-            connection.Open();
-
-            return connection;
-        }
-
-        public static MySqlConnection OpenConnectionCustomer()
-        {
-            if(connection == null)
-            {
-                GetConnectionCustomer();
-            }
-            
-            connection.Open();
-
-            return connection;
-        }
-
         public static void CloseConnection()
         {
             if (connection != null)
