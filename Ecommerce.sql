@@ -79,8 +79,6 @@ create table OrderDetails (
 		references Products (ProductID),
 	constraint pk_OrderDetails primary key (OrderID, ProductID)
         );
-        
-select * from Users;
 
 insert into Users (UserName, Password, Role, FullName, Birthday, Email, Phone, Address)
 VALUES ('QuangQuy', SHA2('123456', 256), 'Seller', 'Lê Quang Quý', '1993-7-1', 'QuangQuy@vtc.edu.vn', '0987654321', 'Thanh Hóa'),
@@ -92,10 +90,6 @@ VALUES ('QuangQuy', SHA2('123456', 256), 'Seller', 'Lê Quang Quý', '1993-7-1',
        ('CanhToan', SHA2('123456', 256), 'Customer', 'Nguyễn Cảnh Toàn', '2002-3-4', 'CanhToan@vtc.edu.vn', '0987654327', 'Bắc Ninh'),
        ('VanTam', SHA2('123456', 256), 'Customer', 'Lê Văn Tâm', '1999-3-12', 'VanTam@vtc.edu.vn', '0987654328', 'Ninh Bình');
 
-update Users
-set password = '123456';
-
-select * from Products;
 
 insert into Products (ProductName, Price, Quantity)
 VALUES ('Toyota Raize 1.0 Turbo', '527000000', 10),
@@ -112,11 +106,7 @@ VALUES ('Toyota Raize 1.0 Turbo', '527000000', 10),
        ('Máy giặt Samsung Inverter 9 Kg', '11590000', 10),
        ('Máy giặt Aqua Inverter 10 Kg AQD', '8990000', 10),
        ('Máy giặt LG Inverter 10 Kg', '14390', 10);
-       
-update Products 
-set Description = ' ';
 
-select * from Orders;
 
 insert into Orders (SellerID, CustomerID, CreateDate, Status)
 values (1, 3, '2020-01-01 15:10:10', 'Processing'),
@@ -126,14 +116,13 @@ values (1, 3, '2020-01-01 15:10:10', 'Processing'),
        (6, 8, '2020-01-09 11:19:10', 'Processing'),
 	   (1, 7, '2020-01-08 16:10:10', 'Processing');
 
-select * from OrderDetails;
 insert into OrderDetails (OrderID, ProductID, ProductNumber)
 values (1, 1, 1),
+       (2, 1, 4),
        (3, 5, 1),
-       (3, 6, 2),
-       (3, 7, 1),
-       (3, 8, 3),
-       (2, 1, 4);
+       (4, 6, 2),
+       (5, 11, 1),
+       (6, 12, 3);
        
 insert into Users_Product (UserID, ProductID)
 values  (1, 1),

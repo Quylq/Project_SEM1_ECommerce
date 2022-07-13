@@ -17,6 +17,23 @@ namespace Persistence
             orderBL = new OrderBL();
             categoryBL = new CategoryBL();
         }
+        static string ComputeSha256Hash(string rawData)  
+        {  
+            // Create a SHA256   
+            using (SHA256 sha256Hash = SHA256.Create())  
+            {  
+                // ComputeHash - returns byte array  
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));  
+  
+                // Convert byte array to a string   
+                StringBuilder builder = new StringBuilder();  
+                for (int i = 0; i < bytes.Length; i++)
+                {  
+                    builder.Append(bytes[i].ToString("x2"));  
+                }  
+                return builder.ToString();  
+            }  
+        }
         public void Login()
         {
             SellerPage sellerPage = new SellerPage();
@@ -26,12 +43,12 @@ namespace Persistence
             string? _UserName = Console.ReadLine();
             Console.Write("Nhập Mật Khẩu: ");
             string? _Password = Console.ReadLine();
-
+            string _password = ComputeSha256Hash(_Password);
             User user =  userBL.GetUserByName(_UserName);
 
             if (user.UserName != null)
             {
-                if (_Password == user.Password)
+                if (_password == user.Password)
                 {
                     Console.WriteLine($"Đăng nhập thành công {user.UserID}");
                     if (user.Role == "Seller")
@@ -42,17 +59,16 @@ namespace Persistence
                     {
                         customerPage.Customer(user);
                     }
-                    else
-                    {
-                        Console.WriteLine($"Update");
-                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Mật khẩu của bạn không đúng");
                 }
             }
             else
             {
-                Console.WriteLine($"Sai tài khoản hoặc mật khẩu");
+                Console.WriteLine($"Tên tài khoản không tồn tại");
             }
-
         }        
     }
 }
