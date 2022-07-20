@@ -10,7 +10,7 @@ namespace DAL
 
         public User GetUserByName(string _UserName)
         {
-            query = $"select UserID, UserName, Password, FullName, Birthday, Email, Phone, Address, Role from Users where UserName = '{_UserName}'";
+            query = $"select * from Users where UserName = '{_UserName}'";
 
             DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
@@ -20,6 +20,7 @@ namespace DAL
             {
                 user = GetUserInfo(reader);
             }
+
             DbHelper.CloseConnection();
             return user;
         }
@@ -48,14 +49,13 @@ namespace DAL
             user.Birthday = reader.GetDateTime("Birthday");
             user.Email = reader.GetString("Email");
             user.Phone = reader.GetString("Phone");
-            user.Address = reader.GetString("Address");
+            user.AddressID = reader.GetInt32("AddressID");
             user.Role = reader.GetString("Role");
             return user;
         }
-        
-        public void SaveUser(User user)
+        public void InsertUser(User user)
         {
-            query = $"Insert into Users (UserID, UserName, Password , FullName, Birthday, Email, Phone, Address, Role) value ('{user.UserID}', '{user.UserName}', '{user.Password}', '{user.FullName}', '{user.Birthday}', '{user.Email}', '{user.Phone}', '{user.Address}', '{user.Role}')";
+            query = $"Insert into Users (UserID, UserName, Password , FullName, Birthday, Email, Phone, AddressID, Role) value ('{user.UserID}', '{user.UserName}', '{user.Password}', '{user.FullName}', '{user.Birthday}', '{user.Email}', '{user.Phone}', '{user.AddressID}', '{user.Role}')";
 
             DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);

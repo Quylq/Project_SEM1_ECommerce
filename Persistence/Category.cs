@@ -3,18 +3,18 @@ namespace Persistence
     public class Category
     {
         public int CategoryID{get;set;}
-        public int UserID{get;set;}
+        public int ShopID{get;set;}
         public string? CategoryName{get;set;}
 
-        public Category(int _CategoryID, int _UserID, string _CategoryName)
+        public Category(int _CategoryID, int _ShopID, string _CategoryName)
         {
             CategoryID = _CategoryID;
-            UserID = _UserID;
+            ShopID = _ShopID;
             CategoryName = _CategoryName;
         }
-        public Category(int _UserID, string _CategoryName)
+        public Category(int _ShopID, string _CategoryName)
         {
-            UserID = _UserID;
+            ShopID = _ShopID;
             CategoryName = _CategoryName;
         }
         public Category(){}

@@ -16,45 +16,59 @@ public class ProductBL
         products = productDAL.GetProductsByName(_ProductName);
         return products;
     }
-
-    public List<Product> GetProductsByNameAndUser(string _ProductName, User user)
+    public List<Product> GetProductsByShopID(int _ShopID)
     {
         List<Product> products = new List<Product>();
-        products = productDAL.GetProductsByNameAndUser(_ProductName, user);
+        products = productDAL.GetProductsByShopID(_ShopID);
         return products;
     }
-
-    public List<Product> GetProductsByUser(User user)
+    public List<Product> GetProductsByNameAndShopID(string _ProductName, int _ShopID)
     {
         List<Product> products = new List<Product>();
-        products = productDAL.GetProductsByUser(user);
+        products = productDAL.GetProductsByNameAndShopID(_ProductName, _ShopID);
         return products;
     }
-    public List<Product> GetProductsByCategory(Category category)
+    public List<Product> GetProductsByShopIDAndCategoryID(int _ShopID, int _CategoryID)
+    {
+        List<Product> products = productDAL.GetProductsByShopIDAndCategoryID(_ShopID, _CategoryID);
+
+        return products;
+    }
+    public List<Product> GetProductsByCategory(int _CategoryID)
     {
         List<Product> products = new List<Product>();
-        products = productDAL.GetProductsByCategory(category);
+        products = productDAL.GetProductsByCategory(_CategoryID);
         return products;
     }
-    public void SaveProduct(Product product)
+    public void InsertProduct(Product product)
     {
-        productDAL.SaveProduct(product);
+        productDAL.InsertProduct(product);
     }
-    public void UpdateDescription(Product product, string _Description)
+    public void UpdateDescriptionOfProduct(int _ProductID, string _Description)
     {
-        productDAL.UpdateDescription(product, _Description);
+        productDAL.UpdateDescriptionOfProduct(_ProductID, _Description);
     }
-
-    public void UpdateQuantity(Product product, int _Quatity)
+    public void UpdateQuantityOfProduct(int _ProductID, int _Quatity)
     {
-        productDAL.UpdateQuantity(product, _Quatity);
+        productDAL.UpdateQuantityOfProduct(_ProductID, _Quatity);
     }
-
     public int ProductIDMax()
     {
         int _ProductID = productDAL.ProductIDMax();
 
         return _ProductID;
+    }
+    public List<Product> GetProductsByOrderID(int _OrderID)
+    {
+        List<Product> products = productDAL.GetProductsByOrderID(_OrderID);
+
+        return products;
+    }
+    public Product GetProductByID(int _ProductID)
+    {
+        Product product = productDAL.GetProductByID(_ProductID);
+
+        return product;
     }
 }
 

@@ -1,12 +1,21 @@
-drop database Ecommerce;
 create database Ecommerce;
 
 use Ecommerce;
+-- SELECT user, host FROM mysql.user;
+DROP USER 'guest'@'localhost';
+CREATE user 'guest'@'localhost' identified by '123456';
+
+grant SELECT, INSERT, UPDATE on ecommerce.users to 'guest'@'localhost';
+grant SELECT, INSERT, UPDATE on ecommerce.products to 'guest'@'localhost';
+grant SELECT, INSERT, UPDATE on ecommerce.categories to 'guest'@'localhost';
+grant SELECT, INSERT, UPDATE on ecommerce.orders to 'guest'@'localhost';
+grant SELECT, INSERT, UPDATE on ecommerce.orderdetails to 'guest'@'localhost';
+grant SELECT, INSERT, UPDATE on ecommerce.product_categories to 'guest'@'localhost';
 
 create table Users (
 	UserID int not null auto_increment,
     UserName varchar(50) not null unique,
-    Password varchar(200),
+    Password varchar(100),
     FullName varchar(100),
     Birthday datetime,
     Email varchar(100),
@@ -21,12 +30,17 @@ create table Users (
 create table Products (
 	ProductID int not null auto_increment,
     ProductName varchar(50),
+<<<<<<< HEAD
     Description varchar(500),
+=======
+    Description varchar(1000),
+>>>>>>> 4f5fcfc1a4493fac7519d4822dea940488daebcf
     Price int not null,
     Quantity int not null,
     constraint pk_Products primary key (ProductID)
     );
 
+<<<<<<< HEAD
 create table Users_Product (
 	UserID int,
     ProductID int,
@@ -37,6 +51,8 @@ create table Users_Product (
     constraint pk_Users_Product primary key (UserID, ProductID)
     );
 
+=======
+>>>>>>> 4f5fcfc1a4493fac7519d4822dea940488daebcf
 create table Categories (
 	CategoryID int not null auto_increment,
     UserID int,
@@ -49,15 +65,20 @@ create table Categories (
 create table Product_Categories (
 	ProductID int,
     CategoryID int,
-    constraint fk_ProCat_Products foreign key (ProductID)
+    constraint fk_Sub_Products foreign key (ProductID)
 		references Products (ProductID),
+<<<<<<< HEAD
 	constraint fk_ProCat_Category foreign key (CategoryID)
+=======
+	constraint fk_Sub_Categories foreign key (CategoryID)
+>>>>>>> 4f5fcfc1a4493fac7519d4822dea940488daebcf
 		references Categories (CategoryID),
 	primary key (ProductID, CategoryID)
 	);
     
 create table Orders (
 	OrderID int not null auto_increment,
+<<<<<<< HEAD
     SellerID int,
     CustomerID int,
     CreateDate datetime,
@@ -65,6 +86,12 @@ create table Orders (
     constraint fk1_Orders_Users foreign key (SellerID)
 		references Users (UserID),
 	constraint fk2_Orders_Users foreign key (CustomerID)
+=======
+    UserID int,
+    CreateDate datetime,
+    Status enum ('Shopping', 'Processing', 'Confirm', 'Failed', 'Shipping', 'Finished'),
+	constraint fk_Orders_Users foreign key (UserID)
+>>>>>>> 4f5fcfc1a4493fac7519d4822dea940488daebcf
 		references Users (UserID),
 	constraint pk_Orders primary key(OrderID)
         );
@@ -73,9 +100,9 @@ create table OrderDetails (
 	OrderID int,
     ProductID int,
     ProductNumber int,
-    constraint fk_OrdDet_Orders foreign key (OrderID)
+    constraint fk_OD_Orders foreign key (OrderID)
 		references Orders (OrderID),
-	constraint fk_OrdDet_Products foreign key (ProductID)
+	constraint fk_OD_Products foreign key (ProductID)
 		references Products (ProductID),
 	constraint pk_OrderDetails primary key (OrderID, ProductID)
         );
@@ -90,6 +117,7 @@ VALUES ('QuangQuy', SHA2('123456', 256), 'Seller', 'Lê Quang Quý', '1993-7-1',
        ('CanhToan', SHA2('123456', 256), 'Customer', 'Nguyễn Cảnh Toàn', '2002-3-4', 'CanhToan@vtc.edu.vn', '0987654327', 'Bắc Ninh'),
        ('VanTam', SHA2('123456', 256), 'Customer', 'Lê Văn Tâm', '1999-3-12', 'VanTam@vtc.edu.vn', '0987654328', 'Ninh Bình');
 
+<<<<<<< HEAD
 
 insert into Products (ProductName, Price, Quantity)
 VALUES ('Toyota Raize 1.0 Turbo', '527000000', 10),
@@ -141,3 +169,47 @@ values  (1, 1),
         (6, 14);
 
 
+=======
+update Users
+set password = '123456';
+
+-- select * from Products;
+
+-- insert into Products (ProductName, Price, Quantity)
+-- VALUES ('Toyota Raize 1.0 Turbo', '527000000', 10),
+-- 	   ('Kia Seltos', '719000000', 10),
+--        ('Ford Territory', '780000000', 10),
+-- 	   ('Toyota Venzao', '1100000000', 10),
+--        ('Samsung Galaxy Z Fold3 5G', '36990000', 10),
+-- 	   ('iPhone 13 Pro Max', '31190000', 10),
+--        ('Samsung Galaxy S22 Ultra 5G', '30990000', 10),
+-- 	   ('OPPO Find X5 Pro 5G', '30990', 10),
+--        ('Đồng Hồ ORIENT Cơ 41 mm Nam', '37458000', 10),
+--        ('Đồng Hồ ORIENT Cơ 38.7 mm Nam RE-AW0004S00B', '17640000', 10),
+--        ('Đồng Hồ TITONI Cơ kính sapphire 27 mm Nữ 729 G-306', '24720000', 10),
+--        ('Máy giặt Samsung Inverter 9 Kg', '11590000', 10),
+--        ('Máy giặt Aqua Inverter 10 Kg AQD', '8990000', 10),
+--        ('Máy giặt LG Inverter 10 Kg', '14390', 10);
+--        
+-- update Products 
+-- set Description = ' ';
+
+-- select * from Orders;
+
+-- insert into Orders (userID, CreateDate, Status)
+-- values (3, '2020-01-01 15:10:10', 'Processing'),
+-- 	   (4, '2020-11-01 12:10:10', 'Processing'),
+--        (5, '2020-02-01 5:10:10', 'Processing'),
+-- 	   (8, '2020-01-01 10:18:10', 'Processing'),
+--        (8, '2020-01-09 11:19:10', 'Processing'),
+-- 	   (7, '2020-01-08 16:10:10', 'Processing');
+
+-- select * from OrderDetails;
+-- insert into OrderDetails (OrderID, ProductID, ProductNumber)
+-- values (1, 1, 1),
+--        (3, 5, 1),
+--        (3, 6, 2),
+--        (3, 7, 1),
+--        (3, 8, 3),
+--        (2, 1, 4);
+>>>>>>> 4f5fcfc1a4493fac7519d4822dea940488daebcf

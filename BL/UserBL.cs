@@ -20,9 +20,9 @@ public class UserBL
         User user = userDAL.GetUserByID(_UserID);
         return user;
     }
-    public void SaveUser(User user)
+    public void InsertUser(User user)
     {
-        userDAL.SaveUser(user);
+        userDAL.InsertUser(user);
     }
 
 }
