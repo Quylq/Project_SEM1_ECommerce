@@ -13,24 +13,6 @@ namespace Persistence
             userBL = new UserBL();
             shopBL = new ShopBL();
         }
-<<<<<<< HEAD
-        static string ComputeSha256Hash(string rawData)  
-        {  
-            // Create a SHA256   
-            using (SHA256 sha256Hash = SHA256.Create())  
-            {  
-                // ComputeHash - returns byte array  
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));  
-  
-                // Convert byte array to a string   
-                StringBuilder builder = new StringBuilder();  
-                for (int i = 0; i < bytes.Length; i++)
-                {  
-                    builder.Append(bytes[i].ToString("x2"));  
-                }  
-                return builder.ToString();  
-            }  
-=======
         public void Menu()
         {
             Console.WriteLine("1. Đăng Nhập: ");
@@ -71,7 +53,6 @@ namespace Persistence
                     Menu();
                     break;
             }
->>>>>>> 4f5fcfc1a4493fac7519d4822dea940488daebcf
         }
         public void Login()
         {
@@ -81,29 +62,17 @@ namespace Persistence
             Console.Write("Nhập Tên Đăng Nhập: ");
             string? _UserName = Console.ReadLine();
             Console.Write("Nhập Mật Khẩu: ");
-<<<<<<< HEAD
-            string? _Password = Console.ReadLine();
-            string _password = ComputeSha256Hash(_Password);
-=======
             string? _Password = ReadPassword();
 
->>>>>>> 4f5fcfc1a4493fac7519d4822dea940488daebcf
             User user =  userBL.GetUserByName(_UserName);
 
             if (user.UserName != null)
             {
-                if (_password == user.Password)
+                if (_Password == user.Password)
                 {
                     Console.WriteLine($"Đăng nhập thành công!");
                     if (user.Role == "Seller")
                     {
-<<<<<<< HEAD
-                        sellerPage.Seller(user);
-                    }
-                    else if (user.Role == "Customer")
-                    {
-                        customerPage.Customer(user);
-=======
                         SellerPage(user.UserID);
                     }
                     else if (user.Role == "Customer")
@@ -113,7 +82,6 @@ namespace Persistence
                     else
                     {
                         Console.WriteLine($"Update");
->>>>>>> 4f5fcfc1a4493fac7519d4822dea940488daebcf
                     }
                 }
                 else
@@ -125,9 +93,6 @@ namespace Persistence
             {
                 Console.WriteLine($"Tên tài khoản không tồn tại");
             }
-<<<<<<< HEAD
-        }        
-=======
 
         }
         public void SigUp()
@@ -239,6 +204,5 @@ namespace Persistence
                     break;
             }
         }
->>>>>>> 4f5fcfc1a4493fac7519d4822dea940488daebcf
     }
 }

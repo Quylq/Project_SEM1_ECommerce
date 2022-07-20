@@ -25,17 +25,10 @@ namespace DAL
             DbHelper.CloseConnection();
             return products;
         }
-<<<<<<< HEAD
-        public List<Product> GetProductsByUser(User user)
-        {
-
-            query = $"select * from Products where UserID = {user.UserID}";
-=======
         // Lấy danh sách sản phẩm theo ID người bán
         public List<Product> GetProductsByShopID(int _ShopID)
         {          
             query = $"select * from Products where ShopID = {_ShopID}";
->>>>>>> 4f5fcfc1a4493fac7519d4822dea940488daebcf
             DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
 
@@ -49,16 +42,10 @@ namespace DAL
             DbHelper.CloseConnection();
             return products;
         }
-<<<<<<< HEAD
-        public List<Product> GetProductsByCategory(Category category)
-        {
-            query = $"select p.ProductID, p.UserID, p.ProductName, p.Price, p.Description, p.Quantity from Products p inner join Product_Categories pc on p.ProductID = pc.ProductID where pc.CategoryID = {category.CategoryID}";
-=======
         // Lấy danh sách sản phẩm theo ID người bán và không thuộc danh mục
         public List<Product> GetProductsByShopIDAndCategoryID(int _ShopID, int _CategoryID)
         {          
             query = $"select * from Products p inner join Product_Categories pc on p.ProductID = pc.ProductID where p.ShopID = {_ShopID} and pc.CategoryID != {_CategoryID}";
->>>>>>> 4f5fcfc1a4493fac7519d4822dea940488daebcf
             DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
 

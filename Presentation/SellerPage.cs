@@ -26,41 +26,7 @@ namespace Persistence
             shopBL = new ShopBL();
             addressBL = new AddressBL();
         }
-<<<<<<< HEAD
-        public void Seller (User user)
-        {
-            
-            Console.Clear();
-            Console.WriteLine("1. Quản lý đơn đặt hàng.");
-            Console.WriteLine("2. Quản lý sản phẩm.");
-            Console.WriteLine("3. Quản lý danh mục sản phẩm.");
-            Console.WriteLine("0. Thoát");
-            Console.Write("Chọn: ");
-            string? choice = Console.ReadLine();
-            switch (choice)
-            {
-                case "1":
-                    OrderManagement(user);
-                    break;
-                case "2": 
-                    ProductManagement(user);
-                    break;
-                case "3": 
-                    CategoryManagement(user);
-                    break;
-                case "0": 
-                    Environment.Exit(0);
-                    break;
-                default:
-                    Console.WriteLine("Vui lòng chọn 0 - 3 !");
-                    Seller (user);
-                    break;
-            }
-        }
-        public void OrderManagement(User user)
-=======
         public void OrderManagement(int _ShopID)
->>>>>>> 4f5fcfc1a4493fac7519d4822dea940488daebcf
         {
             Console.Clear();
             Console.WriteLine("1. Chờ xác nhận.");
@@ -85,11 +51,7 @@ namespace Persistence
                     ViewOrdersFailed(_ShopID);
                     break;
                 case "0":
-<<<<<<< HEAD
-                    Seller(user);
-=======
                     ecommerce.SellerPage(_ShopID);
->>>>>>> 4f5fcfc1a4493fac7519d4822dea940488daebcf
                     break;
                 default:
                     Console.WriteLine("Vui lòng chọn 0 - 4 !");
@@ -118,11 +80,7 @@ namespace Persistence
                     AddProduct(_ShopID);
                     break;
                 case "0": 
-<<<<<<< HEAD
-                    Seller(user);
-=======
                     ecommerce.SellerPage(_ShopID);
->>>>>>> 4f5fcfc1a4493fac7519d4822dea940488daebcf
                     break;
                 default:
                     Console.WriteLine("Vui lòng chọn 0 - 3 !");
@@ -143,28 +101,6 @@ namespace Persistence
             string? choice = Console.ReadLine();
             if (choice == "0")
             {
-<<<<<<< HEAD
-                case "1": 
-                    ViewProductsOfCategory(user);
-                    break; 
-                case "2": 
-                    categoryBL.CreateCategory(user);
-                    Console.WriteLine("Tạo Danh mục thành công!");
-                    Console.WriteLine("Nhấn phím bất kỳ để tiếp tục !");
-                    Console.ReadKey();
-                    CategoryManagement(user);
-                    break;
-                case "3":
-                    DeleteCategory(user);
-                    break;
-                case "0": 
-                    Seller(user);
-                    break; 
-                default:
-                    Console.WriteLine("Vui lòng chọn 0 - 1 !");
-                    CategoryManagement(user);
-                    break;
-=======
                 ecommerce.SellerPage(_ShopID);
             }
             else if (choice == "+")
@@ -196,7 +132,6 @@ namespace Persistence
                 Console.WriteLine("Nhấn phím bất kỳ để tiếp tục");
                 Console.ReadKey();
                 CategoryManagement(_ShopID);
->>>>>>> 4f5fcfc1a4493fac7519d4822dea940488daebcf
             }
         }
         public void SearchProductOfShop(int _ShopID)

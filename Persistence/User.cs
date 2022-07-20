@@ -11,9 +11,6 @@ namespace Persistence
         public string? Email{get;set;}
         public string? Phone{get;set;}
         public string? Role{get;set;}
-<<<<<<< HEAD
-        public User(int _UserID, string _UserName, string _Password, string _FullName, DateTime _Birthday, string _Email, string _Phone, string _Address, string _Role)
-=======
         public User(string _UserName, string _Password, string _FullName, DateTime _Birthday, string _Email, string _Phone, int _AddressID, string _Role)
         {
             UserName = _UserName;
@@ -26,7 +23,6 @@ namespace Persistence
             Role = _Role;
         }
         public User(int _UserID, string _UserName, string _Password, string _FullName, DateTime _Birthday, string _Email, string _Phone, int _AddressID, string _Role)
->>>>>>> 4f5fcfc1a4493fac7519d4822dea940488daebcf
         {
             UserID = _UserID;
             UserName = _UserName;
