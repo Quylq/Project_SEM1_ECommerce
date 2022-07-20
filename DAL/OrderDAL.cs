@@ -7,11 +7,11 @@ namespace DAL
     {
         private string? query;
         private MySqlDataReader? reader;
-
-        public List<Order> GetOrdersByStatusOfSeller(string _Status, User seller)
+        // Lấy danh sách order theo ID khách hàng và trạng thái
+        public List<Order> GetOrdersByStatusAndUserID(string _Status, int _UserID)
         {
-            query = $"select * from Orders o inner join Users u on o.CustomerID = u.UserID where o.SellerID = {seller.UserID} and o.Status = '{_Status}'";
-            DbHelper.OpenConnection("Seller");
+            query = $"select * from Orders o inner join Users u on o.UserID = u.UserID where o.UserID = {_UserID} and o.Status = '{_Status}'";
+            DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
 
             List<Order>? orders = new List<Order>();
@@ -24,93 +24,87 @@ namespace DAL
             DbHelper.CloseConnection();
             return orders;
         }
-        public List<User> GetUsersByStatusOfSeller(string _Status, User seller)
+        // Lấy danh sách order theo ID cửa hàng và trạng thái
+        public List<Order> GetOrdersByStatusAndShopID(string _Status, int _ShopID)
         {
-            query = $"select * from Orders o inner join Users u on o.CustomerID = u.UserID where o.SellerID = {seller.UserID} and o.Status = '{_Status}'";
-            DbHelper.OpenConnection("Seller");
+            query = $"select * from Orders o inner join Shops s on o.ShopID = s.ShopID where o.ShopID = {_ShopID} and o.Status = '{_Status}'";
+            DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
 
-            List<User>? customers = new List<User>();
+            List<Order>? orders = new List<Order>();
 
             while (reader.Read())
             {
-                User customer = GetUserInfo(reader);
-                customers.Add(customer);
+                Order order = GetOrderInfo(reader);
+                orders.Add(order);
             }
             DbHelper.CloseConnection();
-            return customers;
+            return orders;
         }
         private Order GetOrderInfo(MySqlDataReader reader)
         {
             Order order = new Order();
 
             order.OrderID = reader.GetInt32("OrderID");
-            order.SellerID = reader.GetInt32("SellerID");
-            order.CustomerID = reader.GetInt32("CustomerID");
-            order.CreateDate = reader.GetDateTime("CreateDate");
+            order.UserID = reader.GetInt32("UserID");
+            order.ShopID = reader.GetInt32("ShopID");
+            order.CreateDate = reader.GetString("CreateDate");
             order.Status = reader.GetString("Status");
 
             return order;
         }
-        private User GetUserInfo(MySqlDataReader reader)
+        // Cập nhật status của đơn hàng
+        public void UpdateStatusOfOrder(int _OrderID, string _Status)
         {
-            User user = new User();
-            user.UserID = reader.GetInt32("UserID");
-            user.UserName = reader.GetString("UserName");
-            user.Password = reader.GetString("Password");
-            user.FullName = reader.GetString("FullName");
-            user.Birthday = reader.GetDateTime("Birthday");
-            user.Email = reader.GetString("Email");
-            user.Phone = reader.GetString("Phone");
-            user.Address = reader.GetString("Address");
-            user.Role = reader.GetString("Role");
-            return user;
-        }
-        public void SaveOrder(Order order)
-        {
-            query = $"Insert into Orders (UserID, CreateDate , Status) value ( '{order.SellerID}', '{order.CreateDate}', '{order.Status}')";
+            query = $"update Orders set Status = '{_Status}' where OrderID = {_OrderID};";
 
-            DbHelper.OpenConnection("Seller");
+            DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();
         }
-
-        public void UpdateStatus(Order order, string _Status)
+        public void InsertOrder(Order order)
         {
-            query = $"update Orders set Status = '{_Status}' where OrderID = {order.OrderID};";
+            query = $"Insert into Orders (OrderID, UserID, ShopID, CreateDate , Status) value ('{order.OrderID}', '{order.UserID}', '{order.ShopID}', '{order.CreateDate}', '{order.Status}')";
 
-            DbHelper.OpenConnection("Seller");
+            DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();
         }
-
-        private Product GetProductOfOrderDetails(MySqlDataReader reader)
+        public int OrderIDMax()
         {
-            Product product = new Product();
-
-            product.ProductID = reader.GetInt32("ProductID");
-            product.ProductName = reader.GetString("ProductName");
-            product.Price = reader.GetInt32("Price");
-            // product.Description = reader.GetString("Description");
-            product.Quantity = reader.GetInt32("ProductNumber");
-
-            return product;
-        }
-        public List<Product> GetOrderDetails(Order order)
-        {
-            query = $"select * from OrderDetails od inner join Products p on od.ProductID = p.ProductID where od.OrderID = {order.OrderID}";
-
-            DbHelper.OpenConnection("Seller");
+            query = $"select max(OrderID) from orders";
+            DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
-            List<Product> products = new List<Product>();
-            Product product = new Product();
-            while (reader.Read())
+            int _OrderID = 0;
+
+            try
             {
-                product = GetProductOfOrderDetails(reader);
-                products.Add(product);
+                if (reader.Read())
+                {
+                    _OrderID = reader.GetInt32("max(OrderID)");
+                }
+            }
+            catch (System.Exception)
+            {
+                _OrderID = 0;
             }
             DbHelper.CloseConnection();
-            return products;
+            return _OrderID;
+        }
+        public Order GetOrderByID(int _OrderID)
+        {
+            query = $"select * from Orders where OrderID = '{_OrderID}'";
+            DbHelper.OpenConnection();
+            reader = DbHelper.ExecQuery(query);
+
+            Order order = new Order();
+
+            if (reader.Read())
+            {
+                order = GetOrderInfo(reader);
+            }
+            DbHelper.CloseConnection();
+            return order;
         }
     }
 }

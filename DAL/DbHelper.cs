@@ -5,48 +5,29 @@ namespace DAL
     public class DbHelper
     {
         private static MySqlConnection? connection;
-
-        public static MySqlConnection GetConnection(string _Role)
+        public static MySqlConnection GetConnection()
         {
             if (connection == null)
             {
-                if (_Role == "Seller")
+                connection = new MySqlConnection
                 {
-                    connection = new MySqlConnection
-                    {
-                        ConnectionString = @"server=localhost;port=3306;user=seller;password=123456;database=Ecommerce"
-                    };
-                }
-                else if (_Role == "Customer")
-                {
-                    connection = new MySqlConnection
-                    {
-                        ConnectionString = @"server=localhost;port=3306;user=customer;password=123456;database=Ecommerce"
-                    };
-                }
+                    ConnectionString = @"server=localhost;port=3306;user=guest;password=123456;database=Ecommerce"
+                };
             }
-
             return connection;
         }
-
-        public static MySqlConnection OpenConnection(string _Role)
+        public static MySqlConnection OpenConnection()
         {
             if(connection == null)
             {
-                GetConnection(_Role);
+                GetConnection();
             }
-            
             connection.Open();
-
             return connection;
         }
-
         public static void CloseConnection()
         {
-            if (connection != null)
-            {
-                connection.Close();
-            }
+            connection.Close();
         }
 
         public static MySqlDataReader ExecQuery(string sqlCommand)

@@ -3,15 +3,15 @@ namespace Persistence
     public class User
     {
         public int UserID{get;set;}
+        public int AddressID{get;set;}
         public string? UserName{get;set;}
         public string? Password{get;set;}
         public string? FullName{get;set;}
         public DateTime Birthday{get;set;}
         public string? Email{get;set;}
         public string? Phone{get;set;}
-        public string? Address{get;set;}
         public string? Role{get;set;}
-        public User(string _UserName, string _Password, string _FullName, DateTime _Birthday, string _Email, string _Phone, string _Address, string _Role)
+        public User(string _UserName, string _Password, string _FullName, DateTime _Birthday, string _Email, string _Phone, int _AddressID, string _Role)
         {
             UserName = _UserName;
             Password = _Password;
@@ -19,10 +19,10 @@ namespace Persistence
             Birthday = _Birthday;
             Email = _Email;
             Phone = _Phone;
-            Address = _Address;
+            AddressID = _AddressID;
             Role = _Role;
         }
-        public User(int _UserID, string _UserName, string _Password, string _FullName, DateTime _Birthday, string _Email, string _Phone, string _Address, string _Role)
+        public User(int _UserID, string _UserName, string _Password, string _FullName, DateTime _Birthday, string _Email, string _Phone, int _AddressID, string _Role)
         {
             UserID = _UserID;
             UserName = _UserName;
@@ -31,7 +31,7 @@ namespace Persistence
             Birthday = _Birthday;
             Email = _Email;
             Phone = _Phone;
-            Address = _Address;
+            AddressID = _AddressID;
             Role = _Role;
         }
         public User(){}

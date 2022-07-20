@@ -10,31 +10,45 @@ public class OrderBL
     {
         orderDAL = new OrderDAL();
     }
-    public List<Order> GetOrdersByStatusOfSeller(string _Status, User seller)
+    public List<Order> GetOrdersByStatusAndUserID(string _Status, int _UserID)
     {
-        List<Order> orders = orderDAL.GetOrdersByStatusOfSeller(_Status, seller);
+        List<Order> orders = orderDAL.GetOrdersByStatusAndUserID(_Status, _UserID);
         return orders;
     }
-    public List<User> GetUsersByStatusOfSeller(string _Status, User seller)
+    public List<Order> GetOrdersByStatusAndShopID(string _Status, int _ShopID)
     {
-        List<User> users = orderDAL.GetUsersByStatusOfSeller(_Status, seller);
-        return users;
+        List<Order> orders = orderDAL.GetOrdersByStatusAndShopID(_Status, _ShopID);
+        return orders;
     }
-    public void SaveOrder(Order order)
+    public void UpdateStatusOfOrder(int _OrderID, string _Status)
     {
-        orderDAL.SaveOrder(order);
+        orderDAL.UpdateStatusOfOrder(_OrderID, _Status);
     }
+    public void InsertOrder(Order order)
+    {
+        orderDAL.InsertOrder(order);
+    }
+    public int OrderIDMax()
+    {
+        int _OrderID = orderDAL.OrderIDMax();
 
-    public List<Product> GetOrderDetails(Order order)
-    {
-        List<Product> products = new List<Product>();
-        products = orderDAL.GetOrderDetails(order);
-
-        return products;
+        return _OrderID;
     }
-    public void UpdateStatus(Order order, string _Status)
+    public Order GetOrderByID(int _OrderID)
     {
-        orderDAL.UpdateStatus(order, _Status);
+        Order order = orderDAL.GetOrderByID(_OrderID);
+        return order;
+    }
+    public int GetTotalOrder(int _OrderID)
+    {
+        int total = 0;
+        OrderDetailsBL orderDetailsBL = new OrderDetailsBL();
+        List<OrderDetails> orderDetailsList = orderDetailsBL.GetOrderDetailsListByOrderID(_OrderID);
+        foreach (OrderDetails orderDetails in orderDetailsList)
+        {
+            total += orderDetailsBL.GetTotalOrderDetails(orderDetails);
+        }
+        return total;
     }
 }
 
