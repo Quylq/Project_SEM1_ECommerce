@@ -56,8 +56,6 @@ namespace Persistence
         }
         public void Login()
         {
-            SellerPage sellerPage = new SellerPage();
-            CustomerPage customerPage = new CustomerPage();
             Console.Clear();
             Console.Write("Nhập Tên Đăng Nhập: ");
             string? _UserName = Console.ReadLine();
@@ -84,14 +82,10 @@ namespace Persistence
                         Console.WriteLine($"Update");
                     }
                 }
-                else
-                {
-                    Console.WriteLine($"Mật khẩu của bạn không đúng");
-                }
             }
             else
             {
-                Console.WriteLine($"Tên tài khoản không tồn tại");
+                Console.WriteLine($"Sai tài khoản hoặc mật khẩu");
             }
 
         }
