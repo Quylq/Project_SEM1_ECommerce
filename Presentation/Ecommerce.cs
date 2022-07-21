@@ -16,7 +16,6 @@ namespace Persistence
         public void Menu()
         {
             Console.WriteLine("1. Đăng Nhập: ");
-            Console.WriteLine("2. Đăng Ký: ");
             Console.WriteLine("0. Thoát");
             Console.Write("Chọn: ");
             string? choice = Console.ReadLine();
@@ -24,9 +23,6 @@ namespace Persistence
             {
                 case "1":
                     Login();
-                    break;
-                case "2":
-                    SigUp();
                     break;
                 case "0":
                     Console.WriteLine("Bạn xác nhận muốn thoát?");
@@ -49,7 +45,7 @@ namespace Persistence
                     }
                     break;
                 default:
-                    Console.WriteLine("Vui lòng chọn 0, 1, 2 !");
+                    Console.WriteLine("Vui lòng chọn 0 hoặc 1!");
                     Menu();
                     break;
             }
@@ -60,13 +56,14 @@ namespace Persistence
             Console.Write("Nhập Tên Đăng Nhập: ");
             string? _UserName = Console.ReadLine();
             Console.Write("Nhập Mật Khẩu: ");
-            string? _Password = ReadPassword();
+            string? _Password = Console.ReadLine();
+            string? _Pass = Sha256Hash(_Password);
 
             User user =  userBL.GetUserByName(_UserName);
 
             if (user.UserName != null)
             {
-                if (_Password == user.Password)
+                if (_Pass == user.Password)
                 {
                     Console.WriteLine($"Đăng nhập thành công!");
                     if (user.Role == "Seller")
@@ -77,41 +74,35 @@ namespace Persistence
                     {
                         CustomerPage(user.UserID);
                     }
-                    else
-                    {
-                        Console.WriteLine($"Update");
-                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Mật khẩu của bạn không đúng");
+                    Menu();
                 }
             }
             else
             {
-                Console.WriteLine($"Sai tài khoản hoặc mật khẩu");
+                Console.WriteLine($"Tên tài khoản không tồn tại");
+                Menu();
             }
-
         }
-        public void SigUp()
-        {
-            
-        }
-        public string ReadPassword()
-        {
-            string temp = "";
-            ConsoleKeyInfo info = Console.ReadKey(true);
-            while (info.Key != ConsoleKey.Enter)
-            {
-                if (info.Key != ConsoleKey.Backspace && info.Key != ConsoleKey.Spacebar)
-                {
-                    temp += info.KeyChar;
-                    Console.Write("*");
-                }
-                else if (temp.Length > 0 && info.Key == ConsoleKey.Backspace)
-                {
-                    Console.Write("\b");
-                    temp = temp.Substring(0, temp.Length - 1);
-                }
-                info = Console.ReadKey(true);
-            }
-            return temp;
+        static string Sha256Hash(string rawData)  
+        {  
+            // Create a SHA256   
+            using (SHA256 sha256Hash = SHA256.Create())  
+            {  
+                // ComputeHash - returns byte array  
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));  
+  
+                // Convert byte array to a string   
+                StringBuilder builder = new StringBuilder();  
+                for (int i = 0; i < bytes.Length; i++)  
+                {  
+                    builder.Append(bytes[i].ToString("x2"));  
+                }  
+                return builder.ToString();  
+            }  
         }
         public void CustomerPage(int _UserID)
         {
