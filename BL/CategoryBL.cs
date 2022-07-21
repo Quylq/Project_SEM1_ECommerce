@@ -25,4 +25,3 @@ public class CategoryBL
         categoryDAL.DeleteCategoryByID(_CategoryID);
     }
 }
-

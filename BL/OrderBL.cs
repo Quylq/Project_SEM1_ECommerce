@@ -51,4 +51,3 @@ public class OrderBL
         return total;
     }
 }
-
