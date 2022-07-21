@@ -1,64 +1,64 @@
+drop database Ecommerce;
 create database Ecommerce;
 
 use Ecommerce;
--- SELECT user, host FROM mysql.user;
-DROP USER 'guest'@'localhost';
-CREATE user 'guest'@'localhost' identified by '123456';
 
-grant SELECT, INSERT, UPDATE on ecommerce.users to 'guest'@'localhost';
-grant SELECT, INSERT, UPDATE on ecommerce.products to 'guest'@'localhost';
-grant SELECT, INSERT, UPDATE on ecommerce.categories to 'guest'@'localhost';
-grant SELECT, INSERT, UPDATE on ecommerce.orders to 'guest'@'localhost';
-grant SELECT, INSERT, UPDATE on ecommerce.orderdetails to 'guest'@'localhost';
-grant SELECT, INSERT, UPDATE on ecommerce.product_categories to 'guest'@'localhost';
-
+create table Address (
+	AddressID int not null auto_increment,
+    City varchar(50),
+    District varchar(50),
+    Commune varchar(50),
+    Address varchar(200),
+    constraint pk_Address primary key (AddressID)
+	);
+    
 create table Users (
 	UserID int not null auto_increment,
+	AddressID int,
     UserName varchar(50) not null unique,
-    Password varchar(100),
+    Password varchar(200),
     FullName varchar(100),
     Birthday datetime,
     Email varchar(100),
     Phone varchar(20),
-    Address varchar(200),
-    Role enum('Customer', 'Seller'),
+    Role enum('Customer', 'Admin'),
+    constraint fk_Users_Address foreign key (AddressID)
+    references Address(AddressID),
     constraint Users_chk1 check (UserName not like '% %'),
     constraint Users_chk2 check (Password not like '% %'),
     constraint pk_Users primary key (UserID)
     );
 
+create table Shops (
+	ShopID int not null auto_increment,
+    UserID int,
+    AddressID int,
+    ShopName varchar(50),
+    constraint fk_Shops_Users foreign key (UserID)
+    references Users (UserID),
+    constraint fk_Shops_Address foreign key (AddressID)
+    references Address (AddressID),
+    constraint pk_Shops primary key (ShopID)
+	);
+    
 create table Products (
 	ProductID int not null auto_increment,
+    ShopID int,
     ProductName varchar(50),
-<<<<<<< HEAD
-    Description varchar(500),
-=======
     Description varchar(1000),
->>>>>>> 4f5fcfc1a4493fac7519d4822dea940488daebcf
     Price int not null,
     Quantity int not null,
+    constraint fk_Products_Shops foreign key (ShopID)
+    references Shops (ShopID),
     constraint pk_Products primary key (ProductID)
     );
 
-<<<<<<< HEAD
-create table Users_Product (
-	UserID int,
-    ProductID int,
-    constraint fk_Users foreign key (UserID)
-    references Users (UserID),
-    constraint fk_Products foreign key (ProductID)
-    references Products (ProductID),
-    constraint pk_Users_Product primary key (UserID, ProductID)
-    );
-
-=======
->>>>>>> 4f5fcfc1a4493fac7519d4822dea940488daebcf
 create table Categories (
 	CategoryID int not null auto_increment,
-    UserID int,
+    ShopID int,
     CategoryName varchar(50),
-    constraint fk_Category_Users foreign key (UserID)
-    references Users(UserID),
+    constraint fk_Category_Shops foreign key (ShopID)
+    references Shops(ShopID),
     constraint pk_Categories primary key (CategoryID)
     );
 
@@ -67,35 +67,23 @@ create table Product_Categories (
     CategoryID int,
     constraint fk_Sub_Products foreign key (ProductID)
 		references Products (ProductID),
-<<<<<<< HEAD
-	constraint fk_ProCat_Category foreign key (CategoryID)
-=======
 	constraint fk_Sub_Categories foreign key (CategoryID)
->>>>>>> 4f5fcfc1a4493fac7519d4822dea940488daebcf
 		references Categories (CategoryID),
-	primary key (ProductID, CategoryID)
+	constraint pk_Product_Categories primary key (ProductID, CategoryID)
 	);
     
 create table Orders (
 	OrderID int not null auto_increment,
-<<<<<<< HEAD
-    SellerID int,
-    CustomerID int,
-    CreateDate datetime,
-    Status enum ('Processing', 'Confirm', 'Failed', 'Shipping', 'Finished'),
-    constraint fk1_Orders_Users foreign key (SellerID)
-		references Users (UserID),
-	constraint fk2_Orders_Users foreign key (CustomerID)
-=======
     UserID int,
+    ShopID int,
     CreateDate datetime,
-    Status enum ('Shopping', 'Processing', 'Confirm', 'Failed', 'Shipping', 'Finished'),
+    Status enum ('Shopping', 'Processing', 'Shipping', 'ToReceive', 'Finished', 'Failed'),
 	constraint fk_Orders_Users foreign key (UserID)
->>>>>>> 4f5fcfc1a4493fac7519d4822dea940488daebcf
 		references Users (UserID),
+	constraint fk_Orders_Shops foreign key (ShopID)
+		references Shops (ShopID),
 	constraint pk_Orders primary key(OrderID)
         );
-
 create table OrderDetails (
 	OrderID int,
     ProductID int,
@@ -106,110 +94,58 @@ create table OrderDetails (
 		references Products (ProductID),
 	constraint pk_OrderDetails primary key (OrderID, ProductID)
         );
+        
+insert into Address (City, District, Commune, Address)
+values 	('Thành Phố 1', 'Quận 1', 'Phường 1', 'Số nhà 1, đường 1'),
+		('Thành Phố 1', 'Quận 1', 'Phường 1', 'Số nhà 2, đường 2'),
+        ('Thành Phố 1', 'Quận 1', 'Phường 2', 'Số nhà 3, đường 3'),
+        ('Thành Phố 1', 'Quận 2', 'Phường 3', 'Số nhà 4, đường 4'),
+        ('Thành Phố 2', 'Quận 3', 'Phường 4', 'Số nhà 5, đường 5'),
+        ('Thành Phố 3', 'Quận 4', 'Phường 5', 'Số nhà 6, đường 6');
 
-insert into Users (UserName, Password, Role, FullName, Birthday, Email, Phone, Address)
-VALUES ('QuangQuy', SHA2('123456', 256), 'Seller', 'Lê Quang Quý', '1993-7-1', 'QuangQuy@vtc.edu.vn', '0987654321', 'Thanh Hóa'),
-       ('TuanAnh', SHA2('123456', 256), 'Customer', 'Ngô Tuấn Anh', '2003-7-3','TuanAnh@vtc.edu.vn', '0987654322', 'Bắc Giang'),
-       ('NguyenDat', SHA2('123456', 256), 'Customer', 'Nguyễn Tất Đạt', '2000-12-5','NguyenDat@vtc.edu.vn', '0987654323', 'Hà Nội'),
-       ('LongTan', SHA2('123456', 256), 'Customer', 'Đào Long Tân', '1996-4-3','LongTan@vtc.edu.vn', '0987654324', 'Thái Bình'),
-       ('CaoBac', SHA2('123456', 256), 'Customer', 'Cao Việt Bắc', '1996-2-14', 'CaoBac@vtc.edu.vn', '0987654325', 'Nghệ An'),
-       ('VietAnh', SHA2('123456', 256), 'Seller', 'Nguyễn Duyên Việt Anh', '2000-4-6', 'VietAnh@vtc.edu.vn', '0987654326', 'Tiền Giang'),
-       ('CanhToan', SHA2('123456', 256), 'Customer', 'Nguyễn Cảnh Toàn', '2002-3-4', 'CanhToan@vtc.edu.vn', '0987654327', 'Bắc Ninh'),
-       ('VanTam', SHA2('123456', 256), 'Customer', 'Lê Văn Tâm', '1999-3-12', 'VanTam@vtc.edu.vn', '0987654328', 'Ninh Bình');
+insert into Users (UserName, Password, Role, FullName, Birthday, Email, Phone, AddressID)
+VALUES ('User1', SHA2('123456', 256), 'Customer', 'Full Name 1', '1993-7-1', 'Email1@vtc.edu.vn', '0987654321', 1),
+       ('User2', SHA2('123456', 256), 'Customer', 'Full Name 2', '1993-7-2', 'Email2@vtc.edu.vn', '0987654321', 2),
+       ('User3', SHA2('123456', 256), 'Customer', 'Full Name 3', '1993-8-3', 'Email3@vtc.edu.vn', '0987654321', 3),
+       ('User4', SHA2('123456', 256), 'Customer', 'Full Name 4', '1994-9-4', 'Email4@vtc.edu.vn', '0987654321', 4),
+       ('User5', SHA2('123456', 256), 'Customer', 'Full Name 5', '1995-10-5', 'Email5@vtc.edu.vn', '0987654321', 5),
+       ('User6', SHA2('123456', 256), 'Customer', 'Full Name 6', '1996-11-6', 'Email6@vtc.edu.vn', '0987654321', 6);
 
-<<<<<<< HEAD
-
-insert into Products (ProductName, Price, Quantity)
-VALUES ('Toyota Raize 1.0 Turbo', '527000000', 10),
-	   ('Kia Seltos', '719000000', 10),
-       ('Ford Territory', '780000000', 10),
-	   ('Toyota Venzao', '1100000000', 10),
-       ('Samsung Galaxy Z Fold3 5G', '36990000', 10),
-	   ('iPhone 13 Pro Max', '31190000', 10),
-       ('Samsung Galaxy S22 Ultra 5G', '30990000', 10),
-	   ('OPPO Find X5 Pro 5G', '30990', 10),
-       ('Đồng Hồ ORIENT Cơ 41 mm Nam', '37458000', 10),
-       ('Đồng Hồ ORIENT Cơ 38.7 mm Nam RE-AW0004S00B', '17640000', 10),
-       ('Đồng Hồ TITONI Cơ kính sapphire 27 mm Nữ 729 G-306', '24720000', 10),
-       ('Máy giặt Samsung Inverter 9 Kg', '11590000', 10),
-       ('Máy giặt Aqua Inverter 10 Kg AQD', '8990000', 10),
-       ('Máy giặt LG Inverter 10 Kg', '14390', 10);
-
-
-insert into Orders (SellerID, CustomerID, CreateDate, Status)
-values (1, 3, '2020-01-01 15:10:10', 'Processing'),
-	   (1, 4, '2020-11-01 12:10:10', 'Processing'),
-       (1, 5, '2020-02-01 5:10:10', 'Processing'),
-	   (6, 8, '2020-01-01 10:18:10', 'Processing'),
-       (6, 8, '2020-01-09 11:19:10', 'Processing'),
-	   (1, 7, '2020-01-08 16:10:10', 'Processing');
-
-insert into OrderDetails (OrderID, ProductID, ProductNumber)
-values (1, 1, 1),
-       (2, 1, 4),
-       (3, 5, 1),
-       (4, 6, 2),
-       (5, 11, 1),
-       (6, 12, 3);
-       
-insert into Users_Product (UserID, ProductID)
-values  (1, 1),
-		(1, 2),
-        (1, 3),
-        (1, 4),
-        (1, 5),
-        (1, 6),
-        (1, 7),
-        (1, 8),
-        (6, 9),
-        (6, 10),
-        (6, 11),
-        (6, 12),
-        (6, 13),
-        (6, 14);
-
-
-=======
 update Users
 set password = '123456';
 
--- select * from Products;
+insert into Shops (UserID, AddressID, ShopName)
+values 	(1, 2, 'Shop 1'),
+		(2, 2, 'Shop 2');
 
--- insert into Products (ProductName, Price, Quantity)
--- VALUES ('Toyota Raize 1.0 Turbo', '527000000', 10),
--- 	   ('Kia Seltos', '719000000', 10),
---        ('Ford Territory', '780000000', 10),
--- 	   ('Toyota Venzao', '1100000000', 10),
---        ('Samsung Galaxy Z Fold3 5G', '36990000', 10),
--- 	   ('iPhone 13 Pro Max', '31190000', 10),
---        ('Samsung Galaxy S22 Ultra 5G', '30990000', 10),
--- 	   ('OPPO Find X5 Pro 5G', '30990', 10),
---        ('Đồng Hồ ORIENT Cơ 41 mm Nam', '37458000', 10),
---        ('Đồng Hồ ORIENT Cơ 38.7 mm Nam RE-AW0004S00B', '17640000', 10),
---        ('Đồng Hồ TITONI Cơ kính sapphire 27 mm Nữ 729 G-306', '24720000', 10),
---        ('Máy giặt Samsung Inverter 9 Kg', '11590000', 10),
---        ('Máy giặt Aqua Inverter 10 Kg AQD', '8990000', 10),
---        ('Máy giặt LG Inverter 10 Kg', '14390', 10);
---        
--- update Products 
--- set Description = ' ';
+insert into Products (ProductName, ShopID, Price, Quantity, Description)
+VALUES 	('Sản Phẩm 1', 1, '123000', 11, 'Mô tả 1'),
+		('Sản Phẩm 2', 1, '124000', 11, 'Mô tả 2'),
+        ('Sản Phẩm 3', 1, '133000', 11, 'Mô tả 3'),
+		('Sản Phẩm 4', 1, '143000', 11, 'Mô tả 4'),
+        ('Sản Phẩm 5', 1, '153000', 11, 'Mô tả 5'),
+		('Sản Phẩm 6', 1, '163000', 11, 'Mô tả 6'),
+        ('Sản Phẩm 7', 1, '223000', 11, 'Mô tả 7'),
+		('Sản Phẩm 8', 1, '323000', 11, 'Mô tả 8'),
+        ('Sản Phẩm 9', 1, '423000', 11, 'Mô tả 9'),
+		('Sản Phẩm 10', 2, '13000', 11, 'Mô tả 10'),
+        ('Sản Phẩm 11', 2, '15000', 11, 'Mô tả 11'),
+        ('Sản Phẩm 12', 2, '17000', 11, 'Mô tả 12'),
+        ('Sản Phẩm 13', 2, '23000', 11, 'Mô tả 13'),
+        ('Sản Phẩm 14', 2, '33000', 11, 'Mô tả 14'),
+        ('Sản Phẩm 15', 2, '43000', 11, 'Mô tả 15'),
+        ('Sản Phẩm 16', 2, '53000', 11, 'Mô tả 16'),
+        ('Sản Phẩm 17', 2, '63000', 11, 'Mô tả 17');
 
--- select * from Orders;
+-- SELECT user, host FROM mysql.user;
+DROP USER 'guest'@'localhost';
+CREATE user 'guest'@'localhost' identified by '123456';
 
--- insert into Orders (userID, CreateDate, Status)
--- values (3, '2020-01-01 15:10:10', 'Processing'),
--- 	   (4, '2020-11-01 12:10:10', 'Processing'),
---        (5, '2020-02-01 5:10:10', 'Processing'),
--- 	   (8, '2020-01-01 10:18:10', 'Processing'),
---        (8, '2020-01-09 11:19:10', 'Processing'),
--- 	   (7, '2020-01-08 16:10:10', 'Processing');
-
--- select * from OrderDetails;
--- insert into OrderDetails (OrderID, ProductID, ProductNumber)
--- values (1, 1, 1),
---        (3, 5, 1),
---        (3, 6, 2),
---        (3, 7, 1),
---        (3, 8, 3),
---        (2, 1, 4);
->>>>>>> 4f5fcfc1a4493fac7519d4822dea940488daebcf
+grant SELECT, INSERT, UPDATE on ecommerce.address to 'guest'@'localhost';
+grant SELECT, INSERT, UPDATE on ecommerce.users to 'guest'@'localhost';
+grant SELECT, INSERT, UPDATE on ecommerce.products to 'guest'@'localhost';
+grant SELECT, INSERT, UPDATE on ecommerce.categories to 'guest'@'localhost';
+grant SELECT, INSERT, UPDATE on ecommerce.orders to 'guest'@'localhost';
+grant SELECT, INSERT, UPDATE on ecommerce.orderdetails to 'guest'@'localhost';
+grant SELECT, INSERT, UPDATE on ecommerce.product_categories to 'guest'@'localhost';
+grant SELECT, INSERT, UPDATE on ecommerce.shops to 'guest'@'localhost';
