@@ -33,5 +33,34 @@ namespace DAL
             DbHelper.CloseConnection();
             return address;
         }
+        public void InsertAddress(Address address)
+        {
+            query = $"Insert into Address (AddressID, City, District, Commune, Address) value ('{address.AddressID}', '{address.City}', '{address.District}', '{address.Commune}', '{address.SpecificAddress}')";
+
+            DbHelper.OpenConnection();
+            reader = DbHelper.ExecQuery(query);
+            DbHelper.CloseConnection();
+        }
+        public int AddressIDMax()
+        {
+            query = $"select max(AddressID) from address";
+            DbHelper.OpenConnection();
+            reader = DbHelper.ExecQuery(query);
+            int _AddressID = 0;
+
+            try
+            {
+                if (reader.Read())
+                {
+                    _AddressID = reader.GetInt32("max(AddressID)");
+                }
+            }
+            catch (System.Exception)
+            {
+                _AddressID = 0;
+            }
+            DbHelper.CloseConnection();
+            return _AddressID;
+        }
     }
 }

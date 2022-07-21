@@ -24,5 +24,13 @@ namespace DAL
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();
         }
+        public void DeleteProduct_CategoryByCategoryID(int _CategoryID)
+        {
+            query = $"Delete from product_categories where CategoryID = {_CategoryID}";
+            
+            DbHelper.OpenConnection();
+            reader = DbHelper.ExecQuery(query);
+            DbHelper.CloseConnection();
+        }
     }
 }

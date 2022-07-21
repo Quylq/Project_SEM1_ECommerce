@@ -16,4 +16,14 @@ public class AddressBL
 
         return address;
     }
+    public void InsertAddress(Address address)
+    {
+        addressDAL.InsertAddress(address);
+    }
+    public int AddressIDMax()
+    {
+        int IDMax = addressDAL.AddressIDMax();
+
+        return IDMax;
+    }
 }

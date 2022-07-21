@@ -6,7 +6,7 @@ Console.InputEncoding = System.Text.Encoding.Unicode;
 
 Ecommerce ecommerce = new Ecommerce();
 
-ecommerce.CustomerPage(3);
+ecommerce.SellerPage(3);
 
 
 

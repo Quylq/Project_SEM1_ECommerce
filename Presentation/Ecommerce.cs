@@ -8,10 +8,12 @@ namespace Persistence
     {
         private UserBL userBL;
         private ShopBL shopBL;
+        private AddressBL addressBL;
         public Ecommerce()
         {
             userBL = new UserBL();
             shopBL = new ShopBL();
+            addressBL = new AddressBL();
         }
         public void Menu()
         {
@@ -26,7 +28,7 @@ namespace Persistence
                     Login();
                     break;
                 case "2":
-                    SigUp();
+                    
                     break;
                 case "0":
                     Console.WriteLine("Bạn xác nhận muốn thoát?");
@@ -89,9 +91,33 @@ namespace Persistence
             }
 
         }
-        public void SigUp()
+        public void SigUpShop(int _UserID)
         {
-            
+            Console.Write("Nhập tên Shop: ");
+            string _ShopName = Console.ReadLine();
+            Console.WriteLine("--- Địa chỉ Shop ---");
+            Console.Write("City: ");
+            string _City = Console.ReadLine();
+            Console.Write("District: ");
+            string _District = Console.ReadLine();
+            Console.Write("Commune: ");
+            string _Commune = Console.ReadLine();
+            Console.Write("SpecificAddress: ");
+            string _SpecificAddress = Console.ReadLine();
+            int _AddressID = addressBL.AddressIDMax() + 1;
+            Address address =  new Address(_AddressID, _City, _District, _Commune, _SpecificAddress);
+            Console.WriteLine($"{address.AddressID},{address.City},{address.District},{address.Commune},{address.SpecificAddress}");
+            Console.ReadKey();
+            addressBL.InsertAddress(address);
+            int _ShopID = shopBL.ShopIDMax() + 1;
+            Shop shop = new Shop(_ShopID, _ShopName, _UserID, _AddressID);
+            shopBL.InsertShop(shop);
+
+            Console.WriteLine("Tạo cửa hàng thành công");
+            Console.WriteLine("Nhấn phím bất kỳ để vào cửa hàng");
+            Console.ReadKey();
+            SellerPage(_ShopID);
+
         }
         public string ReadPassword()
         {
@@ -154,9 +180,7 @@ namespace Persistence
                     }
                     else
                     {
-                        Console.WriteLine("Đang cập nhật");
-                        Console.ReadKey();
-                        CustomerPage(_UserID);
+                        SigUpShop(_UserID);
                     }
                     break; 
                 case "0": 
@@ -168,33 +192,34 @@ namespace Persistence
                     break;
             }
         }
-        public void SellerPage (int _UserID)
+        public void SellerPage (int _ShopID)
         {
             SellerPage sellerPage = new SellerPage();
             Console.Clear();
             Console.WriteLine("1. Quản lý đơn đặt hàng.");
             Console.WriteLine("2. Quản lý sản phẩm.");
             Console.WriteLine("3. Quản lý danh mục sản phẩm.");
-            Console.WriteLine("0. Thoát");
+            Console.WriteLine("0. Quay lại");
             Console.Write("Chọn: ");
             string? choice = Console.ReadLine();
             switch (choice)
             {
                 case "1":
-                    sellerPage.OrderManagement(_UserID);
+                    sellerPage.OrderManagement(_ShopID);
                     break;
                 case "2": 
-                    sellerPage.ProductManagement(_UserID);
+                    sellerPage.ProductManagement(_ShopID);
                     break;
                 case "3": 
-                    sellerPage.CategoryManagement(_UserID);
+                    sellerPage.CategoryManagement(_ShopID);
                     break;
                 case "0": 
-                    Environment.Exit(0);
+                    Shop shop = shopBL.GetShopByID(_ShopID);
+                    CustomerPage(shop.UserID);
                     break;
                 default:
                     Console.WriteLine("Vui lòng chọn 0 - 3 !");
-                    SellerPage (_UserID);
+                    SellerPage (_ShopID);
                     break;
             }
         }

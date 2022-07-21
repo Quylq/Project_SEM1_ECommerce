@@ -43,11 +43,29 @@ namespace DAL
         }
         public void DeleteCategoryByID(int _CategoryID)
         {
-            // query = $"Delete from Categories where categoryID = {_CategoryID}";
-            query = $"update Categories set ShopID = null where CategoryID = {_CategoryID}";
+            query = $"Delete from Categories where categoryID = {_CategoryID}";
+            // query = $"update Categories set ShopID = null where CategoryID = {_CategoryID}";
             DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();
+        }
+        public List<Category> GetCategoriesByProductID(int _ProductID)
+        {
+            query = $@"select * from Categories c
+            inner join product_categories pc on c.CategoryID = pc.CategoryID
+            where pc.productID = {_ProductID}";
+
+            DbHelper.OpenConnection();
+            reader = DbHelper.ExecQuery(query);
+            List<Category> categories = new List<Category>();
+            Category category = new Category();
+            while (reader.Read())
+            {
+                category = GetCategoryInfo(reader);
+                categories.Add(category);
+            }
+            DbHelper.CloseConnection();
+            return categories;
         }
     }
 }
