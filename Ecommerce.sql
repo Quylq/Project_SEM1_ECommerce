@@ -1,5 +1,5 @@
-drop database Ecommerce;
-create database Ecommerce;
+drop database if EXISTS Ecommerce;
+create database if NOT EXISTS Ecommerce;
 
 use Ecommerce;
 
@@ -11,7 +11,7 @@ create table Address (
     Address varchar(200),
     constraint pk_Address primary key (AddressID)
 	);
-    
+
 create table Users (
 	UserID int not null auto_increment,
 	AddressID int,
@@ -40,7 +40,7 @@ create table Shops (
     references Address (AddressID),
     constraint pk_Shops primary key (ShopID)
 	);
-    
+
 create table Products (
 	ProductID int not null auto_increment,
     ShopID int,
@@ -71,7 +71,7 @@ create table Product_Categories (
 		references Categories (CategoryID),
 	constraint pk_Product_Categories primary key (ProductID, CategoryID)
 	);
-    
+
 create table Orders (
 	OrderID int not null auto_increment,
     UserID int,
@@ -94,7 +94,7 @@ create table OrderDetails (
 		references Products (ProductID),
 	constraint pk_OrderDetails primary key (OrderID, ProductID)
         );
-        
+
 insert into Address (City, District, Commune, Address)
 values 	('Thành Phố 1', 'Quận 1', 'Phường 1', 'Số nhà 1, đường 1'),
 		('Thành Phố 1', 'Quận 1', 'Phường 1', 'Số nhà 2, đường 2'),
@@ -111,11 +111,8 @@ VALUES ('User1', SHA2('123456', 256), 'Customer', 'Full Name 1', '1993-7-1', 'Em
        ('User5', SHA2('123456', 256), 'Customer', 'Full Name 5', '1995-10-5', 'Email5@vtc.edu.vn', '0987654321', 5),
        ('User6', SHA2('123456', 256), 'Customer', 'Full Name 6', '1996-11-6', 'Email6@vtc.edu.vn', '0987654321', 6);
 
-update Users
-set password = '123456';
-
 insert into Shops (UserID, AddressID, ShopName)
-values 	(1, 2, 'Shop 1'),
+values 	(1, 1, 'Shop 1'),
 		(2, 2, 'Shop 2');
 
 insert into Products (ProductName, ShopID, Price, Quantity, Description)
@@ -137,9 +134,76 @@ VALUES 	('Sản Phẩm 1', 1, '123000', 11, 'Mô tả 1'),
         ('Sản Phẩm 16', 2, '53000', 11, 'Mô tả 16'),
         ('Sản Phẩm 17', 2, '63000', 11, 'Mô tả 17');
 
+INSERT INTO Categories (CategoryID, ShopID, CategoryName)
+VALUES (1, 2, 'Đồ Chơi'),
+       (2, 2, 'Thiết Bị Trường Học'),
+       (3, 2, 'Bút Các Loại'),
+       (4, 1, 'Thiết Bị Gia Dụng'),
+       (5, 1, 'Thiết Bị Điện'),
+       (6, 1, 'Phụ Kiện Điện Thoại'),
+       (7, 1, 'Dụng Cụ Nhà Bếp');
+
+INSERT INTO Orders (OrderID, UserID, ShopID, CreateDate, Status)
+VALUES (1, 4, 1, '2022-07-22 11:20:34', 'Processing'),
+       (2, 5, 1, '2022-07-22 11:21:13', 'Processing'),
+       (3, 3, 2, '2022-07-22 11:21:55', 'Processing'),
+       (4, 1, 2, '2022-07-22 11:22:18', 'Processing'),
+       (5, 3, 1, '2022-07-22 11:22:41', 'Processing'),
+       (6, 2, 1, '2022-07-22 11:22:59', 'Processing'),
+       (7, 4, 2, '2022-07-22 11:23:14', 'Processing'),
+       (8, 6, 1, '2022-07-22 11:23:34', 'Processing'),
+       (9, 6, 2, '2022-07-22 11:23:58', 'Processing'),
+       (10, 5, 2, '2022-07-22 11:24:19', 'Processing');
+
+insert into OrderDetails (OrderID, ProductID, ProductNumber)
+values (1, 1, 1),
+       (2, 5, 1),
+       (3, 13, 2),
+       (4, 11, 1),
+       (5, 8, 3),
+       (6, 1, 4),
+       (1, 3, 3),
+       (1, 4, 2),
+       (2, 2, 4),
+       (3, 15, 1),
+       (6, 3, 2),
+       (7, 15, 3),
+       (7, 12, 2),
+       (8, 6, 3),
+       (8, 7, 2),
+       (8, 9, 1),
+       (9, 10, 4),
+       (9, 14, 2),
+       (9, 17, 1),
+       (10, 16, 3),
+       (10, 11, 2);
+
+INSERT INTO Product_Categories (ProductID, CategoryID)
+VALUES (10, 1),
+       (11, 1),
+       (12, 1),
+       (13, 1),
+       (14, 2),
+       (15, 2),
+       (16, 2),
+       (17, 2),
+       (16, 3),
+       (17, 3),
+       (1, 4),
+       (2, 4),
+       (3, 4),
+       (4, 4),
+       (5, 5),
+       (6, 5),
+       (7, 5),
+       (8, 6),
+       (9, 6),
+       (1, 7),
+       (3, 7);
+
 -- SELECT user, host FROM mysql.user;
-DROP USER 'guest'@'localhost';
-CREATE user 'guest'@'localhost' identified by '123456';
+DROP USER if EXISTS 'guest'@'localhost';
+CREATE user if not exists 'guest'@'localhost' identified by '123456';
 
 grant SELECT, INSERT, UPDATE on ecommerce.address to 'guest'@'localhost';
 grant SELECT, INSERT, UPDATE on ecommerce.users to 'guest'@'localhost';
