@@ -120,6 +120,7 @@ namespace Persistence
             else if (IsNumber(choice.ToLower().Replace(" ", "").Replace("delete", "")))
             {
                 int deleteNo = Convert.ToInt32(choice.ToLower().Replace(" ", "").Replace("delete", ""));
+                product_CategoryBL.DeleteProduct_CategoryByCategoryID(categories[deleteNo - 1].CategoryID);
                 categoryBL.DeleteCategoryByID(categories[deleteNo - 1].CategoryID);
                 Console.WriteLine("Xóa danh mục thành công !");
                 Console.WriteLine("Nhấn phím bất kỳ để tiếp tục");
@@ -154,7 +155,13 @@ namespace Persistence
             Console.WriteLine($"Giá: {product.Price.ToString("C0")}");
             Console.WriteLine($"Mô tả: {product.Description}");
             Console.WriteLine($"Số lượng: {product.Quantity}");
-            Console.WriteLine($"-----------------------------------------");
+            List<Category> categories = categoryBL.GetCategoriesByProductID(_ProductID);
+            Console.Write($"Danh mục: ");
+            foreach (Category category in categories)
+            {
+                Console.Write($"{category.CategoryName} ");
+            }
+            Console.WriteLine("\n-----------------------------------------");
             ProductInformation:
             Console.WriteLine("1. Cập nhật mô tả sản phẩm.");
             Console.WriteLine("2. Cập nhật số lượng sản phẩm.");
@@ -218,12 +225,8 @@ namespace Persistence
             int _Quantity = Convert.ToInt32(Console.ReadLine());
             Console.WriteLine("Mô tả: ");
             string? _Description = Console.ReadLine();
-            Console.WriteLine($"{productBL.ProductIDMax() + 1}, {_ShopID}, {_ProductName}, {_Price}, {_Description}, {_Quantity}");
-            Console.ReadKey();
             Product product = new Product(productBL.ProductIDMax() + 1, _ShopID, _ProductName, _Price, _Description, _Quantity);
             productBL.InsertProduct(product);
-            Console.WriteLine($"123");
-            Console.ReadKey();
             AddProductToCategory(_ShopID, product.ProductID);
             Console.WriteLine("Thêm sản phẩm thành công !");
             Console.WriteLine("Nhấn phím bất kỳ để tiếp tục !");
@@ -373,8 +376,8 @@ namespace Persistence
             }
             Console.WriteLine("|---------------------------------------------------------------------------------------|");
             Console.Write("Nhập số thứ tự để xem thông tin chi tiết hoặc \"0\" để quay lại: ");
-            try
-            {
+            // try
+            // {
                 int choice = Convert.ToInt32(Console.ReadLine());
                 if (choice != 0)
                 {
@@ -384,12 +387,12 @@ namespace Persistence
                 {
                     ProductManagement(_ShopID);
                 }
-            }
-            catch (System.Exception)
-            {
-                Console.Clear();
-                DisplayProducts(_ShopID, products);
-            }
+            // }
+            // catch (System.Exception)
+            // {
+            //     Console.Clear();
+            //     DisplayProducts(_ShopID, products);
+            // }
         }
         public void ViewAllProducts(int _ShopID)
         {
@@ -403,14 +406,17 @@ namespace Persistence
         }
         public void AddProductsToCategory(int _ShopID, int _CategoryID)
         {
-            List<Product> products = productBL.GetProductsByShopIDAndCategoryID(_ShopID, _CategoryID);
+            List<Product> products = productBL.GetProductsByShopID(_ShopID);
             Console.WriteLine("|---------------------------------------------------------------------------------------|");
             Console.WriteLine("| STT | Tên sản phẩm                                       |       Giá       | Số lượng |");
             Console.WriteLine("|---------------------------------------------------------------------------------------|");
             int count = 1;
             foreach (Product product in products)  
-            { 
-                Console.WriteLine("| {0,3 } | {1,-50} | {2, 15} | {3,8} |", count++, product.ProductName, product.Price.ToString("C0"), product.Quantity);
+            {
+                if (!CheckProductOfCategory(product.ProductID, _CategoryID))
+                {
+                    Console.WriteLine("| {0,3 } | {1,-50} | {2, 15} | {3,8} |", count++, product.ProductName, product.Price.ToString("C0"), product.Quantity);
+                }
                 
             }
             Console.WriteLine("|---------------------------------------------------------------------------------------|");
@@ -421,6 +427,10 @@ namespace Persistence
                 if (choice != 0)
                 {
                     product_CategoryBL.InsertProduct_Category(products[choice - 1].ProductID, _CategoryID);
+                    Console.WriteLine("Thêm sản phẩm vào danh mục thành công !");
+                    Console.WriteLine("Nhập phím bất kỳ để tiếp tục");
+                    Console.ReadKey();
+                    AddProductsToCategory(_ShopID, _CategoryID);
                 }
                 else
                 {
@@ -462,25 +472,28 @@ namespace Persistence
             List<Category> categories = categoryBL.GetCategoriesByShopID(_ShopID);
             DisplayCategories(_ShopID);
             Console.Write("Nhập số thứ tự để thêm sản phẩm vào danh mục có sẵn hoặc 0 để quay lại : ");
-            try
-            {
+            // try
+            // {
                 ProductBL productBL = new ProductBL();
                 int choice = Convert.ToInt32(Console.ReadLine());
                 if (choice != 0)
                 {
+                    // xử lý TH đã có sẵn trong category
                     product_CategoryBL.InsertProduct_Category(_ProductID, categories[choice - 1].CategoryID);
                     Console.WriteLine("Thêm sản phẩm vào danh mục thành công !");
+                    Console.WriteLine("Nhập phím bất kỳ để tiếp tục");
+                    Console.ReadKey();
                 }
                 else
                 {
                     ProductManagement(_ShopID);
                 }
-            }
-            catch (System.Exception)
-            {
-                Console.Clear();
-                AddProductToCategory(_ShopID, _ProductID);
-            }
+            // }
+            // catch (System.Exception)
+            // {
+            //     Console.Clear();
+            //     AddProductToCategory(_ShopID, _ProductID);
+            // }
         }
         public void CreateCategory(int _ShopID)
         {
@@ -516,6 +529,21 @@ namespace Persistence
                 return false;
             }
             return true;
+        }
+        public bool CheckProductOfCategory(int _ProductID, int _CategoryID)
+        {
+            bool result = false;
+            List<Category> categories = categoryBL.GetCategoriesByProductID(_ProductID);
+            for (int i = 0; i < categories.Count; i++)
+            {
+                if (categories[i].CategoryID == _CategoryID)
+                {
+                    result = true;
+                    break;
+                }
+            }
+            
+            return result;
         }
     }
     

@@ -24,4 +24,15 @@ public class CategoryBL
     {
         categoryDAL.DeleteCategoryByID(_CategoryID);
     }
+<<<<<<< HEAD
 }
+=======
+    public List<Category> GetCategoriesByProductID(int _ProductID)
+    {
+        List<Category> categories = categoryDAL.GetCategoriesByProductID(_ProductID);
+        
+        return categories;
+    }
+}
+
+>>>>>>> 41376646ea774f67b7f31904a4b96c9a311eb762

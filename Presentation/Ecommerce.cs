@@ -8,10 +8,12 @@ namespace Persistence
     {
         private UserBL userBL;
         private ShopBL shopBL;
+        private AddressBL addressBL;
         public Ecommerce()
         {
             userBL = new UserBL();
             shopBL = new ShopBL();
+            addressBL = new AddressBL();
         }
         public void Menu()
         {
@@ -87,6 +89,65 @@ namespace Persistence
                 Menu();
             }
         }
+        public void SigUp()
+        {
+            Console.Write("Tên đăng nhập: ");
+            string _UserName = Console.ReadLine();
+            Console.Write("Mật Khẩu: ");
+            string _Password = ReadPassword();
+            Console.Write("You Name: ");
+            string _FullName = Console.ReadLine();
+            Console.Write("Email: ");
+            string _Email = Console.ReadLine();
+            Console.Write("Phone: ");
+            string _Phone = Console.ReadLine();
+            string _Birthday = ReadBirthDay();
+            int _AddressID = ReadAddress();
+            int _UserID = userBL.UserIDMax() + 1;
+            User user = new User(_UserID, _UserName, _Password, _FullName, _Birthday, _Email, _Phone, _AddressID, "Customer");
+            userBL.InsertUser(user);
+
+            Console.WriteLine("Đăng ký thành công!");
+            Console.WriteLine("Nhấn phím bất kỳ để tiếp tục");
+            Console.ReadKey();
+            CustomerPage(_UserID);
+        }
+        public void SigUpShop(int _UserID)
+        {
+            Console.Write("Nhập tên Shop: ");
+            string _ShopName = Console.ReadLine();
+            int _AddressID = ReadAddress();
+            int _ShopID = shopBL.ShopIDMax() + 1;
+            Shop shop = new Shop(_ShopID, _ShopName, _UserID, _AddressID);
+            shopBL.InsertShop(shop);
+
+            Console.WriteLine("Tạo cửa hàng thành công");
+            Console.WriteLine("Nhấn phím bất kỳ để vào cửa hàng");
+            Console.ReadKey();
+            SellerPage(_ShopID);
+
+        }
+        public string ReadPassword()
+        {
+            string temp = "";
+            ConsoleKeyInfo info = Console.ReadKey(true);
+            while (info.Key != ConsoleKey.Enter)
+            {
+                if (info.Key != ConsoleKey.Backspace && info.Key != ConsoleKey.Spacebar)
+                {
+                    temp += info.KeyChar;
+                    Console.Write("*");
+                }
+                else if (temp.Length > 0 && info.Key == ConsoleKey.Backspace)
+                {
+                    Console.Write("\b");
+                    temp = temp.Substring(0, temp.Length - 1);
+                }
+                info = Console.ReadKey(true);
+            }
+            Console.WriteLine();
+            return Sha256Hash(temp);
+        }
         static string Sha256Hash(string rawData)  
         {  
             // Create a SHA256   
@@ -103,6 +164,45 @@ namespace Persistence
                 }  
                 return builder.ToString();  
             }  
+        }
+        public string ReadBirthDay()
+        {
+            DateOnly _Birthday;
+            string format = "yyyy-MM-dd";
+            try
+            {           
+            Console.WriteLine("--- Birthday --- ");  
+            Console.Write("Ngày Sinh: ");
+            int _Day = Convert.ToInt32(Console.ReadLine()) ;
+            Console.Write("Tháng: ");
+            int _Mon = Convert.ToInt32(Console.ReadLine()) ;
+            Console.Write("Năm: ");
+            int _Year = Convert.ToInt32(Console.ReadLine()) ;
+            _Birthday = new DateOnly(_Year, _Mon, _Day);
+            }
+            catch (System.Exception)
+            {
+                Console.WriteLine($"Ngày sinh không hợp lệ, vui lòng nhập lại.");
+                ReadBirthDay();
+            }
+            return _Birthday.ToString(format);
+        }
+        public int ReadAddress()
+        {
+            Console.WriteLine("--- Địa chỉ ---");
+            Console.Write("City: ");
+            string _City = Console.ReadLine();
+            Console.Write("District: ");
+            string _District = Console.ReadLine();
+            Console.Write("Commune: ");
+            string _Commune = Console.ReadLine();
+            Console.Write("SpecificAddress: ");
+            string _SpecificAddress = Console.ReadLine();
+            int _AddressID = addressBL.AddressIDMax() + 1;
+            Address address =  new Address(_AddressID, _City, _District, _Commune, _SpecificAddress);
+            addressBL.InsertAddress(address);
+
+            return _AddressID;
         }
         public void CustomerPage(int _UserID)
         {
@@ -145,9 +245,7 @@ namespace Persistence
                     }
                     else
                     {
-                        Console.WriteLine("Đang cập nhật");
-                        Console.ReadKey();
-                        CustomerPage(_UserID);
+                        SigUpShop(_UserID);
                     }
                     break; 
                 case "0": 
@@ -159,33 +257,34 @@ namespace Persistence
                     break;
             }
         }
-        public void SellerPage (int _UserID)
+        public void SellerPage (int _ShopID)
         {
             SellerPage sellerPage = new SellerPage();
             Console.Clear();
             Console.WriteLine("1. Quản lý đơn đặt hàng.");
             Console.WriteLine("2. Quản lý sản phẩm.");
             Console.WriteLine("3. Quản lý danh mục sản phẩm.");
-            Console.WriteLine("0. Thoát");
+            Console.WriteLine("0. Quay lại");
             Console.Write("Chọn: ");
             string? choice = Console.ReadLine();
             switch (choice)
             {
                 case "1":
-                    sellerPage.OrderManagement(_UserID);
+                    sellerPage.OrderManagement(_ShopID);
                     break;
                 case "2": 
-                    sellerPage.ProductManagement(_UserID);
+                    sellerPage.ProductManagement(_ShopID);
                     break;
                 case "3": 
-                    sellerPage.CategoryManagement(_UserID);
+                    sellerPage.CategoryManagement(_ShopID);
                     break;
                 case "0": 
-                    Environment.Exit(0);
+                    Shop shop = shopBL.GetShopByID(_ShopID);
+                    CustomerPage(shop.UserID);
                     break;
                 default:
                     Console.WriteLine("Vui lòng chọn 0 - 3 !");
-                    SellerPage (_UserID);
+                    SellerPage (_ShopID);
                     break;
             }
         }

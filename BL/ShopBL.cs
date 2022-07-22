@@ -28,4 +28,14 @@ public class ShopBL
 
         return shops;
     }
+    public void InsertShop(Shop shop)
+    {
+        shopDAL.InsertShop(shop);
+    }
+    public int ShopIDMax()
+    {
+        int IDMax = shopDAL.ShopIDMax();
+        
+        return IDMax;
+    }
 }

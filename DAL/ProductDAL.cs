@@ -42,23 +42,6 @@ namespace DAL
             DbHelper.CloseConnection();
             return products;
         }
-        // Lấy danh sách sản phẩm theo ID người bán và không thuộc danh mục
-        public List<Product> GetProductsByShopIDAndCategoryID(int _ShopID, int _CategoryID)
-        {          
-            query = $"select * from Products p inner join Product_Categories pc on p.ProductID = pc.ProductID where p.ShopID = {_ShopID} and pc.CategoryID != {_CategoryID}";
-            DbHelper.OpenConnection();
-            reader = DbHelper.ExecQuery(query);
-
-            List<Product>? products = new List<Product>();
-
-            while (reader.Read())
-            {
-                Product product = GetProductInfo(reader);
-                products.Add(product);
-            }
-            DbHelper.CloseConnection();
-            return products;
-        }
         // Lấy danh sách sản phẩm theo tên và ShopID
         public List<Product> GetProductsByNameAndShopID(string _ProductName, int _ShopID)
         {
@@ -79,7 +62,7 @@ namespace DAL
         // Lấy danh sách sản phẩm theo ID danh mục
         public List<Product> GetProductsByCategory(int _CategoryID)
         {    
-            query = $"select p.ProductID, p.ProductID, p.ProductName, p.Price, p.Description, p.Quantity from Products p inner join Product_Categories pc on p.ProductID = pc.ProductID where pc.CategoryID = {_CategoryID}";
+            query = $"select p.ProductID, p.ShopID, p.ProductName, p.Price, p.Description, p.Quantity from Products p inner join Product_Categories pc on p.ProductID = pc.ProductID where pc.CategoryID = {_CategoryID}";
             DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
 

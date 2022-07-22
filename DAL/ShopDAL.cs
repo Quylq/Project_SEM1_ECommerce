@@ -64,5 +64,34 @@ namespace DAL
             DbHelper.CloseConnection();
             return shops;
         }
+        public void InsertShop(Shop shop)
+        {
+            query = $"Insert into Shops (ShopID, UserID, AddressID, ShopName) value ('{shop.ShopID}', '{shop.UserID}', '{shop.AddressID}', '{shop.ShopName}')";
+
+            DbHelper.OpenConnection();
+            reader = DbHelper.ExecQuery(query);
+            DbHelper.CloseConnection();
+        }
+        public int ShopIDMax()
+        {
+            query = $"select max(ShopID) from shops";
+            DbHelper.OpenConnection();
+            reader = DbHelper.ExecQuery(query);
+            int _ShopID = 0;
+
+            try
+            {
+                if (reader.Read())
+                {
+                    _ShopID = reader.GetInt32("max(ShopID)");
+                }
+            }
+            catch (System.Exception)
+            {
+                _ShopID = 0;
+            }
+            DbHelper.CloseConnection();
+            return _ShopID;
+        }
     }
 }

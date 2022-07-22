@@ -11,14 +11,14 @@ create table Address (
     Address varchar(200),
     constraint pk_Address primary key (AddressID)
 	);
-
+    
 create table Users (
 	UserID int not null auto_increment,
 	AddressID int,
     UserName varchar(50) not null unique,
     Password varchar(200),
     FullName varchar(100),
-    Birthday datetime,
+    Birthday date,
     Email varchar(100),
     Phone varchar(20),
     Role enum('Customer', 'Admin'),
@@ -40,7 +40,6 @@ create table Shops (
     references Address (AddressID),
     constraint pk_Shops primary key (ShopID)
 	);
-
 create table Products (
 	ProductID int not null auto_increment,
     ShopID int,
