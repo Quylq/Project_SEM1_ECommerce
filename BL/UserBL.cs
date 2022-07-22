@@ -24,6 +24,11 @@ public class UserBL
     {
         userDAL.InsertUser(user);
     }
+    public int UserIDMax()
+    {
+        int _UserID = userDAL.UserIDMax();
 
+        return _UserID;
+    }
 }
 

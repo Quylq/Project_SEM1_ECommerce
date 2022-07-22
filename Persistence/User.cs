@@ -7,11 +7,11 @@ namespace Persistence
         public string? UserName{get;set;}
         public string? Password{get;set;}
         public string? FullName{get;set;}
-        public DateTime Birthday{get;set;}
+        public string? Birthday{get;set;}
         public string? Email{get;set;}
         public string? Phone{get;set;}
         public string? Role{get;set;}
-        public User(string _UserName, string _Password, string _FullName, DateTime _Birthday, string _Email, string _Phone, int _AddressID, string _Role)
+        public User(string _UserName, string _Password, string _FullName, string _Birthday, string _Email, string _Phone, int _AddressID, string _Role)
         {
             UserName = _UserName;
             Password = _Password;
@@ -22,7 +22,7 @@ namespace Persistence
             AddressID = _AddressID;
             Role = _Role;
         }
-        public User(int _UserID, string _UserName, string _Password, string _FullName, DateTime _Birthday, string _Email, string _Phone, int _AddressID, string _Role)
+        public User(int _UserID, string _UserName, string _Password, string _FullName, string _Birthday, string _Email, string _Phone, int _AddressID, string _Role)
         {
             UserID = _UserID;
             UserName = _UserName;

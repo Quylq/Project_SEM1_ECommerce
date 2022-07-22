@@ -28,12 +28,6 @@ public class ProductBL
         products = productDAL.GetProductsByNameAndShopID(_ProductName, _ShopID);
         return products;
     }
-    public List<Product> GetProductsByShopIDAndCategoryID(int _ShopID, int _CategoryID)
-    {
-        List<Product> products = productDAL.GetProductsByShopIDAndCategoryID(_ShopID, _CategoryID);
-
-        return products;
-    }
     public List<Product> GetProductsByCategory(int _CategoryID)
     {
         List<Product> products = new List<Product>();

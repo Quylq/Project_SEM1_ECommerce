@@ -46,7 +46,7 @@ namespace DAL
             user.UserName = reader.GetString("UserName");
             user.Password = reader.GetString("Password");
             user.FullName = reader.GetString("FullName");
-            user.Birthday = reader.GetDateTime("Birthday");
+            user.Birthday = reader.GetString("Birthday");
             user.Email = reader.GetString("Email");
             user.Phone = reader.GetString("Phone");
             user.AddressID = reader.GetInt32("AddressID");
@@ -55,11 +55,33 @@ namespace DAL
         }
         public void InsertUser(User user)
         {
-            query = $"Insert into Users (UserID, UserName, Password , FullName, Birthday, Email, Phone, AddressID, Role) value ('{user.UserID}', '{user.UserName}', '{user.Password}', '{user.FullName}', '{user.Birthday}', '{user.Email}', '{user.Phone}', '{user.AddressID}', '{user.Role}')";
+            query = $@"Insert into Users (UserID, UserName, Password , FullName, Birthday, Email, Phone, AddressID, Role) 
+            value ('{user.UserID}', '{user.UserName}', '{user.Password}', '{user.FullName}', '{user.Birthday}', '{user.Email}', '{user.Phone}', '{user.AddressID}', '{user.Role}')";
 
             DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();
+        }
+        public int UserIDMax()
+        {
+            query = $"select max(UserID) from users";
+            DbHelper.OpenConnection();
+            reader = DbHelper.ExecQuery(query);
+            int _UserID = 0;
+
+            try
+            {
+                if (reader.Read())
+                {
+                    _UserID = reader.GetInt32("max(UserID)");
+                }
+            }
+            catch (System.Exception)
+            {
+                _UserID = 0;
+            }
+            DbHelper.CloseConnection();
+            return _UserID;
         }
     }
 }

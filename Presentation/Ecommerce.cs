@@ -28,7 +28,7 @@ namespace Persistence
                     Login();
                     break;
                 case "2":
-                    
+                    SigUp();
                     break;
                 case "0":
                     Console.WriteLine("Bạn xác nhận muốn thoát?");
@@ -91,24 +91,34 @@ namespace Persistence
             }
 
         }
+        public void SigUp()
+        {
+            Console.Write("Tên đăng nhập: ");
+            string _UserName = Console.ReadLine();
+            Console.Write("Mật Khẩu: ");
+            string _Password = ReadPassword();
+            Console.Write("You Name: ");
+            string _FullName = Console.ReadLine();
+            Console.Write("Email: ");
+            string _Email = Console.ReadLine();
+            Console.Write("Phone: ");
+            string _Phone = Console.ReadLine();
+            string _Birthday = ReadBirthDay();
+            int _AddressID = ReadAddress();
+            int _UserID = userBL.UserIDMax() + 1;
+            User user = new User(_UserID, _UserName, _Password, _FullName, _Birthday, _Email, _Phone, _AddressID, "Customer");
+            userBL.InsertUser(user);
+
+            Console.WriteLine("Đăng ký thành công!");
+            Console.WriteLine("Nhấn phím bất kỳ để tiếp tục");
+            Console.ReadKey();
+            CustomerPage(_UserID);
+        }
         public void SigUpShop(int _UserID)
         {
             Console.Write("Nhập tên Shop: ");
             string _ShopName = Console.ReadLine();
-            Console.WriteLine("--- Địa chỉ Shop ---");
-            Console.Write("City: ");
-            string _City = Console.ReadLine();
-            Console.Write("District: ");
-            string _District = Console.ReadLine();
-            Console.Write("Commune: ");
-            string _Commune = Console.ReadLine();
-            Console.Write("SpecificAddress: ");
-            string _SpecificAddress = Console.ReadLine();
-            int _AddressID = addressBL.AddressIDMax() + 1;
-            Address address =  new Address(_AddressID, _City, _District, _Commune, _SpecificAddress);
-            Console.WriteLine($"{address.AddressID},{address.City},{address.District},{address.Commune},{address.SpecificAddress}");
-            Console.ReadKey();
-            addressBL.InsertAddress(address);
+            int _AddressID = ReadAddress();
             int _ShopID = shopBL.ShopIDMax() + 1;
             Shop shop = new Shop(_ShopID, _ShopName, _UserID, _AddressID);
             shopBL.InsertShop(shop);
@@ -137,7 +147,47 @@ namespace Persistence
                 }
                 info = Console.ReadKey(true);
             }
+            Console.WriteLine();
             return temp;
+        }
+        public string ReadBirthDay()
+        {
+            DateOnly _Birthday;
+            string format = "yyyy-MM-dd";
+            try
+            {           
+            Console.WriteLine("--- Birthday --- ");  
+            Console.Write("Ngày Sinh: ");
+            int _Day = Convert.ToInt32(Console.ReadLine()) ;
+            Console.Write("Tháng: ");
+            int _Mon = Convert.ToInt32(Console.ReadLine()) ;
+            Console.Write("Năm: ");
+            int _Year = Convert.ToInt32(Console.ReadLine()) ;
+            _Birthday = new DateOnly(_Year, _Mon, _Day);
+            }
+            catch (System.Exception)
+            {
+                Console.WriteLine($"Ngày sinh không hợp lệ, vui lòng nhập lại.");
+                ReadBirthDay();
+            }
+            return _Birthday.ToString(format);
+        }
+        public int ReadAddress()
+        {
+            Console.WriteLine("--- Địa chỉ ---");
+            Console.Write("City: ");
+            string _City = Console.ReadLine();
+            Console.Write("District: ");
+            string _District = Console.ReadLine();
+            Console.Write("Commune: ");
+            string _Commune = Console.ReadLine();
+            Console.Write("SpecificAddress: ");
+            string _SpecificAddress = Console.ReadLine();
+            int _AddressID = addressBL.AddressIDMax() + 1;
+            Address address =  new Address(_AddressID, _City, _District, _Commune, _SpecificAddress);
+            addressBL.InsertAddress(address);
+
+            return _AddressID;
         }
         public void CustomerPage(int _UserID)
         {

@@ -42,26 +42,6 @@ namespace DAL
             DbHelper.CloseConnection();
             return products;
         }
-        // Lấy danh sách sản phẩm theo ID người bán và không thuộc danh mục
-        public List<Product> GetProductsByShopIDAndCategoryID(int _ShopID, int _CategoryID)
-        {          
-            query = $@"select * from Products p 
-            inner join Product_Categories pc on pc.ProductID = p.ProductID
-            where p.ShopID = {_ShopID} and pc.CategoryID != {_CategoryID}
-            group by p.productID";
-            DbHelper.OpenConnection();
-            reader = DbHelper.ExecQuery(query);
-
-            List<Product>? products = new List<Product>();
-            while (reader.Read())
-            {
-                Product product = GetProductInfo(reader);
-                products.Add(product);
-            }
-
-            DbHelper.CloseConnection();
-            return products;
-        }
         // Lấy danh sách sản phẩm theo tên và ShopID
         public List<Product> GetProductsByNameAndShopID(string _ProductName, int _ShopID)
         {

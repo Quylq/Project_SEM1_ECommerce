@@ -18,7 +18,7 @@ create table Users (
     UserName varchar(50) not null unique,
     Password varchar(200),
     FullName varchar(100),
-    Birthday datetime,
+    Birthday date,
     Email varchar(100),
     Phone varchar(20),
     Role enum('Customer', 'Admin'),
@@ -105,11 +105,11 @@ values 	('Thành Phố 1', 'Quận 1', 'Phường 1', 'Số nhà 1, đường 1'
 
 insert into Users (UserName, Password, Role, FullName, Birthday, Email, Phone, AddressID)
 VALUES ('User1', SHA2('123456', 256), 'Customer', 'Full Name 1', '1993-7-1', 'Email1@vtc.edu.vn', '0987654321', 1),
-       ('User2', SHA2('123456', 256), 'Customer', 'Full Name 2', '1993-7-2', 'Email2@vtc.edu.vn', '0987654321', 2),
-       ('User3', SHA2('123456', 256), 'Customer', 'Full Name 3', '1993-8-3', 'Email3@vtc.edu.vn', '0987654321', 3),
-       ('User4', SHA2('123456', 256), 'Customer', 'Full Name 4', '1994-9-4', 'Email4@vtc.edu.vn', '0987654321', 4),
-       ('User5', SHA2('123456', 256), 'Customer', 'Full Name 5', '1995-10-5', 'Email5@vtc.edu.vn', '0987654321', 5),
-       ('User6', SHA2('123456', 256), 'Customer', 'Full Name 6', '1996-11-6', 'Email6@vtc.edu.vn', '0987654321', 6);
+       ('User2', SHA2('123456', 256), 'Customer', 'Full Name 2', '1993-7-2', 'Email2@vtc.edu.vn', '0987654322', 2),
+       ('User3', SHA2('123456', 256), 'Customer', 'Full Name 3', '1993-8-3', 'Email3@vtc.edu.vn', '0987654323', 3),
+       ('User4', SHA2('123456', 256), 'Customer', 'Full Name 4', '1994-9-4', 'Email4@vtc.edu.vn', '0987654324', 4),
+       ('User5', SHA2('123456', 256), 'Customer', 'Full Name 5', '1995-10-5', 'Email5@vtc.edu.vn', '0987654325', 5),
+       ('User6', SHA2('123456', 256), 'Customer', 'Full Name 6', '1996-11-6', 'Email6@vtc.edu.vn', '0987654326', 6);
 
 update Users
 set password = '123456';
@@ -137,15 +137,18 @@ VALUES 	('Sản Phẩm 1', 1, '123000', 11, 'Mô tả 1'),
         ('Sản Phẩm 16', 2, '53000', 11, 'Mô tả 16'),
         ('Sản Phẩm 17', 2, '63000', 11, 'Mô tả 17');
 
--- SELECT user, host FROM mysql.user;
+-- SELECT user, host FROM mysql.user; 
+-- SHOW GRANTS FOR 'guest'@'localhost';
 DROP USER 'guest'@'localhost';
 CREATE user 'guest'@'localhost' identified by '123456';
 
 grant SELECT, INSERT, UPDATE on ecommerce.address to 'guest'@'localhost';
 grant SELECT, INSERT, UPDATE on ecommerce.users to 'guest'@'localhost';
 grant SELECT, INSERT, UPDATE on ecommerce.products to 'guest'@'localhost';
-grant SELECT, INSERT, UPDATE on ecommerce.categories to 'guest'@'localhost';
+grant SELECT, INSERT, UPDATE, delete on ecommerce.categories to 'guest'@'localhost';
 grant SELECT, INSERT, UPDATE on ecommerce.orders to 'guest'@'localhost';
 grant SELECT, INSERT, UPDATE on ecommerce.orderdetails to 'guest'@'localhost';
-grant SELECT, INSERT, UPDATE on ecommerce.product_categories to 'guest'@'localhost';
+grant SELECT, INSERT, UPDATE, delete on ecommerce.product_categories to 'guest'@'localhost';
 grant SELECT, INSERT, UPDATE on ecommerce.shops to 'guest'@'localhost';
+
+select max(AddressID) from address;

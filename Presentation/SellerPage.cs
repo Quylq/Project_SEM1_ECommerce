@@ -406,14 +406,17 @@ namespace Persistence
         }
         public void AddProductsToCategory(int _ShopID, int _CategoryID)
         {
-            List<Product> products = productBL.GetProductsByShopIDAndCategoryID(_ShopID, _CategoryID);
+            List<Product> products = productBL.GetProductsByShopID(_ShopID);
             Console.WriteLine("|---------------------------------------------------------------------------------------|");
             Console.WriteLine("| STT | Tên sản phẩm                                       |       Giá       | Số lượng |");
             Console.WriteLine("|---------------------------------------------------------------------------------------|");
             int count = 1;
             foreach (Product product in products)  
-            { 
-                Console.WriteLine("| {0,3 } | {1,-50} | {2, 15} | {3,8} |", count++, product.ProductName, product.Price.ToString("C0"), product.Quantity);
+            {
+                if (!CheckProductOfCategory(product.ProductID, _CategoryID))
+                {
+                    Console.WriteLine("| {0,3 } | {1,-50} | {2, 15} | {3,8} |", count++, product.ProductName, product.Price.ToString("C0"), product.Quantity);
+                }
                 
             }
             Console.WriteLine("|---------------------------------------------------------------------------------------|");
@@ -526,6 +529,21 @@ namespace Persistence
                 return false;
             }
             return true;
+        }
+        public bool CheckProductOfCategory(int _ProductID, int _CategoryID)
+        {
+            bool result = false;
+            List<Category> categories = categoryBL.GetCategoriesByProductID(_ProductID);
+            for (int i = 0; i < categories.Count; i++)
+            {
+                if (categories[i].CategoryID == _CategoryID)
+                {
+                    result = true;
+                    break;
+                }
+            }
+            
+            return result;
         }
     }
     
