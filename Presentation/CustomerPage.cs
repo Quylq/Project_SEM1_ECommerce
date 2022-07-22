@@ -362,9 +362,16 @@ namespace Persistence
                     SearchProduct(_UserID);
                 }
             }
-            else
+            else if (orders.Count == 1)
             {
                 ViewOrder(_UserID, orders[0].OrderID);
+            }
+            else
+            {
+                Console.WriteLine("Giỏ hàng trống");
+                Console.WriteLine("Nhấn phím bất kỳ để về Menu");
+                Console.ReadKey();
+                ecommerce.CustomerPage(_UserID);
             }
         }
         public int CheckShopOfOrders(List<Order> orders, int _ShopID)
