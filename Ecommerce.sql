@@ -1,5 +1,5 @@
-drop database Ecommerce;
-create database Ecommerce;
+drop database if EXISTS Ecommerce;
+create database if NOT EXISTS Ecommerce;
 
 use Ecommerce;
 
@@ -111,9 +111,6 @@ VALUES ('User1', SHA2('123456', 256), 'Customer', 'Full Name 1', '1993-7-1', 'Em
        ('User5', SHA2('123456', 256), 'Customer', 'Full Name 5', '1995-10-5', 'Email5@vtc.edu.vn', '0987654325', 5),
        ('User6', SHA2('123456', 256), 'Customer', 'Full Name 6', '1996-11-6', 'Email6@vtc.edu.vn', '0987654326', 6);
 
-update Users
-set password = '123456';
-
 insert into Shops (UserID, AddressID, ShopName)
 values 	(1, 2, 'Shop 1'),
 		(2, 2, 'Shop 2');
@@ -150,5 +147,3 @@ grant SELECT, INSERT, UPDATE on ecommerce.orders to 'guest'@'localhost';
 grant SELECT, INSERT, UPDATE on ecommerce.orderdetails to 'guest'@'localhost';
 grant SELECT, INSERT, UPDATE, delete on ecommerce.product_categories to 'guest'@'localhost';
 grant SELECT, INSERT, UPDATE on ecommerce.shops to 'guest'@'localhost';
-
-select max(AddressID) from address;
