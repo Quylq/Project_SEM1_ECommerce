@@ -18,6 +18,7 @@ namespace Persistence
         public void Menu()
         {
             Console.WriteLine("1. Đăng Nhập: ");
+            Console.WriteLine("2. Đăng Ký: ");
             Console.WriteLine("0. Thoát");
             Console.Write("Chọn: ");
             string? choice = Console.ReadLine();
@@ -25,6 +26,9 @@ namespace Persistence
             {
                 case "1":
                     Login();
+                    break;
+                case "2":
+                    SigUp();
                     break;
                 case "0":
                     Console.WriteLine("Bạn xác nhận muốn thoát?");
@@ -47,7 +51,7 @@ namespace Persistence
                     }
                     break;
                 default:
-                    Console.WriteLine("Vui lòng chọn 0 hoặc 1!");
+                    Console.WriteLine("Vui lòng chọn 0, 1, 2 !");
                     Menu();
                     break;
             }
@@ -58,14 +62,13 @@ namespace Persistence
             Console.Write("Nhập Tên Đăng Nhập: ");
             string? _UserName = Console.ReadLine();
             Console.Write("Nhập Mật Khẩu: ");
-            string? _Password = Console.ReadLine();
-            string? _Pass = Sha256Hash(_Password);
+            string? _Password = ReadPassword();
 
             User user =  userBL.GetUserByName(_UserName);
 
             if (user.UserName != null)
             {
-                if (_Pass == user.Password)
+                if (_Password == user.Password)
                 {
                     Console.WriteLine($"Đăng nhập thành công!");
                     if (user.Role == "Seller")
@@ -76,18 +79,17 @@ namespace Persistence
                     {
                         CustomerPage(user.UserID);
                     }
-                }
-                else
-                {
-                    Console.WriteLine($"Mật khẩu của bạn không đúng");
-                    Menu();
+                    else
+                    {
+                        Console.WriteLine($"Update");
+                    }
                 }
             }
             else
             {
-                Console.WriteLine($"Tên tài khoản không tồn tại");
-                Menu();
+                Console.WriteLine($"Sai tài khoản hoặc mật khẩu");
             }
+
         }
         public void SigUp()
         {
