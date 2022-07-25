@@ -24,6 +24,23 @@ namespace DAL
             return categories;
         }
 
+        public List<Category> GetCategories()
+        {
+            query = $"select * from Categories";
+
+            DbHelper.OpenConnection();
+            reader = DbHelper.ExecQuery(query);
+            List<Category> categories = new List<Category>();
+            Category category = new Category();
+            while (reader.Read())
+            {
+                category = GetCategoryInfo(reader);
+                categories.Add(category);
+            }
+            DbHelper.CloseConnection();
+            return categories;
+        }
+
         private Category GetCategoryInfo(MySqlDataReader reader)
         {
             Category category = new Category();

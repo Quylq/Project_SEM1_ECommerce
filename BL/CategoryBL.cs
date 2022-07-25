@@ -30,5 +30,11 @@ public class CategoryBL
         
         return categories;
     }
+    public List<Category> GetCategories()
+    {
+        List<Category> categories = categoryDAL.GetCategories();
+        
+        return categories;
+    }
 }
 

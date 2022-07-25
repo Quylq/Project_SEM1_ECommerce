@@ -17,7 +17,6 @@ namespace Persistence
         }
         public void Menu()
         {
-            Console.Clear();
             Console.WriteLine("-------------------------------------------");
             Console.WriteLine("|------------- ECOMMERCE -------------|");
             Console.WriteLine("-------------------------------------------");
@@ -237,16 +236,17 @@ namespace Persistence
             Console.WriteLine();
             Console.WriteLine("1. Search Product.");
             Console.WriteLine("2. Search Shop.");
-            Console.WriteLine("3. Cart.");
-            Console.WriteLine("4. My Order.");
+            Console.WriteLine("3. Show Category");
+            Console.WriteLine("4. Cart.");
+            Console.WriteLine("5. My Order.");
             Shop shop = shopBL.GetShopByUserID(_UserID);
             if (shop.UserID == _UserID)
             {
-                Console.WriteLine("5. My Shop.");
+                Console.WriteLine("6. My Shop.");
             }
             else
             {
-                Console.WriteLine("5. Create shop.");
+                Console.WriteLine("6. Create shop.");
             }
             Console.WriteLine("0. Exit.");
             Console.Write("Choice: ");
@@ -260,12 +260,15 @@ namespace Persistence
                     customerPage.SearchShop(_UserID);
                     break;
                 case "3":
-                    customerPage.ViewCart(_UserID);
+                    customerPage.ShowCategory(_UserID);
                     break;
                 case "4":
-                    customerPage.MyOrder(_UserID);
+                    customerPage.ViewCart(_UserID);
                     break;
                 case "5":
+                    customerPage.MyOrder(_UserID);
+                    break;
+                case "6":
                     if (shop.UserID == _UserID)
                     {
                         SellerPage(shop.ShopID);
