@@ -30,7 +30,7 @@ namespace Persistence
         public void SearchProduct(int _UserID)
         {
             Console.Clear();
-            Console.WriteLine("Nhập sản phẩm bạn muốn tìm hoặc \"Menu\" để quay lại: ");
+            Console.WriteLine("Enter the product name you want to find or enter \"Menu\" to go back! ");
             string? _ProductName = Console.ReadLine();
             if (_ProductName.ToLower() != "menu")
             {
