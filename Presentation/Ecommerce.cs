@@ -17,8 +17,8 @@ namespace Persistence
         }
         public void Menu()
         {
-            Console.WriteLine("1. Đăng Nhập: ");
-            Console.WriteLine("2. Đăng Ký: ");
+            Console.WriteLine("1. Đăng Nhập. ");
+            Console.WriteLine("2. Đăng Ký. ");
             Console.WriteLine("0. Thoát");
             Console.Write("Chọn: ");
             string? choice = Console.ReadLine();
@@ -71,11 +71,7 @@ namespace Persistence
                 if (_Password == user.Password)
                 {
                     Console.WriteLine($"Đăng nhập thành công!");
-                    if (user.Role == "Seller")
-                    {
-                        SellerPage(user.UserID);
-                    }
-                    else if (user.Role == "Customer")
+                    if (user.Role == "Customer")
                     {
                         CustomerPage(user.UserID);
                     }
@@ -88,6 +84,9 @@ namespace Persistence
             else
             {
                 Console.WriteLine($"Sai tài khoản hoặc mật khẩu");
+                Console.WriteLine("Nhấn phím bất kỳ để quay lại");
+                Console.ReadKey();
+                Menu();
             }
 
         }
@@ -173,14 +172,10 @@ namespace Persistence
             string format = "yyyy-MM-dd";
             try
             {           
-            Console.WriteLine("--- Birthday --- ");  
-            Console.Write("Ngày Sinh: ");
-            int _Day = Convert.ToInt32(Console.ReadLine()) ;
-            Console.Write("Tháng: ");
-            int _Mon = Convert.ToInt32(Console.ReadLine()) ;
-            Console.Write("Năm: ");
-            int _Year = Convert.ToInt32(Console.ReadLine()) ;
-            _Birthday = new DateOnly(_Year, _Mon, _Day);
+            Console.WriteLine("Birthday (dd/MM/yyyy): ");  
+            string s = Console.ReadLine();
+            string[] result = s.Replace(" ", "").Split('/', StringSplitOptions.None);
+            _Birthday = new DateOnly(Convert.ToInt32(result[2]), Convert.ToInt32(result[1]), Convert.ToInt32(result[0]));
             }
             catch (System.Exception)
             {

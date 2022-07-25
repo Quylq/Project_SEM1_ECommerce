@@ -50,5 +50,22 @@ public class OrderBL
         }
         return total;
     }
+    public int GetTotalCart(int _UserID)
+    {
+        int total = 0;
+        OrderDetailsBL orderDetailsBL = new OrderDetailsBL();
+        List<OrderDetails> orderDetailsList = orderDetailsBL.GetOrderDetailsListByUserIDAndStatus(_UserID, "Shopping");
+        foreach (OrderDetails orderDetails in orderDetailsList)
+        {
+            total += orderDetailsBL.GetTotalOrderDetails(orderDetails);
+        }
+        return total;
+    }
+    public List<Order> GetOrdersByUserID(int _UserID)
+    {
+        List<Order> orders = orderDAL.GetOrdersByUserID(_UserID);
+
+        return orders;
+    }
 }
 

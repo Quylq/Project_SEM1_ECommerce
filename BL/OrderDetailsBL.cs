@@ -32,4 +32,10 @@ public class OrderDetailsBL
         total = orderDetails.ProductNumber * product.Price;
         return total;
     }
+    public List<OrderDetails> GetOrderDetailsListByUserIDAndStatus(int _UserID, string _Status)
+    {
+        List<OrderDetails> orderDetailsList = orderDetailsDAL.GetOrderDetailsListByUserIDAndStatus(_UserID, _Status);
+
+        return orderDetailsList;
+    }
 }

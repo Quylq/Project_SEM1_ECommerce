@@ -24,6 +24,22 @@ namespace DAL
             DbHelper.CloseConnection();
             return orders;
         }
+        public List<Order> GetOrdersByUserID(int _UserID)
+        {
+            query = $"select * from Orders o inner join Users u on o.UserID = u.UserID where o.UserID = {_UserID}";
+            DbHelper.OpenConnection();
+            reader = DbHelper.ExecQuery(query);
+
+            List<Order>? orders = new List<Order>();
+
+            while (reader.Read())
+            {
+                Order order = GetOrderInfo(reader);
+                orders.Add(order);
+            }
+            DbHelper.CloseConnection();
+            return orders;
+        }
         // Lấy danh sách order theo ID cửa hàng và trạng thái
         public List<Order> GetOrdersByStatusAndShopID(string _Status, int _ShopID)
         {
