@@ -510,6 +510,42 @@ namespace Persistence
                 viewShop(_UserID, _ShopID);
             }
         }
+        public void viewShopInSearch(int _UserID, int _ShopID, List<Shop> shops)
+        {
+            Console.Clear();
+            Console.WriteLine("1. Tất cả sản phẩm");
+            List<Category> categories = categoryBL.GetCategoriesByShopID(_ShopID);
+            int count = 2;
+            foreach (Category category in categories)
+            {
+                Console.WriteLine($"{count++}. {category.CategoryName}");
+            }
+            Console.WriteLine("0. Quay lại.");
+            Console.Write("Chọn: ");
+            try
+            {
+                int choice = Convert.ToInt32(Console.ReadLine());
+                if (choice != 0 && choice != 1)
+                {
+                    List<Product> products = productBL.GetProductsByCategory(categories[choice - 2].CategoryID);
+                    DisplayProductsInShop(_UserID, products, _ShopID);
+                }
+                else if (choice == 0)
+                {
+                    DisplayShops(_UserID, shops);
+                }
+                else
+                {
+                    List<Product> products = productBL.GetProductsByShopID(_ShopID);
+                    DisplayProductsInShop(_UserID, products, _ShopID);
+                }
+            }
+            catch (System.Exception)
+            {
+                Console.Clear();
+                viewShop(_UserID, _ShopID);
+            }
+        }
         public void ViewCart(int _UserID)
         {
             List<Order> orders = orderBL.GetOrdersByStatusAndUserID("Shopping", _UserID);
@@ -604,7 +640,7 @@ namespace Persistence
                 int choice = Convert.ToInt32(Console.ReadLine());
                 if (choice != 0)
                 {
-                    viewShop(_UserID, shops[choice - 1].ShopID);
+                    viewShopInSearch(_UserID, shops[choice - 1].ShopID, shops);
                 }
                 else
                 {
