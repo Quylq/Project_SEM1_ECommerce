@@ -236,17 +236,16 @@ namespace Persistence
             Console.WriteLine();
             Console.WriteLine("1. Search Product.");
             Console.WriteLine("2. Search Shop.");
-            Console.WriteLine("3. Show Category");
-            Console.WriteLine("4. Cart.");
-            Console.WriteLine("5. My Order.");
+            Console.WriteLine("3. Cart.");
+            Console.WriteLine("4. My Order.");
             Shop shop = shopBL.GetShopByUserID(_UserID);
             if (shop.UserID == _UserID)
             {
-                Console.WriteLine("6. My Shop.");
+                Console.WriteLine("5. My Shop.");
             }
             else
             {
-                Console.WriteLine("6. Create shop.");
+                Console.WriteLine("5. Create shop.");
             }
             Console.WriteLine("0. Exit.");
             Console.Write("Choice: ");
@@ -260,15 +259,12 @@ namespace Persistence
                     customerPage.SearchShop(_UserID);
                     break;
                 case "3":
-                    customerPage.ShowCategory(_UserID);
-                    break;
-                case "4":
                     customerPage.ViewCart(_UserID);
                     break;
-                case "5":
+                case "4":
                     customerPage.MyOrder(_UserID);
                     break;
-                case "6":
+                case "5":
                     if (shop.UserID == _UserID)
                     {
                         SellerPage(shop.ShopID);
