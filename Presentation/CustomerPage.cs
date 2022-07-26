@@ -30,7 +30,8 @@ namespace Persistence
         public void SearchProduct(int _UserID)
         {
             Console.Clear();
-            Console.WriteLine("Enter product name to search or \"0\" to go back: ");
+            Console.WriteLine($"---------- Search Product ---------");
+            Console.WriteLine("Enter product name to search or \"0\" to go back. ");
             string? _ProductName = Console.ReadLine();
             if (_ProductName.ToLower() != "0")
             {
@@ -134,8 +135,8 @@ namespace Persistence
                 })
                 .ExportAndWriteLine();
             Console.WriteLine($"Enter Quantity of products to add to cart.");
-            Console.WriteLine($"0. Quay lại.");
-            Console.Write($"Chọn: ");
+            Console.WriteLine($"0. Back.");
+            Console.Write($"Choose: ");
             int choice = Convert.ToInt32(Console.ReadLine());
             try
             {
@@ -186,6 +187,7 @@ namespace Persistence
         }
         public void ViewOrder(int _UserID, int _OrderID)
         {
+            Console.Clear();
             List<List<object>> tableData = new List<List<object>>();
             int count = 1;
             Order order = orderBL.GetOrderByID(_OrderID);
@@ -217,7 +219,7 @@ namespace Persistence
             if (order.Status == "ToReceive")
             {
                 Console.WriteLine("1. Confirm pick up.");
-                Console.WriteLine("2. Reject orders");
+                Console.WriteLine("2. Reject orders.");
                 Console.WriteLine("0. Back.");
                 string? choice = Console.ReadLine();
                 if (choice == "1")
@@ -330,7 +332,7 @@ namespace Persistence
                 tableData.Add(rowTotal);
                 ConsoleTableBuilder
                     .From(tableData)
-                    .WithColumn("Shop Name", "ID", "Product's Name", "Price", "Quantity", "Into Money")
+                    .WithColumn("Shop Name", "ID", "Product's Name", "Price", "Quantity", "Total")
                     .WithTextAlignment(new Dictionary < int, TextAligntment>
                         {
                             {4, TextAligntment.Right },
@@ -387,6 +389,7 @@ namespace Persistence
         public void SearchShop(int _UserID)
         {
             Console.Clear();
+            Console.WriteLine("------------- Search Shop -----------------");
             Console.WriteLine("Enter Shop name to search or \"0\" to go back: ");
             string? _ShopName = Console.ReadLine();
             if (_ShopName.ToLower() != "0")
@@ -473,57 +476,10 @@ namespace Persistence
             }
             ConsoleTableBuilder
                 .From(tableData)
-                .WithColumn("ID", "Shop Name", "Quantity", "Into Money", "Status")
+                .WithColumn("ID", "Shop Name", "Quantity", "Total", "Status")
                 .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
                 .ExportAndWriteLine();
         }
-        public void ViewOrdersToReceive(int _UserID)
-        {
-            List<Order> orders = orderBL.GetOrdersByStatusAndUserID("ToReceive", _UserID);
-            if (orders.Count > 0)
-            {
-                DisplayOrders(_UserID, orders);
-                Console.WriteLine($"Enter \"Confirm + ID \" to confirm pick up.");
-                Console.WriteLine($"Enter \"Reject + ID \" to reject the order.");
-                Console.WriteLine($"0. Back.");
-                Console.Write($"Chọn: ");
-                string? choice = Console.ReadLine();
-                if (choice == "0")
-                {
-                    MyOrder(_UserID);
-                }
-                else if (IsNumber(choice.ToLower().Replace(" ", "").Replace("confirm", "")))
-                {
-                    int confirmNo = Convert.ToInt32(choice.ToLower().Replace(" ", "").Replace("confirm", ""));
-                    orderBL.UpdateStatusOfOrder(orders[confirmNo-1].OrderID, "Finished");
-                    Console.WriteLine("Successful confirmation");
-                    Console.WriteLine("Press any key to continue");
-                    Console.ReadKey();
-                    ViewOrdersToReceive(_UserID);
-                }
-                else if (IsNumber(choice.ToLower().Replace(" ", "").Replace("reject", "")))
-                {
-                    int rejectNo = Convert.ToInt32(choice.ToLower().Replace(" ", "").Replace("reject", ""));
-                    orderBL.UpdateStatusOfOrder(orders[rejectNo-1].OrderID, "Failed");
-                    Console.WriteLine("Successful refusal");
-                    Console.WriteLine("Press any key to continue");
-                    Console.ReadKey();
-                    ViewOrdersToReceive(_UserID);
-                }
-                else
-                {
-                    Console.WriteLine("Invalid selection !");
-                    Console.ReadKey();
-                    ViewOrdersToReceive(_UserID);
-                }
-            }
-            else
-            {
-                Console.WriteLine("No orders ");
-                Console.WriteLine("Press any key to continue");
-                Console.ReadKey();
-                MyOrder(_UserID);
-            }
-        }
+        
     }
 }

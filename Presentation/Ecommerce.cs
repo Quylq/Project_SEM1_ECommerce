@@ -35,9 +35,9 @@ namespace Persistence
                     SigUp();
                     break;
                 case "0":
-                    Console.WriteLine("Confirm you want to exit?");
+                    Console.WriteLine("You confirm you want to exit?");
                     Console.WriteLine("1. Yes       2. No");
-                    Console.Write("Choice: ");
+                    Console.Write("Choose: ");
                     string? choice1 = Console.ReadLine();
                     switch (choice1)
                     {
@@ -65,11 +65,8 @@ namespace Persistence
         public void Login()
         {
             Console.Clear();
-            Console.WriteLine("-------------------------------------------");
-            Console.WriteLine("| -------------  ECOMMERCE  ------------- |");
-            Console.WriteLine("-------------------------------------------");
-            Console.WriteLine();
-            Console.Write("UserName: ");
+            Console.WriteLine("---------- Login ---------");
+            Console.Write("User Name: ");
             string? _UserName = Console.ReadLine();
             Console.Write("Password: ");
             string? _Password = ReadPassword();
@@ -80,12 +77,8 @@ namespace Persistence
             {
                 if (_Password == user.Password)
                 {
-                    Console.WriteLine($"Login success!");
-                    if (user.Role == "Seller")
-                    {
-                        SellerPage(user.UserID);
-                    }
-                    else if (user.Role == "Customer")
+                    Console.WriteLine($"Logged in successfully!");
+                    if (user.Role == "Customer")
                     {
                         CustomerPage(user.UserID);
                     }
@@ -99,6 +92,7 @@ namespace Persistence
             else
             {
                 Console.WriteLine($"Account name does not exist!");
+                Console.WriteLine("Press any key to go back");
                 Console.ReadKey();
                 Menu();
             }
@@ -106,12 +100,8 @@ namespace Persistence
         }
         public void SigUp()
         {
-            Console.Clear();
-            Console.WriteLine("-------------------------------------------");
-            Console.WriteLine("| -------------  ECOMMERCE  ------------- |");
-            Console.WriteLine("-------------------------------------------");
-            Console.WriteLine();
-            Console.Write("UserName: ");
+            Console.WriteLine("---------- SigUp ---------");
+            Console.Write("User Name: ");
             string _UserName = Console.ReadLine();
             Console.Write("Password: ");
             string _Password = ReadPassword();
@@ -128,17 +118,13 @@ namespace Persistence
             userBL.InsertUser(user);
 
             Console.WriteLine("Sign Up Success!");
-            Console.WriteLine("Press any key to continue!");
+            Console.WriteLine("Press any key to continue");
             Console.ReadKey();
             Menu();
         }
         public void SigUpShop(int _UserID)
         {
-            Console.Clear();
-            Console.WriteLine("-------------------------------------------");
-            Console.WriteLine("| -------------  ECOMMERCE  ------------- |");
-            Console.WriteLine("-------------------------------------------");
-            Console.WriteLine();
+            Console.WriteLine("---------- Register to open a store ---------");
             Console.Write("Shop Name: ");
             string _ShopName = Console.ReadLine();
             int _AddressID = ReadAddress();
@@ -146,8 +132,8 @@ namespace Persistence
             Shop shop = new Shop(_ShopID, _ShopName, _UserID, _AddressID);
             shopBL.InsertShop(shop);
 
-            Console.WriteLine("Create successful shop!");
-            Console.WriteLine("Press any key to enter the shop!");
+            Console.WriteLine("Create a successful store.");
+            Console.WriteLine("Press any key to enter the store");
             Console.ReadKey();
             SellerPage(_ShopID);
 
@@ -203,14 +189,14 @@ namespace Persistence
             }
             catch (System.Exception)
             {
-                Console.WriteLine($"Invalid date of birth, please re-enter.");
+                Console.WriteLine($"Invalid birthdate, please re-enter.");
                 ReadBirthDay();
             }
             return _Birthday.ToString(format);
         }
         public int ReadAddress()
         {
-            Console.WriteLine("------- Address -------");
+            Console.WriteLine("--- Address ---");
             Console.Write("City: ");
             string _City = Console.ReadLine();
             Console.Write("District: ");
@@ -229,10 +215,7 @@ namespace Persistence
         {
             CustomerPage customerPage = new CustomerPage();
             Console.Clear();
-            Console.WriteLine("-------------------------------------------");
-            Console.WriteLine("| -------------  ECOMMERCE  ------------- |");
-            Console.WriteLine("-------------------------------------------");
-            Console.WriteLine();
+            Console.WriteLine("---------- Home page ---------");
             Console.WriteLine("1. Search Product.");
             Console.WriteLine("2. Search Shop.");
             Console.WriteLine("3. Cart.");
@@ -244,10 +227,10 @@ namespace Persistence
             }
             else
             {
-                Console.WriteLine("5. Create shop.");
+                Console.WriteLine("5. Sales registration."); 
             }
             Console.WriteLine("0. Exit.");
-            Console.Write("Choice: ");
+            Console.Write("Choose: ");
             string? choice = Console.ReadLine();
             switch (choice)
             {
@@ -277,7 +260,7 @@ namespace Persistence
                     Menu();
                     break;
                 default:
-                    Console.WriteLine("Please choose 0 - 4!");
+                    Console.WriteLine("Please select 0 - 4!");
                     CustomerPage(_UserID);
                     break;
             }
@@ -286,15 +269,12 @@ namespace Persistence
         {
             SellerPage sellerPage = new SellerPage();
             Console.Clear();
-            Console.WriteLine("-------------------------------------------");
-            Console.WriteLine("| -------------  ECOMMERCE  ------------- |");
-            Console.WriteLine("-------------------------------------------");
-            Console.WriteLine();
-            Console.WriteLine("1. Order Management.");
-            Console.WriteLine("2. Product Management.");
-            Console.WriteLine("3. Product catalog management.");
+            Console.WriteLine($"---------- {shopBL.GetShopByID(_ShopID).ShopName} ---------");
+            Console.WriteLine("1. Order Manegement.");
+            Console.WriteLine("2. Product Manegement.");
+            Console.WriteLine("3. Category Manegement");
             Console.WriteLine("0. Back");
-            Console.Write("Choice: ");
+            Console.Write("Choose: ");
             string? choice = Console.ReadLine();
             switch (choice)
             {
@@ -312,8 +292,8 @@ namespace Persistence
                     CustomerPage(shop.UserID);
                     break;
                 default:
-                    Console.WriteLine("Please choice 0 - 3!");
-                    SellerPage(_ShopID);
+                    Console.WriteLine("Please select 0 - 3!");
+                    SellerPage (_ShopID);
                     break;
             }
         }
