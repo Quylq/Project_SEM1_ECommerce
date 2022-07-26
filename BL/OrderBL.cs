@@ -67,5 +67,11 @@ public class OrderBL
 
         return orders;
     }
+    public List<Order> GetOrdersByShopIDAndNotStatus(int _ShopID, string _Status)
+    {
+        List<Order> orders = orderDAL.GetOrdersByShopIDAndNotStatus(_ShopID, _Status);
+
+        return orders;
+    }
 }
 
