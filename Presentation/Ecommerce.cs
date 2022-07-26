@@ -18,7 +18,7 @@ namespace Persistence
         public void Menu()
         {
             Console.WriteLine("-------------------------------------------");
-            Console.WriteLine("|------------- ECOMMERCE -------------|");
+            Console.WriteLine("| -------------  ECOMMERCE  ------------- |");
             Console.WriteLine("-------------------------------------------");
             Console.WriteLine();
             Console.WriteLine("1. Login ");
