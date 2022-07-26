@@ -17,10 +17,11 @@ namespace Persistence
         }
         public void Menu()
         {
-            Console.WriteLine("1. Đăng Nhập. ");
-            Console.WriteLine("2. Đăng Ký. ");
-            Console.WriteLine("0. Thoát");
-            Console.Write("Chọn: ");
+            Console.Clear();
+            Console.WriteLine("1. Login. ");
+            Console.WriteLine("2. SigUp. ");
+            Console.WriteLine("0. Exit");
+            Console.Write("Choose: ");
             string? choice = Console.ReadLine();
             switch (choice)
             {
@@ -31,9 +32,9 @@ namespace Persistence
                     SigUp();
                     break;
                 case "0":
-                    Console.WriteLine("Bạn xác nhận muốn thoát?");
+                    Console.WriteLine("You confirm you want to exit?");
                     Console.WriteLine("1. Yes       2. No");
-                    Console.Write("Chọn: ");
+                    Console.Write("Choose: ");
                     string? choice1 = Console.ReadLine();
                     switch (choice1)
                     {
@@ -45,13 +46,13 @@ namespace Persistence
                             Menu();
                             break;
                         default:
-                            Console.WriteLine("Vui lòng chọn 1 hoặc 2!");
+                            Console.WriteLine("Please choose 1 or 2!");
                             Menu();
                             break;
                     }
                     break;
                 default:
-                    Console.WriteLine("Vui lòng chọn 0, 1, 2 !");
+                    Console.WriteLine("Please choose 0 - 2!");
                     Menu();
                     break;
             }
@@ -59,9 +60,10 @@ namespace Persistence
         public void Login()
         {
             Console.Clear();
-            Console.Write("Nhập Tên Đăng Nhập: ");
+            Console.WriteLine("---------- Login ---------");
+            Console.Write("User Name: ");
             string? _UserName = Console.ReadLine();
-            Console.Write("Nhập Mật Khẩu: ");
+            Console.Write("Password: ");
             string? _Password = ReadPassword();
 
             User user =  userBL.GetUserByName(_UserName);
@@ -70,7 +72,7 @@ namespace Persistence
             {
                 if (_Password == user.Password)
                 {
-                    Console.WriteLine($"Đăng nhập thành công!");
+                    Console.WriteLine($"Logged in successfully!");
                     if (user.Role == "Customer")
                     {
                         CustomerPage(user.UserID);
@@ -83,8 +85,8 @@ namespace Persistence
             }
             else
             {
-                Console.WriteLine($"Sai tài khoản hoặc mật khẩu");
-                Console.WriteLine("Nhấn phím bất kỳ để quay lại");
+                Console.WriteLine($"Wrong username or password");
+                Console.WriteLine("Press any key to go back");
                 Console.ReadKey();
                 Menu();
             }
@@ -92,9 +94,10 @@ namespace Persistence
         }
         public void SigUp()
         {
-            Console.Write("Tên đăng nhập: ");
+            Console.WriteLine("---------- SigUp ---------");
+            Console.Write("User Name: ");
             string _UserName = Console.ReadLine();
-            Console.Write("Mật Khẩu: ");
+            Console.Write("Password: ");
             string _Password = ReadPassword();
             Console.Write("You Name: ");
             string _FullName = Console.ReadLine();
@@ -108,22 +111,23 @@ namespace Persistence
             User user = new User(_UserID, _UserName, _Password, _FullName, _Birthday, _Email, _Phone, _AddressID, "Customer");
             userBL.InsertUser(user);
 
-            Console.WriteLine("Đăng ký thành công!");
-            Console.WriteLine("Nhấn phím bất kỳ để tiếp tục");
+            Console.WriteLine("Sign Up Success!");
+            Console.WriteLine("Press any key to continue");
             Console.ReadKey();
             CustomerPage(_UserID);
         }
         public void SigUpShop(int _UserID)
         {
-            Console.Write("Nhập tên Shop: ");
+            Console.WriteLine("---------- Register to open a store ---------");
+            Console.Write("Shop Name: ");
             string _ShopName = Console.ReadLine();
             int _AddressID = ReadAddress();
             int _ShopID = shopBL.ShopIDMax() + 1;
             Shop shop = new Shop(_ShopID, _ShopName, _UserID, _AddressID);
             shopBL.InsertShop(shop);
 
-            Console.WriteLine("Tạo cửa hàng thành công");
-            Console.WriteLine("Nhấn phím bất kỳ để vào cửa hàng");
+            Console.WriteLine("Create a successful store.");
+            Console.WriteLine("Press any key to enter the store");
             Console.ReadKey();
             SellerPage(_ShopID);
 
@@ -179,14 +183,14 @@ namespace Persistence
             }
             catch (System.Exception)
             {
-                Console.WriteLine($"Ngày sinh không hợp lệ, vui lòng nhập lại.");
+                Console.WriteLine($"Invalid birthdate, please re-enter.");
                 ReadBirthDay();
             }
             return _Birthday.ToString(format);
         }
         public int ReadAddress()
         {
-            Console.WriteLine("--- Địa chỉ ---");
+            Console.WriteLine("--- Address ---");
             Console.Write("City: ");
             string _City = Console.ReadLine();
             Console.Write("District: ");
@@ -205,6 +209,7 @@ namespace Persistence
         {
             CustomerPage customerPage = new CustomerPage();
             Console.Clear();
+            Console.WriteLine("---------- Home page ---------");
             Console.WriteLine("1. Search Product.");
             Console.WriteLine("2. Search Shop.");
             Console.WriteLine("3. Cart.");
@@ -216,10 +221,10 @@ namespace Persistence
             }      
             else
             {
-                Console.WriteLine("5. Đăng ký bán hàng."); 
+                Console.WriteLine("5. Sales registration."); 
             }
             Console.WriteLine("0. Exit.");
-            Console.Write("Chọn: ");
+            Console.Write("Choose: ");
             string? choice = Console.ReadLine();
             switch (choice)
             {
@@ -249,7 +254,7 @@ namespace Persistence
                     Environment.Exit(0);
                     break;
                 default:
-                    Console.WriteLine("Vui lòng chọn 0 - 4 !");
+                    Console.WriteLine("Please select 0 - 4!");
                     CustomerPage(_UserID);
                     break;
             }
@@ -258,11 +263,12 @@ namespace Persistence
         {
             SellerPage sellerPage = new SellerPage();
             Console.Clear();
-            Console.WriteLine("1. Quản lý đơn đặt hàng.");
-            Console.WriteLine("2. Quản lý sản phẩm.");
-            Console.WriteLine("3. Quản lý danh mục sản phẩm.");
-            Console.WriteLine("0. Quay lại");
-            Console.Write("Chọn: ");
+            Console.WriteLine($"---------- {shopBL.GetShopByID(_ShopID).ShopName} ---------");
+            Console.WriteLine("1. Order Manegement.");
+            Console.WriteLine("2. Product Manegement.");
+            Console.WriteLine("3. Category Manegement");
+            Console.WriteLine("0. Back");
+            Console.Write("Choose: ");
             string? choice = Console.ReadLine();
             switch (choice)
             {
@@ -280,7 +286,7 @@ namespace Persistence
                     CustomerPage(shop.UserID);
                     break;
                 default:
-                    Console.WriteLine("Vui lòng chọn 0 - 3 !");
+                    Console.WriteLine("Please select 0 - 3!");
                     SellerPage (_ShopID);
                     break;
             }

@@ -7,7 +7,7 @@ Console.InputEncoding = System.Text.Encoding.Unicode;
 
 Ecommerce ecommerce = new Ecommerce();
 
-ecommerce.CustomerPage(1);
+ecommerce.Menu();
 
 
 

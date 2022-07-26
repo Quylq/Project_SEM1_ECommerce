@@ -31,9 +31,9 @@ namespace Persistence
             Console.Clear();
             List<Order> orders = orderBL.GetOrdersByShopIDAndNotStatus(_ShopID, "Shopping");
             DisplayOrders(_ShopID, orders);
-            Console.WriteLine("Nhập Số thứ tự để xem chi tiết đơn hàng tương ứng");
-            Console.WriteLine("0. Quay lại.");
-            Console.Write("Chọn: ");
+            Console.WriteLine("Enter Order Number to view corresponding order details");
+            Console.WriteLine("0. Back.");
+            Console.Write("Choose: ");
             try
             {
                 int choice = Convert.ToInt32(Console.ReadLine());
@@ -54,11 +54,12 @@ namespace Persistence
         public void ProductManagement(int _ShopID)
         {
             Console.Clear();
-            Console.WriteLine("1. Tìm kiếm sản phẩm.");
-            Console.WriteLine("2. Tất cả sản phẩm.");
-            Console.WriteLine("3. Thêm sản phẩm.");
-            Console.WriteLine("0. Quay lại.");
-            Console.Write("Chọn: ");
+            Console.WriteLine("------------- Product Management -----------------");
+            Console.WriteLine("1. Search Product.");
+            Console.WriteLine("2. Product All.");
+            Console.WriteLine("3. Add Product.");
+            Console.WriteLine("0. Back.");
+            Console.Write("Choose: ");
             string? choice = Console.ReadLine();
             switch (choice)
             {
@@ -75,7 +76,7 @@ namespace Persistence
                     ecommerce.SellerPage(_ShopID);
                     break;
                 default:
-                    Console.WriteLine("Vui lòng chọn 0 - 3 !");
+                    Console.WriteLine("Please choose 0 - 3 !");
                     ProductManagement(_ShopID);
                     break;
             }
@@ -84,12 +85,12 @@ namespace Persistence
         {
             DisplayCategories(_ShopID);
             List<Category> categories = categoryBL.GetCategoriesByShopID(_ShopID);
-            Console.WriteLine($"Nhập \"View + Số thứ tự \" xem tất cả sản phẩm trong danh mục tương ứng.");
-            Console.WriteLine($"Nhập \"Add + Số thứ tự \" để thêm sản phẩm vào danh mục tương ứng.");
-            Console.WriteLine($"Nhập \"Delete + Số thứ tự \" để xóa danh mục tương ứng.");
-            Console.WriteLine($"+. Thêm Danh mục mới.");
-            Console.WriteLine($"0. Quay lại.");
-            Console.Write($"Chọn: ");
+            Console.WriteLine($"Enter \"View + Serial Number \" to view all products in the respective category.");
+            Console.WriteLine($"Enter \"Add + Serial Number \" to add the product to the respective category.");
+            Console.WriteLine($"Enter \"Delete + Serial Number \" to delete the corresponding category.");
+            Console.WriteLine($"+. Add New Category.");
+            Console.WriteLine($"0. Back.");
+            Console.Write($"Choose: ");
             string? choice = Console.ReadLine();
             if (choice == "0")
             {
@@ -114,15 +115,15 @@ namespace Persistence
                 int deleteNo = Convert.ToInt32(choice.ToLower().Replace(" ", "").Replace("delete", ""));
                 product_CategoryBL.DeleteProduct_CategoryByCategoryID(categories[deleteNo - 1].CategoryID);
                 categoryBL.DeleteCategoryByID(categories[deleteNo - 1].CategoryID);
-                Console.WriteLine("Xóa danh mục thành công !");
-                Console.WriteLine("Nhấn phím bất kỳ để tiếp tục");
+                Console.WriteLine("Delete category successfully !");
+                Console.WriteLine("Press any key to continue");
                 Console.ReadKey();
                 CategoryManagement(_ShopID);
             }
             else
             {
-                Console.WriteLine("Lựa chọn không hợp lệ !");
-                Console.WriteLine("Nhấn phím bất kỳ để tiếp tục");
+                Console.WriteLine("Invalid selection !");
+                Console.WriteLine("Press any key to continue");
                 Console.ReadKey();
                 CategoryManagement(_ShopID);
             }
@@ -130,7 +131,7 @@ namespace Persistence
         public void SearchProductOfShop(int _ShopID)
         {
             Console.Clear();
-            Console.WriteLine("Nhập sản phẩm bạn muốn tìm: ");
+            Console.WriteLine("Enter the product you want to find: ");
             string? _ProductName = Console.ReadLine();
             List<Product> products = new List<Product>();
             products = productBL.GetProductsByNameAndShopID(_ProductName, _ShopID);
@@ -151,10 +152,10 @@ namespace Persistence
             }
             List<List<object>> tableData = new List<List<object>>
             {
-                new List<object>{"Sản Phẩm", product.ProductName},
-                new List<object>{"Giá", product.Price.ToString("C0")},
-                new List<object>{"Hàng còn", product.Quantity},
-                new List<object>{"Danh mục", _ListCategory}
+                new List<object>{"Product", product.ProductName},
+                new List<object>{"Price", product.Price.ToString("C0")},
+                new List<object>{"Quantity", product.Quantity},
+                new List<object>{"Category", _ListCategory}
             
             };
             for (int i = 0; i < product.Description.Split('\n').Length; i++)
@@ -162,7 +163,7 @@ namespace Persistence
                 List<object> rowData;
                 if (i == 0)
                 {
-                    rowData = new List<object>{"Mô tả", product.Description.Split('\n')[i]};
+                    rowData = new List<object>{"Description", product.Description.Split('\n')[i]};
                 }
                 else
                 {
@@ -173,7 +174,7 @@ namespace Persistence
             Console.Clear();
             ConsoleTableBuilder
                 .From(tableData)
-                .WithTitle("Thông Tin sản phẩm ", ConsoleColor.Yellow, ConsoleColor.DarkGray)
+                .WithTitle("Product Information ", ConsoleColor.Yellow, ConsoleColor.DarkGray)
                 .WithCharMapDefinition(new Dictionary<CharMapPositions, char> {
                     {CharMapPositions.BottomLeft, '═' },
                     {CharMapPositions.BottomCenter, '═' },
@@ -197,11 +198,11 @@ namespace Persistence
                 })
                 .ExportAndWriteLine();
             ProductInformation:
-            Console.WriteLine("1. Cập nhật mô tả sản phẩm.");
-            Console.WriteLine("2. Cập nhật số lượng sản phẩm.");
-            Console.WriteLine("3. Thêm sản phẩm vào danh mục.");
-            Console.WriteLine("0. Quay lại.");
-            Console.Write("Chọn: ");
+            Console.WriteLine("1. Update product description.");
+            Console.WriteLine("2. Update product quantity.");
+            Console.WriteLine("3. Add Product to the category.");
+            Console.WriteLine("0. Back.");
+            Console.Write("Choose: ");
             string? choice = Console.ReadLine();
             switch (choice)
             {
@@ -219,7 +220,7 @@ namespace Persistence
                     ProductManagement(_ShopID);
                     break;
                 default:
-                    Console.WriteLine("Vui lòng chọn 0 - 2 !");
+                    Console.WriteLine("Please choose 0 - 2 !");
                     goto ProductInformation;
             }
         }
@@ -227,11 +228,11 @@ namespace Persistence
         public void UpdateDescription(int _ShopID, int _ProductID)
         {
             Console.Clear();
-            Console.Write("Mô tả mới: ");
+            Console.Write("New Description: ");
             string? _Description = Console.ReadLine();
             productBL.UpdateDescriptionOfProduct(_ProductID, _Description);
-            Console.WriteLine("Cập nhật thành công!");
-            Console.WriteLine("Nhập phím bất kỳ để tiếp tục");
+            Console.WriteLine("Update successful!");
+            Console.WriteLine("Enter any key to continue");
             Console.ReadKey();
             ProductInformation(_ShopID, _ProductID);
         }
@@ -239,11 +240,11 @@ namespace Persistence
         public void UpdateQuantity(int _ShopID, int _ProductID)
         {
             Console.Clear();
-            Console.Write("Số lượng sản phẩm còn: ");
+            Console.Write("Quantity: ");
             int _Quantity = Convert.ToInt32(Console.ReadLine());
             productBL.UpdateQuantityOfProduct(_ProductID, _Quantity);
-            Console.WriteLine("Cập nhật thành công!");
-            Console.WriteLine("Nhập phím bất kỳ để tiếp tục");
+            Console.WriteLine("Update successful!");
+            Console.WriteLine("Enter any key to continue");
             Console.ReadKey();
             ProductInformation(_ShopID, _ProductID);
         }
@@ -251,19 +252,19 @@ namespace Persistence
         public void AddProduct(int _ShopID)
         {
             Console.Clear();
-            Console.WriteLine("Tên sản phẩm: ");
+            Console.WriteLine("Product Name: ");
             string? _ProductName = Console.ReadLine();
-            Console.WriteLine("Giá sản phẩm: ");
+            Console.WriteLine("Price: ");
             int _Price = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("Số lượng sản phẩm: ");
+            Console.WriteLine("Quantity: ");
             int _Quantity = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("Mô tả: ");
+            Console.WriteLine("Description: ");
             string? _Description = Console.ReadLine();
             Product product = new Product(productBL.ProductIDMax() + 1, _ShopID, _ProductName, _Price, _Description, _Quantity);
             productBL.InsertProduct(product);
             AddProductToCategory(_ShopID, product.ProductID);
-            Console.WriteLine("Thêm sản phẩm thành công !");
-            Console.WriteLine("Nhấn phím bất kỳ để tiếp tục !");
+            Console.WriteLine("Add Product successfully !");
+            Console.WriteLine("Press any key to continue !");
             Console.ReadKey();
             ProductManagement(_ShopID);
         }
@@ -282,7 +283,7 @@ namespace Persistence
             }
             ConsoleTableBuilder
                 .From(tableData)
-                .WithColumn("STT", "Tên khách hàng", "Số lượng sản phẩm", "Tổng tiền", "Trạng Thái")
+                .WithColumn("STT", "Customer", "Quantity", "Total", "Status")
                 .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
                 .ExportAndWriteLine();
         }
@@ -308,30 +309,30 @@ namespace Persistence
             tableData.Add(rowData1);
             ConsoleTableBuilder
                 .From(tableData)
-                .WithTitle($"Khách hàng: {user.FullName} ", ConsoleColor.Yellow, ConsoleColor.DarkGray)
-                .WithColumn("STT", "Tên sản phẩm", "Giá", "Số lượng", "Thành Tiền")
+                .WithTitle($"Customer: {user.FullName} ", ConsoleColor.Yellow, ConsoleColor.DarkGray)
+                .WithColumn("STT", "Product Name", "Price", "Quantity", "Status")
                 .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
                 .ExportAndWriteLine();
             if (order.Status == "Processing")
             {
-                Console.WriteLine("1. Xác nhận.");
-                Console.WriteLine("2. Từ chối.");
-                Console.WriteLine("0. Quay lại.");
-                Console.Write($"Chọn: ");
+                Console.WriteLine("1. Confirm.");
+                Console.WriteLine("2. Refuse.");
+                Console.WriteLine("0. Back.");
+                Console.Write($"Choose: ");
                 string? choice = Console.ReadLine();
                 if (choice.ToLower() == "2")
                 {
                     orderBL.UpdateStatusOfOrder(_OrderID, "Failed");
-                    Console.WriteLine("Hủy đơn hàng thành công");
-                    Console.WriteLine("Nhấn phím bất kỳ để tiếp tục");
+                    Console.WriteLine("Canceled order successfully");
+                    Console.WriteLine("Press any key to continue");
                     Console.ReadKey();
                     OrderManagement(_ShopID);
                 }
                 else if (choice.ToLower() == "1")
                 {
                     orderBL.UpdateStatusOfOrder(_OrderID, "ToReceive");
-                    Console.WriteLine("Xác nhận thành công");
-                    Console.WriteLine("Nhấn phím bất kỳ để tiếp tục");
+                    Console.WriteLine("Successful confirmation");
+                    Console.WriteLine("Press any key to continue");
                     Console.ReadKey();
                     OrderManagement(_ShopID);
                 }
@@ -341,14 +342,14 @@ namespace Persistence
                 }
                 else
                 {
-                    Console.WriteLine("Vui lòng chọn 0 - 2");
+                    Console.WriteLine("Please choose 0 - 2");
                     Console.ReadKey();
                     ViewOrder(_ShopID, _OrderID);
                 }
             }
             else
             {
-                Console.WriteLine("Nhấn phím bất kỳ để quay lại");
+                Console.WriteLine("Press any key to go back");
                 Console.ReadKey();
                 OrderManagement(_ShopID);
             }
@@ -365,10 +366,10 @@ namespace Persistence
             }
             ConsoleTableBuilder
                 .From(tableData)
-                .WithColumn("STT", "Tên sản phẩm", "Giá", "Số lượng")
+                .WithColumn("STT", "Product Name", "Price", "Quantity")
                 .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
                 .ExportAndWriteLine();
-            Console.Write("Nhập số thứ tự để xem thông tin chi tiết hoặc \"0\" để quay lại: ");
+            Console.Write("Enter the sequence number to view details or \"0\" to go back: ");
             try
             {
                 int choice = Convert.ToInt32(Console.ReadLine());
@@ -410,18 +411,18 @@ namespace Persistence
             }
             ConsoleTableBuilder
                 .From(tableData)
-                .WithColumn("STT", "Tên sản phẩm", "Giá", "Số lượng")
+                .WithColumn("STT", "Product Name", "Price", "Quantity")
                 .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
                 .ExportAndWriteLine();
-            Console.Write("Nhập số thứ tự tương ứng để thêm sản phẩm vào Danh mục hoặc \"0\" để quay lại: ");
+            Console.Write("Enter the corresponding serial number to add the product to the Category or \"0\" to go back: ");
             try
             {
                 int choice = Convert.ToInt32(Console.ReadLine());
                 if (choice != 0)
                 {
                     product_CategoryBL.InsertProduct_Category(products[choice - 1].ProductID, _CategoryID);
-                    Console.WriteLine("Thêm sản phẩm vào danh mục thành công !");
-                    Console.WriteLine("Nhập phím bất kỳ để tiếp tục");
+                    Console.WriteLine("successfully added product to category!");
+                    Console.WriteLine("Enter any key to continue");
                     Console.ReadKey();
                     AddProductsToCategory(_ShopID, _CategoryID);
                 }
@@ -440,7 +441,7 @@ namespace Persistence
         {
             List<Category> categories = categoryBL.GetCategoriesByShopID(_ShopID);
             DisplayCategories(_ShopID);
-            Console.Write("Nhập số thứ tự để xem sản phẩm hoặc \"0\" để quay lại: ");
+            Console.Write("Enter the order number to view the product or \"0\" to go back: ");
             try
             {
                 int choice = Convert.ToInt32(Console.ReadLine());
@@ -464,7 +465,7 @@ namespace Persistence
         {
             List<Category> categories = categoryBL.GetCategoriesByShopID(_ShopID);
             DisplayCategories(_ShopID);
-            Console.Write("Nhập số thứ tự để thêm sản phẩm vào danh mục có sẵn hoặc 0 để quay lại : ");
+            Console.Write("Enter the order number to add the product to an existing catalog or 0 to go back : ");
             // try
             // {
                 ProductBL productBL = new ProductBL();
@@ -473,8 +474,8 @@ namespace Persistence
                 {
                     // xử lý TH đã có sẵn trong category
                     product_CategoryBL.InsertProduct_Category(_ProductID, categories[choice - 1].CategoryID);
-                    Console.WriteLine("Thêm sản phẩm vào danh mục thành công !");
-                    Console.WriteLine("Nhập phím bất kỳ để tiếp tục");
+                    Console.WriteLine("successfully added product to category !");
+                    Console.WriteLine("Enter any key to continue");
                     Console.ReadKey();
                 }
                 else
@@ -490,12 +491,12 @@ namespace Persistence
         }
         public void CreateCategory(int _ShopID)
         {
-            Console.WriteLine("Tên danh mục: ");
+            Console.WriteLine("Category Name: ");
             string? _CategoryName = Console.ReadLine();
             Category category = new Category(_ShopID, _CategoryName);
             categoryBL.InsertCategory(category);
-            Console.WriteLine("Thêm danh mục thành công");
-            Console.WriteLine("Nhấn phím bất kỳ để tiếp tục ");
+            Console.WriteLine("Add successful category");
+            Console.WriteLine("Press any key to continue ");
             Console.ReadKey();
             CategoryManagement(_ShopID);
         }
@@ -512,7 +513,7 @@ namespace Persistence
             }
             ConsoleTableBuilder
                 .From(tableData)
-                .WithColumn("STT", "Danh Mục")
+                .WithColumn("STT", "Category")
                 .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
                 .ExportAndWriteLine();
         }
