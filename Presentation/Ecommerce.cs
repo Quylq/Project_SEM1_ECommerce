@@ -97,6 +97,7 @@ namespace Persistence
             else
             {
                 Console.WriteLine($"Account name does not exist!");
+                Console.ReadKey();
                 Menu();
             }
 
@@ -192,15 +193,11 @@ namespace Persistence
             DateOnly _Birthday;
             string format = "yyyy-MM-dd";
             try
-            {
-                Console.WriteLine("------- Birthday ------- ");
-                Console.Write("Day: ");
-                int _Day = Convert.ToInt32(Console.ReadLine());
-                Console.Write("Month: ");
-                int _Mon = Convert.ToInt32(Console.ReadLine());
-                Console.Write("Year: ");
-                int _Year = Convert.ToInt32(Console.ReadLine());
-                _Birthday = new DateOnly(_Year, _Mon, _Day);
+            {           
+            Console.WriteLine("Birthday (dd/MM/yyyy): ");  
+            string s = Console.ReadLine();
+            string[] result = s.Replace(" ", "").Split('/', StringSplitOptions.None);
+            _Birthday = new DateOnly(Convert.ToInt32(result[2]), Convert.ToInt32(result[1]), Convert.ToInt32(result[0]));
             }
             catch (System.Exception)
             {

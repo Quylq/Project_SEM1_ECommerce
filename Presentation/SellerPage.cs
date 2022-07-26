@@ -1,6 +1,6 @@
 using BL;
-using System.Security.Cryptography;
-using System.Text;
+using ConsoleTableExt;
+
 
 namespace Persistence
 {
@@ -365,19 +365,21 @@ namespace Persistence
         public void DisplayProducts(int _ShopID, List<Product> products)
         {
             Console.Clear();
-            Console.WriteLine("|---------------------------------------------------------------------------------------|");
-            Console.WriteLine("| STT | Tên sản phẩm                                       |       Giá       | Số lượng |");
-            Console.WriteLine("|---------------------------------------------------------------------------------------|");
+            List<List<object>> tableData = new List<List<object>>();
             int count = 1;
             foreach (Product product in products)  
-            { 
-                Console.WriteLine("| {0,3 } | {1,-50} | {2, 15} | {3,8} |", count++, product.ProductName, product.Price.ToString("C0"), product.Quantity);
-                
+            {
+                List<object> rowData = new List<object>{count++, product.ProductName, product.Price.ToString("C0"), product.Quantity};
+                tableData.Add(rowData);
             }
-            Console.WriteLine("|---------------------------------------------------------------------------------------|");
+            ConsoleTableBuilder
+                .From(tableData)
+                .WithColumn("STT", "Tên sản phẩm", "Giá", "Số lượng")
+                .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
+                .ExportAndWriteLine();
             Console.Write("Nhập số thứ tự để xem thông tin chi tiết hoặc \"0\" để quay lại: ");
-            // try
-            // {
+            try
+            {
                 int choice = Convert.ToInt32(Console.ReadLine());
                 if (choice != 0)
                 {
@@ -387,12 +389,12 @@ namespace Persistence
                 {
                     ProductManagement(_ShopID);
                 }
-            // }
-            // catch (System.Exception)
-            // {
-            //     Console.Clear();
-            //     DisplayProducts(_ShopID, products);
-            // }
+            }
+            catch (System.Exception)
+            {
+                Console.Clear();
+                DisplayProducts(_ShopID, products);
+            }
         }
         public void ViewAllProducts(int _ShopID)
         {
@@ -406,17 +408,14 @@ namespace Persistence
         }
         public void AddProductsToCategory(int _ShopID, int _CategoryID)
         {
-            List<Product> products = productBL.GetProductsByShopID(_ShopID);
+            List<Product> products = GetProductsByShopIDAndCategoryID(_ShopID, _CategoryID);
             Console.WriteLine("|---------------------------------------------------------------------------------------|");
             Console.WriteLine("| STT | Tên sản phẩm                                       |       Giá       | Số lượng |");
             Console.WriteLine("|---------------------------------------------------------------------------------------|");
             int count = 1;
             foreach (Product product in products)  
             {
-                if (!CheckProductOfCategory(product.ProductID, _CategoryID))
-                {
-                    Console.WriteLine("| {0,3 } | {1,-50} | {2, 15} | {3,8} |", count++, product.ProductName, product.Price.ToString("C0"), product.Quantity);
-                }
+                Console.WriteLine("| {0,3 } | {1,-50} | {2, 15} | {3,8} |", count++, product.ProductName, product.Price.ToString("C0"), product.Quantity);
                 
             }
             Console.WriteLine("|---------------------------------------------------------------------------------------|");
@@ -508,18 +507,20 @@ namespace Persistence
         }
         public void DisplayCategories(int _ShopID)
         {
-            List<Category> categories = categoryBL.GetCategoriesByShopID(_ShopID);
             Console.Clear();
-            Console.WriteLine("|----------------------------------------------------------|");
-            Console.WriteLine("| STT |                     Danh mục                       |");
-            Console.WriteLine("|----------------------------------------------------------|");
+            List<List<object>> tableData = new List<List<object>>();
+            List<Category> categories = categoryBL.GetCategoriesByShopID(_ShopID);
             int count = 1;
-            foreach (Category category in categories) 
-            { 
-                Console.WriteLine("| {0,3 } | {1,-50} |", count++, category.CategoryName);
-                
+            foreach (Category category in categories)  
+            {
+                List<object> rowData = new List<object>{count++, category.CategoryName};
+                tableData.Add(rowData);
             }
-            Console.WriteLine("|----------------------------------------------------------|");
+            ConsoleTableBuilder
+                .From(tableData)
+                .WithColumn("STT", "Danh Mục")
+                .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
+                .ExportAndWriteLine();
         }
         public bool IsNumber(string pValue)
         {
@@ -544,6 +545,20 @@ namespace Persistence
             }
             
             return result;
+        }
+        public List<Product> GetProductsByShopIDAndCategoryID(int _ShopID, int _CategoryID)
+        {
+            List<Product> products = productBL.GetProductsByShopID(_ShopID);
+            List<Product> productsNew = new List<Product>();
+            foreach (Product product in products)  
+            {
+                if (!CheckProductOfCategory(product.ProductID, _CategoryID))
+                {
+                    productsNew.Add(product);
+                }
+                
+            }
+            return productsNew;
         }
     }
     
