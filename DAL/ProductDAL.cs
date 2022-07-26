@@ -62,7 +62,9 @@ namespace DAL
         // Lấy danh sách sản phẩm theo ID danh mục
         public List<Product> GetProductsByCategory(int _CategoryID)
         {    
-            query = $"select p.ProductID, p.ShopID, p.ProductName, p.Price, p.Description, p.Quantity from Products p inner join Product_Categories pc on p.ProductID = pc.ProductID where pc.CategoryID = {_CategoryID}";
+            query = $@"select p.ProductID, p.ShopID, p.ProductName, p.Price, p.Description, p.Quantity from Products p 
+            inner join Product_Categories pc on p.ProductID = pc.ProductID 
+            where pc.CategoryID = {_CategoryID}";
             DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
 
@@ -101,7 +103,7 @@ namespace DAL
             product.ShopID = reader.GetInt32("ShopID");
             product.ProductName = reader.GetString("ProductName");
             product.Price = reader.GetInt32("Price");
-            product.Description = reader.GetString("Description");
+            product.Description = reader.GetString("Description").Replace("\t", " ");
             product.Quantity = reader.GetInt32("Quantity");
 
             return product;

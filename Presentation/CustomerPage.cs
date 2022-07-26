@@ -92,17 +92,46 @@ namespace Persistence
                 new List<object>{"Cửa Hàng", shop.ShopName},
                 new List<object>{"Sản Phẩm", product.ProductName},
                 new List<object>{"Giá", product.Price.ToString("C0")},
-                new List<object>{"Mô tả", product.Description},
-                new List<object>{"Hàng còn", product.Quantity},
+                new List<object>{"Hàng còn", product.Quantity}
             };
+            for (int i = 0; i < product.Description.Split('\n').Length; i++)
+            {
+                List<object> rowData;
+                if (i == 0)
+                {
+                    rowData = new List<object>{"Mô tả", product.Description.Split('\n')[i]};
+                }
+                else
+                {
+                    rowData = new List<object>{"", product.Description.Split('\n')[i]};
+                }
+                tableData.Add(rowData);
+            } 
             Console.Clear();
             ConsoleTableBuilder
                 .From(tableData)
-                .WithTextAlignment(new Dictionary < int, TextAligntment>
-                    {
-                        {1, TextAligntment.Right }
-                    })
-                .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
+                .WithTitle("Thông Tin sản phẩm ", ConsoleColor.Yellow, ConsoleColor.DarkGray)
+                .WithCharMapDefinition(new Dictionary<CharMapPositions, char> {
+                    {CharMapPositions.BottomLeft, '═' },
+                    {CharMapPositions.BottomCenter, '═' },
+                    {CharMapPositions.BottomRight, '═' },
+                    {CharMapPositions.BorderTop, '═' },
+                    {CharMapPositions.BorderBottom, '═' },
+                    {CharMapPositions.BorderLeft, '│' },
+                    {CharMapPositions.BorderRight, '│' },
+                    {CharMapPositions.DividerY, '│' },
+                })
+                .WithHeaderCharMapDefinition(new Dictionary<HeaderCharMapPositions, char> {
+                    {HeaderCharMapPositions.TopLeft, '═' },
+                    {HeaderCharMapPositions.TopCenter, '═' },
+                    {HeaderCharMapPositions.TopRight, '═' },
+                    {HeaderCharMapPositions.BottomLeft, '│' },
+                    {HeaderCharMapPositions.BottomRight, '│' },
+                    {HeaderCharMapPositions.Divider, '│' },
+                    {HeaderCharMapPositions.BorderTop, '═' },
+                    {HeaderCharMapPositions.BorderLeft, '│' },
+                    {HeaderCharMapPositions.BorderRight, '│' },
+                })
                 .ExportAndWriteLine();
             Console.WriteLine($"Nhập Số lượng sản phẩm cần thêm vào giỏ hàng.");
             Console.WriteLine($"0. Quay lại.");
