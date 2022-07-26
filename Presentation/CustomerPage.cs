@@ -366,7 +366,7 @@ namespace Persistence
             else
             {
                 Console.WriteLine("Cart is empty");
-                Console.WriteLine("Nhấn phím bất kỳ để về Menu.");
+                Console.WriteLine("Press any key to return to Menu.");
                 Console.ReadKey();
                 ecommerce.CustomerPage(_UserID);
             }
@@ -483,9 +483,9 @@ namespace Persistence
             if (orders.Count > 0)
             {
                 DisplayOrders(_UserID, orders);
-                Console.WriteLine($"Nhập \"Confirm + Số thứ tự \" để xác nhận lấy hàng.");
-                Console.WriteLine($"Nhập \"Reject + Số thứ tự \" để từ chối lấy hàng.");
-                Console.WriteLine($"0. Quay lại.");
+                Console.WriteLine($"Enter \"Confirm + ID \" to confirm pick up.");
+                Console.WriteLine($"Enter \"Reject + ID \" to reject the order.");
+                Console.WriteLine($"0. Back.");
                 Console.Write($"Chọn: ");
                 string? choice = Console.ReadLine();
                 if (choice == "0")
@@ -496,8 +496,8 @@ namespace Persistence
                 {
                     int confirmNo = Convert.ToInt32(choice.ToLower().Replace(" ", "").Replace("confirm", ""));
                     orderBL.UpdateStatusOfOrder(orders[confirmNo-1].OrderID, "Finished");
-                    Console.WriteLine("Xác nhận thành công");
-                    Console.WriteLine("Nhấn phím bất kỳ để tiếp tục");
+                    Console.WriteLine("Successful confirmation");
+                    Console.WriteLine("Press any key to continue");
                     Console.ReadKey();
                     ViewOrdersToReceive(_UserID);
                 }
@@ -505,22 +505,22 @@ namespace Persistence
                 {
                     int rejectNo = Convert.ToInt32(choice.ToLower().Replace(" ", "").Replace("reject", ""));
                     orderBL.UpdateStatusOfOrder(orders[rejectNo-1].OrderID, "Failed");
-                    Console.WriteLine("Từ chối thành công");
-                    Console.WriteLine("Nhấn phím bất kỳ để tiếp tục");
+                    Console.WriteLine("Successful refusal");
+                    Console.WriteLine("Press any key to continue");
                     Console.ReadKey();
                     ViewOrdersToReceive(_UserID);
                 }
                 else
                 {
-                    Console.WriteLine("Lựa chọn không hợp lệ !");
+                    Console.WriteLine("Invalid selection !");
                     Console.ReadKey();
                     ViewOrdersToReceive(_UserID);
                 }
             }
             else
             {
-                Console.WriteLine("Không có đơn hàng ");
-                Console.WriteLine("Nhấn phím bất kỳ để tiếp tục");
+                Console.WriteLine("No orders ");
+                Console.WriteLine("Press any key to continue");
                 Console.ReadKey();
                 MyOrder(_UserID);
             }
