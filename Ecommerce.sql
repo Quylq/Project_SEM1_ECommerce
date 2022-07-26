@@ -57,6 +57,23 @@ create table Products
     constraint pk_Products primary key (ProductID)
 );
 
+DELIMITER $$
+CREATE TRIGGER ReplaceTab
+before INSERT ON Products FOR EACH ROW
+BEGIN
+	IF NEW.ProductName like '%\t%' then
+    INSERT INTO Products
+        SET
+            ProductID = NEW.ProductID,
+            ShopID = NEW.ShopID,
+            ProductName = replace(NEW.ProductName, '\t', ' '),
+            Description = replace(NEW.Description, '\t', ' '),
+            Price = NEW.Price,
+            Quantity = NEW.Quantity;
+	End IF;
+END $$
+DELIMITER ;
+
 create table Categories
 (
     CategoryID   int not null auto_increment,
@@ -670,9 +687,7 @@ Hướng dẫn sử dụng sản phẩm Ốp lưng iphone 5/5s/6/6s/6plus/6splus
 - Xuất xứ: Việt Nam', 20000, 100)
         ,
        (3, 'Giá đỡ điện thoại bằng kim loại HÌNH NGƯỜI cho điện thoại cao cấp', 'Material: Iron
-
 Color: White, Pink
-
 Car Size: 7.5*7*5 cm', 25000, 100)
         ,
        (3, 'Giá đỡ điện thoại hình ghế đẩu có thể gấp gọn để bàn đa chức năng nhiều màu', '- Chất liệu : Nhựa cứng
@@ -757,9 +772,7 @@ Thiết kế: Áo thun form suông, cổ tròn, tay ngắn basic in hình Stitch
 Kiểu dáng: Trẻ trung, năng động, cá tính, mẫu mã độc đáo hot hit
 Phù hợp nhiều hoàn cảnh: mặc đi học, đi chơi, đi du lịch, mặc hội nhóm siêu đẹp', 100000, 20),
        (4, 'SET VÁY YẾM KAKI BE + ÁO THUN TRẮNG - BỘ ĐẦM 2 DÂY BẢN TO MÀU BE DÁNG DÀI ULZZANG', 'Kiểu dáng: yếm 2 dây bản to chắc chắn, form dài . Mặc cả set này là độ cute tăng lên 1000% luôn ạ ^^
-
 Chất liệu: yếm kaki dày dặn  (shop có bán thêm áo trắng tay cộc chất thun mềm làm set nha)
-
 Form : yếm dài 107cm, v1, v2 từ 60- 90cm, v3 từ 70- 120cm. Tầm dưới 60-65kg đổ lại mặc xinh nha ', 115000, 20),
        (4, 'Sét áo SILENCE +quần ống rộng caro LN12', 'Áo chất cotton su màu trắng in silence và quần ống rộng caro
 Sản xuất tại: phuongmyt 0989401395
@@ -830,17 +843,11 @@ Size 35-39
 Chất liệu mặt trên: lưới + da PU
 Chiều cao gót: gót bằng, tăng chiều cao bên trong', 250000, 20),
        (4, 'Giày Thể Thao Nữ Thời Trang JUNO 5cm Sneaker Love Shack TT05009', 'Mã sản phẩm: TT05009
-
 Kiểu dáng: Giày sneaker
-
 Chất liệu: PU - Polyester
-
 Độ cao: 5cm
-
 Màu sắc: Kem-Trắng-Hồng-Xanh bạc hà
-
 Kích cỡ: 35-36-37-38-39
-
 Xuất xứ: Việt Nam', 999000, 20),
        (4, 'Giày Trắng Đế Dày Phong Cách Thời Trang Mùa Xuân Kiểu Mới Cho Nữ Sinh Dễ Phối Đồ', 'Chất liệu trên: da tổng hợp
 Chất liệu đế: cao su
@@ -880,19 +887,12 @@ Thiết kế tinh tế, nam tính:
 - Màu sắc tinh tế và sang trọng, dễ dàng phối đồ
 - Kiểu dáng khóa tự động, dễ dàng tháo ra cắt ngắn theo vòng eo, kích thước 3.6x120 cm', 130000, 20),
        (4, 'Thắt lưng nam da bò thật TRITA RTL034', '- Kích thước:  Dài 126cm, Rộng 3.5cm
-
 - Kiểu khóa: Khóa cài tự động.
-
 - Chất liệu: Da bò thật cao cấp.
-
 - Màu sắc: Nâu, Đen
-
 - Loại vân: Vân 7, Vân 15.
-
 - Trọng lượng: 97g
-
 - Xuất xứ: Việt Nam
-
 - Bảo hành: 365 ngày ', 500000, 20),
        (4, 'Thắt lưng da nam khóa kim loại IVY moda MS 35E3121', 'Kích thước: Bản dây 4cm (thông dụng) Chiều dài khoảng 125 cm
 Màu sắc: Đen
@@ -925,7 +925,6 @@ Dây nịt YaMe đều làm từ DA BÒ THẬT 100%
 - Bền bỉ
 - Sang trọng và tinh tế
 (*) Được tặng kèm hộp đựng ', 310000, 20);
-
 
 INSERT INTO ecommerce.categories (ShopID, CategoryName)
 VALUES (1, 'Kệ Để Đồ'),
