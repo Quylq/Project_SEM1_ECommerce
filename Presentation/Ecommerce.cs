@@ -24,7 +24,7 @@ namespace Persistence
             Console.WriteLine("1. Login ");
             Console.WriteLine("2. Sign UP ");
             Console.WriteLine("0. Exit");
-            Console.Write("Choice: ");
+            Console.Write("Choose: ");
             string? choice = Console.ReadLine();
             switch (choice)
             {
@@ -260,7 +260,7 @@ namespace Persistence
                     Menu();
                     break;
                 default:
-                    Console.WriteLine("Please select 0 - 4!");
+                    Console.WriteLine("Please choose 0 - 4!");
                     CustomerPage(_UserID);
                     break;
             }
@@ -292,7 +292,7 @@ namespace Persistence
                     CustomerPage(shop.UserID);
                     break;
                 default:
-                    Console.WriteLine("Please select 0 - 3!");
+                    Console.WriteLine("Please choose 0 - 3!");
                     SellerPage (_ShopID);
                     break;
             }

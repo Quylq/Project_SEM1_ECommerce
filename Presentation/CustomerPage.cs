@@ -221,6 +221,7 @@ namespace Persistence
                 Console.WriteLine("1. Confirm pick up.");
                 Console.WriteLine("2. Reject orders.");
                 Console.WriteLine("0. Back.");
+                Console.Write("Choose: ");
                 string? choice = Console.ReadLine();
                 if (choice == "1")
                 {
@@ -280,7 +281,7 @@ namespace Persistence
                 Console.WriteLine($"{count++}. {category.CategoryName}");
             }
             Console.WriteLine("0. Back.");
-            Console.Write("Choice: ");
+            Console.Write("Choose: ");
             try
             {
                 int choice = Convert.ToInt32(Console.ReadLine());
@@ -343,7 +344,7 @@ namespace Persistence
                     .ExportAndWriteLine();
                 Console.WriteLine("1. Payment");
                 Console.WriteLine("0. Back");
-                Console.Write($"Choice: ");
+                Console.Write($"Choose: ");
                 string? choice = Console.ReadLine();
                 if (choice == "1")
                 {
@@ -443,6 +444,7 @@ namespace Persistence
             DisplayOrders(_UserID, orders);
             Console.WriteLine("Enter ID to view order information.");
             Console.WriteLine("0. Back.");
+            Console.Write("Choose: ");
             try
             {
                 int choice = Convert.ToInt32(Console.ReadLine());
