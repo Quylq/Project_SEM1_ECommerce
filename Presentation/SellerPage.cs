@@ -29,34 +29,26 @@ namespace Persistence
         public void OrderManagement(int _ShopID)
         {
             Console.Clear();
-            Console.WriteLine("1. Chờ xác nhận.");
-            Console.WriteLine("2. Đang giao.");
-            Console.WriteLine("3. Hoàn thành.");
-            Console.WriteLine("4. Thất bại.");
+            List<Order> orders = orderBL.GetOrdersByShopIDAndNotStatus(_ShopID, "Shopping");
+            DisplayOrders(_ShopID, orders);
+            Console.WriteLine("Nhập Số thứ tự để xem chi tiết đơn hàng tương ứng");
             Console.WriteLine("0. Quay lại.");
             Console.Write("Chọn: ");
-            string? choice = Console.ReadLine();
-            switch (choice)
+            try
             {
-                case "1": 
-                    ViewOrdersProcessing(_ShopID);
-                    break; 
-                case "2":
-                    ViewOrdersToReceive(_ShopID);
-                    break;
-                case "3":
-                    ViewOrdersFinished(_ShopID);
-                    break;
-                case "4":
-                    ViewOrdersFailed(_ShopID);
-                    break;
-                case "0":
+                int choice = Convert.ToInt32(Console.ReadLine());
+                if (choice != 0)
+                {
+                    ViewOrder(_ShopID, orders[choice - 1].OrderID);
+                }
+                else
+                {
                     ecommerce.SellerPage(_ShopID);
-                    break;
-                default:
-                    Console.WriteLine("Vui lòng chọn 0 - 4 !");
-                    OrderManagement(_ShopID);
-                    break;
+                }
+            }
+            catch (System.Exception)
+            {
+                OrderManagement(_ShopID);
             }
         }
         public void ProductManagement(int _ShopID)
@@ -150,18 +142,60 @@ namespace Persistence
         public void ProductInformation(int _ShopID, int _ProductID)
         {
             Product product = productBL.GetProductByID(_ProductID);
-            Console.Clear();
-            Console.WriteLine($"Tên sản Phẩm: {product.ProductName}");
-            Console.WriteLine($"Giá: {product.Price.ToString("C0")}");
-            Console.WriteLine($"Mô tả: {product.Description}");
-            Console.WriteLine($"Số lượng: {product.Quantity}");
             List<Category> categories = categoryBL.GetCategoriesByProductID(_ProductID);
-            Console.Write($"Danh mục: ");
+            Console.Clear();
+            string _ListCategory = "";
             foreach (Category category in categories)
             {
-                Console.Write($"{category.CategoryName} ");
+                _ListCategory = String.Concat(_ListCategory, " ", category.CategoryName);
             }
-            Console.WriteLine("\n-----------------------------------------");
+            List<List<object>> tableData = new List<List<object>>
+            {
+                new List<object>{"Sản Phẩm", product.ProductName},
+                new List<object>{"Giá", product.Price.ToString("C0")},
+                new List<object>{"Hàng còn", product.Quantity},
+                new List<object>{"Danh mục", _ListCategory}
+            
+            };
+            for (int i = 0; i < product.Description.Split('\n').Length; i++)
+            {
+                List<object> rowData;
+                if (i == 0)
+                {
+                    rowData = new List<object>{"Mô tả", product.Description.Split('\n')[i]};
+                }
+                else
+                {
+                    rowData = new List<object>{"", product.Description.Split('\n')[i]};
+                }
+                tableData.Add(rowData);
+            } 
+            Console.Clear();
+            ConsoleTableBuilder
+                .From(tableData)
+                .WithTitle("Thông Tin sản phẩm ", ConsoleColor.Yellow, ConsoleColor.DarkGray)
+                .WithCharMapDefinition(new Dictionary<CharMapPositions, char> {
+                    {CharMapPositions.BottomLeft, '═' },
+                    {CharMapPositions.BottomCenter, '═' },
+                    {CharMapPositions.BottomRight, '═' },
+                    {CharMapPositions.BorderTop, '═' },
+                    {CharMapPositions.BorderBottom, '═' },
+                    {CharMapPositions.BorderLeft, '│' },
+                    {CharMapPositions.BorderRight, '│' },
+                    {CharMapPositions.DividerY, '│' },
+                })
+                .WithHeaderCharMapDefinition(new Dictionary<HeaderCharMapPositions, char> {
+                    {HeaderCharMapPositions.TopLeft, '═' },
+                    {HeaderCharMapPositions.TopCenter, '═' },
+                    {HeaderCharMapPositions.TopRight, '═' },
+                    {HeaderCharMapPositions.BottomLeft, '│' },
+                    {HeaderCharMapPositions.BottomRight, '│' },
+                    {HeaderCharMapPositions.Divider, '│' },
+                    {HeaderCharMapPositions.BorderTop, '═' },
+                    {HeaderCharMapPositions.BorderLeft, '│' },
+                    {HeaderCharMapPositions.BorderRight, '│' },
+                })
+                .ExportAndWriteLine();
             ProductInformation:
             Console.WriteLine("1. Cập nhật mô tả sản phẩm.");
             Console.WriteLine("2. Cập nhật số lượng sản phẩm.");
@@ -236,130 +270,87 @@ namespace Persistence
         public void DisplayOrders(int _ShopID, List<Order> orders)
         {
             Console.Clear();
-            Console.WriteLine("|-----------------------------------------------------------------------------------------------|");
-            Console.WriteLine("| STT | Tên khách hàng                  | Số lượng sản phẩm |       Tổng tiền     |  Trạng Thái |");
-            Console.WriteLine("|-----------------------------------------------------------------------------------------------|");
+            List<List<object>> tableData = new List<List<object>>();
             int count = 1;
             for (int i = 0; i < orders.Count; i++)
             {
                 int total = orderBL.GetTotalOrder(orders[i].OrderID);
                 User user = userBL.GetUserByID(orders[i].UserID);
                 List<OrderDetails> orderDetailsList = orderDetailsBL.GetOrderDetailsListByOrderID(orders[i].OrderID);
-                Console.WriteLine("| {0,3 } | {1,-31} | {2,17} | {3,19} | {4,11} |", count++, user.FullName, orderDetailsList.Count, total.ToString("C0"), orders[i].Status);
+                List<object> rowData = new List<object>{count++, user.FullName, orderDetailsList.Count, total.ToString("C0"), orders[i].Status};
+                tableData.Add(rowData);
             }
-            Console.WriteLine("|-----------------------------------------------------------------------------------------------|");
-        }
-        public void ViewOrdersToReceive(int _ShopID)
-        {
-            List<Order> orders = orderBL.GetOrdersByStatusAndShopID("ToReceive", _ShopID);
-            DisplayOrders(_ShopID, orders);
-            Console.WriteLine("Nhấn phím bất kỳ để quay lại");
-            Console.ReadKey();
-            OrderManagement(_ShopID);
-        }
-        public void ViewOrdersFinished(int _ShopID)
-        {
-            List<Order> orders = orderBL.GetOrdersByStatusAndShopID("Finished", _ShopID);
-            DisplayOrders(_ShopID, orders);
-            Console.WriteLine("Nhấn phím bất kỳ để quay lại");
-            Console.ReadKey();
-            OrderManagement(_ShopID);
-        }
-        public void ViewOrdersFailed(int _ShopID)
-        {
-            List<Order> orders = orderBL.GetOrdersByStatusAndShopID("Failed", _ShopID);
-            DisplayOrders(_ShopID, orders);
-            Console.WriteLine("Nhấn phím bất kỳ để quay lại");
-            Console.ReadKey();
-            OrderManagement(_ShopID);
-        }
-        public void ViewOrdersProcessing(int _ShopID)
-        {
-            List<Order> orders = orderBL.GetOrdersByStatusAndShopID("Processing", _ShopID);
-            if (orders.Count > 0)
-            {
-                DisplayOrders(_ShopID, orders);
-                Console.WriteLine($"Nhập Số thứ tự tương ứng để xem chi tiết đơn hàng.");
-                Console.WriteLine($"0. Quay lại.");
-                Console.Write($"Chọn: ");
-                int choice = Convert.ToInt32(Console.ReadLine()) ;
-                try
-                {
-                    if (choice == 0)
-                    {
-                        OrderManagement(_ShopID);
-                    }
-                    else if (choice != 0)
-                    {
-                        ViewOrder(_ShopID, orders[choice - 1].OrderID);
-                    }
-                }
-                catch (System.Exception)
-                {
-                    ViewOrdersProcessing(_ShopID);
-                }
-            }
-            else
-            {
-                Console.WriteLine("Không có đơn hàng");
-                Console.WriteLine("Nhập phím bất kỳ để tiếp tục");
-                Console.ReadKey();
-                OrderManagement(_ShopID);
-            }
+            ConsoleTableBuilder
+                .From(tableData)
+                .WithColumn("STT", "Tên khách hàng", "Số lượng sản phẩm", "Tổng tiền", "Trạng Thái")
+                .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
+                .ExportAndWriteLine();
         }
         public void ViewOrder(int _ShopID, int _OrderID)
         {
             Order order = orderBL.GetOrderByID(_OrderID);
             List<OrderDetails> orderDetailsList = orderDetailsBL.GetOrderDetailsListByOrderID(_OrderID);
             User user = userBL.GetUserByID(order.UserID);
-            Address address = addressBL.GetAddressByID(user.AddressID);
-            Console.WriteLine($"Cửa Hàng: {user.FullName}");
-            Console.WriteLine($"Đia chỉ: {address.City}");
-            Console.WriteLine("|--------------------------------------------------------------------------------------------|");
-            Console.WriteLine("| STT | Tên sản phẩm                        |       Giá       | Số lượng |    Thành Tiền     |");
-            Console.WriteLine("|--------------------------------------------------------------------------------------------|");
+            Console.Clear();
+            List<List<object>> tableData = new List<List<object>>();
             int count = 1;
-            int total = 0;
+            int total = orderBL.GetTotalOrder(_OrderID);
             foreach (OrderDetails orderDetails in orderDetailsList)  
-            { 
+            {
                 if (orderDetails.ProductNumber > 0)
                 {
                     Product product = productBL.GetProductByID(orderDetails.ProductID);
-                    Console.WriteLine("| {0,3 } | {1,-35} | {2, 15} | {3,8} | {4, 17} |", count++, product.ProductName, product.Price.ToString("C0"), orderDetails.ProductNumber, (product.Price * orderDetails.ProductNumber).ToString("C0"));
+                    List<object> rowData = new List<object>{count++, product.ProductName, product.Price.ToString("C0"), orderDetails.ProductNumber, (product.Price * orderDetails.ProductNumber).ToString("C0")};
+                    tableData.Add(rowData);
                 }
             }
-            Console.WriteLine("|--------------------------------------------------------------------------------------------|");
-            total = orderBL.GetTotalOrder(_OrderID);
-            Console.WriteLine("Tổng Tiền:  {0, 17} ", total.ToString("C0"));
-            Console.WriteLine("1. Xác nhận.");
-            Console.WriteLine("2. Từ chối.");
-            Console.WriteLine("0. Quay lại.");
-            Console.Write($"Chọn: ");
-            string? choice = Console.ReadLine();
-            if (choice.ToLower() == "2")
+            List<object> rowData1 = new List<object>{"", "", "", "", total.ToString("C0")};
+            tableData.Add(rowData1);
+            ConsoleTableBuilder
+                .From(tableData)
+                .WithTitle($"Khách hàng: {user.FullName} ", ConsoleColor.Yellow, ConsoleColor.DarkGray)
+                .WithColumn("STT", "Tên sản phẩm", "Giá", "Số lượng", "Thành Tiền")
+                .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
+                .ExportAndWriteLine();
+            if (order.Status == "Processing")
             {
-                orderBL.UpdateStatusOfOrder(_OrderID, "Failed");
-                Console.WriteLine("Hủy đơn hàng thành công");
-                Console.WriteLine("Nhấn phím bất kỳ để tiếp tục");
-                Console.ReadKey();
-                ViewOrdersProcessing(_ShopID);
-            }
-            else if (choice.ToLower() == "1")
-            {
-                orderBL.UpdateStatusOfOrder(_OrderID, "ToReceive");
-                Console.WriteLine("Xác nhận thành công");
-                Console.WriteLine("Nhấn phím bất kỳ để tiếp tục");
-                Console.ReadKey();
-                ViewOrdersProcessing(_ShopID);
-            }
-            else if (choice == "0")
-            {
-                ViewOrdersProcessing(_ShopID);
+                Console.WriteLine("1. Xác nhận.");
+                Console.WriteLine("2. Từ chối.");
+                Console.WriteLine("0. Quay lại.");
+                Console.Write($"Chọn: ");
+                string? choice = Console.ReadLine();
+                if (choice.ToLower() == "2")
+                {
+                    orderBL.UpdateStatusOfOrder(_OrderID, "Failed");
+                    Console.WriteLine("Hủy đơn hàng thành công");
+                    Console.WriteLine("Nhấn phím bất kỳ để tiếp tục");
+                    Console.ReadKey();
+                    OrderManagement(_ShopID);
+                }
+                else if (choice.ToLower() == "1")
+                {
+                    orderBL.UpdateStatusOfOrder(_OrderID, "ToReceive");
+                    Console.WriteLine("Xác nhận thành công");
+                    Console.WriteLine("Nhấn phím bất kỳ để tiếp tục");
+                    Console.ReadKey();
+                    OrderManagement(_ShopID);
+                }
+                else if (choice == "0")
+                {
+                    OrderManagement(_ShopID);
+                }
+                else
+                {
+                    Console.WriteLine("Vui lòng chọn 0 - 2");
+                    Console.ReadKey();
+                    ViewOrder(_ShopID, _OrderID);
+                }
             }
             else
             {
-                Console.WriteLine("Vui lòng chọn 0 - 2");
-                ViewOrder(_ShopID, _OrderID);
+                Console.WriteLine("Nhấn phím bất kỳ để quay lại");
+                Console.ReadKey();
+                OrderManagement(_ShopID);
             }
         }
         public void DisplayProducts(int _ShopID, List<Product> products)
@@ -409,16 +400,19 @@ namespace Persistence
         public void AddProductsToCategory(int _ShopID, int _CategoryID)
         {
             List<Product> products = GetProductsByShopIDAndCategoryID(_ShopID, _CategoryID);
-            Console.WriteLine("|---------------------------------------------------------------------------------------|");
-            Console.WriteLine("| STT | Tên sản phẩm                                       |       Giá       | Số lượng |");
-            Console.WriteLine("|---------------------------------------------------------------------------------------|");
+            Console.Clear();
+            List<List<object>> tableData = new List<List<object>>();
             int count = 1;
             foreach (Product product in products)  
             {
-                Console.WriteLine("| {0,3 } | {1,-50} | {2, 15} | {3,8} |", count++, product.ProductName, product.Price.ToString("C0"), product.Quantity);
-                
+                List<object> rowData = new List<object>{count++, product.ProductName, product.Price.ToString("C0"), product.Quantity};
+                tableData.Add(rowData);
             }
-            Console.WriteLine("|---------------------------------------------------------------------------------------|");
+            ConsoleTableBuilder
+                .From(tableData)
+                .WithColumn("STT", "Tên sản phẩm", "Giá", "Số lượng")
+                .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
+                .ExportAndWriteLine();
             Console.Write("Nhập số thứ tự tương ứng để thêm sản phẩm vào Danh mục hoặc \"0\" để quay lại: ");
             try
             {
