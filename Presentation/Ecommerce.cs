@@ -49,12 +49,14 @@ namespace Persistence
                             Menu();
                             break;
                         default:
+                            Console.WriteLine();
                             Console.WriteLine("Please choose 1 or 2!");
                             Menu();
                             break;
                     }
                     break;
                 default:
+                    Console.WriteLine();
                     Console.WriteLine("Please choose 0 - 2!");
                     Menu();
                     break;
@@ -64,7 +66,7 @@ namespace Persistence
         {
             Console.Clear();
             Console.WriteLine("-------------------------------------------");
-            Console.WriteLine("|------------- ECOMMERCE -------------|");
+            Console.WriteLine("| -------------  ECOMMERCE  ------------- |");
             Console.WriteLine("-------------------------------------------");
             Console.WriteLine();
             Console.Write("UserName: ");
@@ -106,7 +108,7 @@ namespace Persistence
         {
             Console.Clear();
             Console.WriteLine("-------------------------------------------");
-            Console.WriteLine("|------------- ECOMMERCE -------------|");
+            Console.WriteLine("| -------------  ECOMMERCE  ------------- |");
             Console.WriteLine("-------------------------------------------");
             Console.WriteLine();
             Console.Write("UserName: ");
@@ -134,7 +136,7 @@ namespace Persistence
         {
             Console.Clear();
             Console.WriteLine("-------------------------------------------");
-            Console.WriteLine("|------------- ECOMMERCE -------------|");
+            Console.WriteLine("| -------------  ECOMMERCE  ------------- |");
             Console.WriteLine("-------------------------------------------");
             Console.WriteLine();
             Console.Write("Shop Name: ");
@@ -228,7 +230,7 @@ namespace Persistence
             CustomerPage customerPage = new CustomerPage();
             Console.Clear();
             Console.WriteLine("-------------------------------------------");
-            Console.WriteLine("|------------- ECOMMERCE -------------|");
+            Console.WriteLine("| -------------  ECOMMERCE  ------------- |");
             Console.WriteLine("-------------------------------------------");
             Console.WriteLine();
             Console.WriteLine("1. Search Product.");
@@ -285,7 +287,7 @@ namespace Persistence
             SellerPage sellerPage = new SellerPage();
             Console.Clear();
             Console.WriteLine("-------------------------------------------");
-            Console.WriteLine("|------------- ECOMMERCE -------------|");
+            Console.WriteLine("| -------------  ECOMMERCE  ------------- |");
             Console.WriteLine("-------------------------------------------");
             Console.WriteLine();
             Console.WriteLine("1. Order Management.");

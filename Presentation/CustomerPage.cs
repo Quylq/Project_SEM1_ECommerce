@@ -30,9 +30,9 @@ namespace Persistence
         public void SearchProduct(int _UserID)
         {
             Console.Clear();
-            Console.WriteLine("Nhập sản phẩm bạn muốn tìm hoặc \"Menu\" để quay lại: ");
+            Console.WriteLine("Enter product name to search or \"0\" to go back: ");
             string? _ProductName = Console.ReadLine();
-            if (_ProductName.ToLower() != "menu")
+            if (_ProductName.ToLower() != "0")
             {
                 List<Product> products = new List<Product>();
                 products = productBL.GetProductsByName(_ProductName);
@@ -49,14 +49,14 @@ namespace Persistence
             int count = 1;
             foreach (Product product in products)  
             { 
-                string status = product.Quantity == 0? "Hết Hàng" : "Còn Hàng";
+                string status = product.Quantity == 0? "Out of stock" : "Stocking";
                 List<object> rowData = new List<object>{count++, product.ProductName, product.Price.ToString("C0"), status};
                 tableData.Add(rowData);
             }
             Console.Clear();
             ConsoleTableBuilder
                 .From(tableData)
-                .WithColumn("STT", "Tên Sản Phẩm", "Giá", "Tình Trạng")
+                .WithColumn("ID", "Product's name", "Price", "Status")
                 .WithTextAlignment(new Dictionary < int, TextAligntment>
                     {
                         {2, TextAligntment.Right },
@@ -64,7 +64,7 @@ namespace Persistence
                     })
                 .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
                 .ExportAndWriteLine();
-            Console.Write("Nhập số thứ tự tương ứng để xem thông tin sản phẩm hoặc \"0\" để tìm sản phẩm khác: ");
+            Console.Write("Enter ID to view product information or \"0\" to find other products: ");
             try
             {
                 int choice = Convert.ToInt32(Console.ReadLine());
@@ -86,20 +86,20 @@ namespace Persistence
         {
             Product product = productBL.GetProductByID(_ProductID);
             Shop shop = shopBL.GetShopByID(product.ShopID);
-            string status = product.Quantity == 0? "Hết Hàng" : "Còn Hàng";
+            string status = product.Quantity == 0? "Out of stock" : "Stocking";
             List<List<object>> tableData = new List<List<object>>
             {
-                new List<object>{"Cửa Hàng", shop.ShopName},
-                new List<object>{"Sản Phẩm", product.ProductName},
-                new List<object>{"Giá", product.Price.ToString("C0")},
-                new List<object>{"Hàng còn", product.Quantity}
+                new List<object>{"Shop Name", shop.ShopName},
+                new List<object>{"Product Name", product.ProductName},
+                new List<object>{"Price", product.Price.ToString("C0")},
+                new List<object>{"Quantity", product.Quantity}
             };
             for (int i = 0; i < product.Description.Split('\n').Length; i++)
             {
                 List<object> rowData;
                 if (i == 0)
                 {
-                    rowData = new List<object>{"Mô tả", product.Description.Split('\n')[i]};
+                    rowData = new List<object>{"Description", product.Description.Split('\n')[i]};
                 }
                 else
                 {
@@ -110,7 +110,7 @@ namespace Persistence
             Console.Clear();
             ConsoleTableBuilder
                 .From(tableData)
-                .WithTitle("Thông Tin sản phẩm ", ConsoleColor.Yellow, ConsoleColor.DarkGray)
+                .WithTitle("Product Information ", ConsoleColor.Yellow, ConsoleColor.DarkGray)
                 .WithCharMapDefinition(new Dictionary<CharMapPositions, char> {
                     {CharMapPositions.BottomLeft, '═' },
                     {CharMapPositions.BottomCenter, '═' },
@@ -133,7 +133,7 @@ namespace Persistence
                     {HeaderCharMapPositions.BorderRight, '│' },
                 })
                 .ExportAndWriteLine();
-            Console.WriteLine($"Nhập Số lượng sản phẩm cần thêm vào giỏ hàng.");
+            Console.WriteLine($"Enter Quantity of products to add to cart.");
             Console.WriteLine($"0. Quay lại.");
             Console.Write($"Chọn: ");
             int choice = Convert.ToInt32(Console.ReadLine());
@@ -169,8 +169,8 @@ namespace Persistence
                             orderDetailsBL.UpdateProductNumberOfOrderDetails(orderDetailsList[j]);
                         }
                     }
-                    Console.WriteLine($"Đã thêm {choice} sản phẩm vào giỏ hàng thành công.");
-                    Console.WriteLine("Nhấn phím bất kỳ để tiếp tục.");
+                    Console.WriteLine($"Added {choice} products to cart successfully.");
+                    Console.WriteLine("Press any key to continue.");
                     Console.ReadKey();
                     ProductInformation(_UserID, _ProductID);
                 }
@@ -183,130 +183,6 @@ namespace Persistence
             {
                 ProductInformation(_UserID, _ProductID);
             }
-        }
-        public void ProductInformationOfCart(int _UserID, int _ProductID)
-        {
-            Product product = productBL.GetProductByID(_ProductID);
-            Shop shop = shopBL.GetShopByID(product.ShopID);
-            Console.WriteLine($"Cửa hàng: {shop.ShopName}");
-            Console.WriteLine($"---------------------------------");
-            Console.WriteLine($"Sản Phẩm: {product.ProductName}");
-            Console.WriteLine($"Giá: {product.Price.ToString("C0")}");
-            Console.WriteLine($"Mô tả: {product.Description}");
-            string status = product.Quantity == 0? "Hết Hàng" : "Còn Hàng";
-            Console.WriteLine($"Tình trạng: {status}");
-            Console.WriteLine($"---------------------------------");
-            Console.WriteLine($"Nhập \"Add + Số lượng \" để thêm số sản phẩm tương ứng vào giỏ hàng.");
-            Console.WriteLine($"Nhập \"Sub + Số lượng \" để bớt số sản phẩm tương ứng ra khỏi giỏ hàng.");
-            Console.WriteLine($"1. Đến giỏ hàng.");
-            Console.WriteLine($"2. Vào cửa hàng {shop.ShopName}.");
-            Console.WriteLine($"0. Quay lại.");
-            Console.Write($"Chọn: ");
-            string? choice = Console.ReadLine();
-            if (choice == "1")
-            {
-                ViewCart(_UserID);
-            }
-            else if (choice == "2")
-            {
-                viewShop(_UserID, shop.ShopID);
-            }
-            else if (choice == "0")
-            {
-                SearchProduct(_UserID);
-            }
-            else if (IsNumber(choice.ToLower().Replace(" ", "").Replace("add", "")))
-            {
-                List<Order> orders = orderBL.GetOrdersByStatusAndUserID("Shopping", _UserID);
-                int addNo = Convert.ToInt32(choice.ToLower().Replace(" ", "").Replace("add", "")) ;
-                int i = CheckShopOfOrders(orders, product.ShopID);
-                Console.WriteLine($"{i}");
-                    Console.ReadKey();
-                if (i == -1)
-                {
-                    string format = "yyyy-MM-dd HH:mm:ss";
-                    DateTime now = DateTime.Now;
-                    Order order = new Order(orderBL.OrderIDMax() + 1, _UserID, product.ShopID, now.ToString(format), "Shopping");
-                    orderBL.InsertOrder(order);
-                    Console.ReadKey();
-                    OrderDetails orderDetails = new OrderDetails(order.OrderID, product.ProductID, addNo);
-                    orderDetailsBL.InsertOrderDetails(orderDetails);
-                }
-                else
-                {                   
-                    Order order = orderBL.GetOrderByID(orders[i].OrderID);
-                    List<OrderDetails> orderDetailsList = orderDetailsBL.GetOrderDetailsListByOrderID(order.OrderID);
-                    if (CheckProductOfOrderDetails(orderDetailsList, product.ProductID) == -1)
-                    {
-                        OrderDetails orderDetails = new OrderDetails(order.OrderID, product.ProductID, addNo);
-                        orderDetailsBL.InsertOrderDetails(orderDetails);
-                    }
-                    else
-                    {
-                        int j = CheckProductOfOrderDetails(orderDetailsList, product.ProductID);
-                        orderDetailsList[j].ProductNumber += addNo;
-                        orderDetailsBL.UpdateProductNumberOfOrderDetails(orderDetailsList[j]);
-                    }
-                }
-                Console.Clear();
-                Console.WriteLine($"---------------------------------");
-                Console.WriteLine("Thêm vào giỏ hàng thành công.");
-                Console.WriteLine("Nhấn phím bất kỳ để tiếp tục.");
-                Console.ReadKey();
-                ProductInformation(_UserID, _ProductID);
-            }
-            else if (IsNumber(choice.ToLower().Replace(" ", "").Replace("sub", "")))
-            {
-                List<Order> orders = orderBL.GetOrdersByStatusAndUserID("Shopping", _UserID);
-                if (orders == null)
-                {
-                    Console.WriteLine("Sản phẩm không có trong giỏ hàng.");
-                    Console.WriteLine("Nhấn phím bất kỳ để tiếp tục.");
-                    Console.ReadKey();
-                    ProductInformation(_UserID, _ProductID);
-                }
-                int num = Convert.ToInt32(choice.ToLower().Replace(" ", "").Replace("sub", ""));
-                int i = CheckShopOfOrders(orders, product.ShopID);
-                if (i == -1)
-                {
-                    Console.WriteLine("Sản phẩm không có trong giỏ hàng.");
-                    Console.WriteLine("Nhấn phím bất kỳ để tiếp tục.");
-                    Console.ReadKey();
-                    ProductInformation(_UserID, _ProductID);
-                }
-                else
-                {
-                    Order order = orderBL.GetOrderByID(orders[i].OrderID);
-                    List<OrderDetails> orderDetailsList = orderDetailsBL.GetOrderDetailsListByOrderID(order.OrderID);
-                    if (CheckProductOfOrderDetails(orderDetailsList, product.ProductID) == -1)
-                    {
-                        Console.WriteLine("Sản phẩm không có trong giỏ hàng.");
-                        Console.WriteLine("Nhấn phím bất kỳ để tiếp tục.");
-                        Console.ReadKey();
-                        ProductInformation(_UserID, _ProductID);
-                    }
-                    else
-                    {
-                        int j = CheckProductOfOrderDetails(orderDetailsList, product.ProductID);
-                        orderDetailsList[j].ProductNumber -= num;
-                        if (orderDetailsList[j].ProductNumber < 0)
-                        {
-                            orderDetailsList[j].ProductNumber = 0;
-                        }
-                        orderDetailsBL.UpdateProductNumberOfOrderDetails(orderDetailsList[j]);
-                        Console.WriteLine("Bỏ khỏi giỏ hàng thành công.");
-                        Console.WriteLine("Nhấn phím bất kỳ để tiếp tục.");
-                        Console.ReadKey();
-                        ProductInformation(_UserID, _ProductID);
-                    }
-                }
-            }
-            else
-            {
-                Console.WriteLine("Lựa chọn không hợp lệ !");
-                Console.ReadKey();
-                ProductInformation(_UserID, _ProductID);
-            }  
         }
         public void ViewOrder(int _UserID, int _OrderID)
         {
@@ -329,7 +205,7 @@ namespace Persistence
             tableData.Add(rowTotal);
             ConsoleTableBuilder
                 .From(tableData)
-                .WithColumn("Cửa Hàng", "STT", "Sản Phẩm", "Giá", "Số lượng", "Thành Tiền")
+                .WithColumn("Shop Name", "ID", "Product's Name", "Price", "Quantity", "Into Money")
                 .WithTextAlignment(new Dictionary < int, TextAligntment>
                     {
                         {4, TextAligntment.Right },
@@ -340,30 +216,29 @@ namespace Persistence
                 .ExportAndWriteLine();
             if (order.Status == "ToReceive")
             {
-                Console.WriteLine("1. Xác nhận lấy hàng.");
-                Console.WriteLine("2. Từ chối lấy hàng.");
-                Console.WriteLine("0. Quay lại.");
+                Console.WriteLine("1. Confirm pick up.");
+                Console.WriteLine("2. Reject orders");
+                Console.WriteLine("0. Back.");
                 string? choice = Console.ReadLine();
                 if (choice == "1")
                 {
                     orderBL.UpdateStatusOfOrder(order.OrderID, "Finished");
-                    Console.WriteLine("Lấy hàng thành công");
-                    Console.WriteLine("Nhấn phím bất kỳ để tiếp tục");
+                    Console.WriteLine("Pick up successfully");
+                    Console.WriteLine("Press any key to continue.");
                     Console.ReadKey();
                 }
                 else if (choice == "2")
                 {
                     orderBL.UpdateStatusOfOrder(order.OrderID, "Failed");
-                    Console.WriteLine("Từ chối nhận hàng thành công");
-                    Console.WriteLine("Nhấn phím bất kỳ để tiếp tục");
+                    Console.WriteLine("Successfully refused order");
+                    Console.WriteLine("Press any key to continue.");
                     Console.ReadKey();
-
                 }
                 MyOrder(_UserID);
             }
             else
             {
-                Console.WriteLine("Nhấn phím bất kỳ để tiếp tục");
+                Console.WriteLine("Press any key to continue.");
                 Console.ReadKey();
                 MyOrder(_UserID);
             }
@@ -395,15 +270,15 @@ namespace Persistence
         public void viewShop(int _UserID, int _ShopID)
         {
             Console.Clear();
-            Console.WriteLine("1. Tất cả sản phẩm");
+            Console.WriteLine("1. All products");
             List<Category> categories = categoryBL.GetCategoriesByShopID(_ShopID);
             int count = 2;
             foreach (Category category in categories)
             {
                 Console.WriteLine($"{count++}. {category.CategoryName}");
             }
-            Console.WriteLine("0. Quay lại.");
-            Console.Write("Chọn: ");
+            Console.WriteLine("0. Back.");
+            Console.Write("Choice: ");
             try
             {
                 int choice = Convert.ToInt32(Console.ReadLine());
@@ -455,7 +330,7 @@ namespace Persistence
                 tableData.Add(rowTotal);
                 ConsoleTableBuilder
                     .From(tableData)
-                    .WithColumn("Cửa Hàng", "STT", "Sản Phẩm", "Giá", "Số lượng", "Thành Tiền")
+                    .WithColumn("Shop Name", "ID", "Product's Name", "Price", "Quantity", "Into Money")
                     .WithTextAlignment(new Dictionary < int, TextAligntment>
                         {
                             {4, TextAligntment.Right },
@@ -464,9 +339,9 @@ namespace Persistence
                         })
                     .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
                     .ExportAndWriteLine();
-                Console.WriteLine("1. Đặt hàng");
-                Console.WriteLine("0. Quay lại");
-                Console.Write($"Chọn: ");
+                Console.WriteLine("1. Payment");
+                Console.WriteLine("0. Back");
+                Console.Write($"Choice: ");
                 string? choice = Console.ReadLine();
                 if (choice == "1")
                 {
@@ -474,8 +349,8 @@ namespace Persistence
                     {
                         orderBL.UpdateStatusOfOrder(order.OrderID, "Processing");
                     }
-                    Console.WriteLine("Đặt hàng thành công");
-                    Console.WriteLine("Nhấn phím bất kỳ để tiếp tục");
+                    Console.WriteLine("Order Success");
+                    Console.WriteLine("Press any key to continue.");
                     Console.ReadKey();
                     ecommerce.CustomerPage(_UserID);
                 }
@@ -490,8 +365,8 @@ namespace Persistence
             }
             else
             {
-                Console.WriteLine("Giỏ hàng trống");
-                Console.WriteLine("Nhấn phím bất kỳ để về Menu");
+                Console.WriteLine("Cart is empty");
+                Console.WriteLine("Nhấn phím bất kỳ để về Menu.");
                 Console.ReadKey();
                 ecommerce.CustomerPage(_UserID);
             }
@@ -512,9 +387,9 @@ namespace Persistence
         public void SearchShop(int _UserID)
         {
             Console.Clear();
-            Console.WriteLine("Nhập Shop bạn muốn tìm hoặc \"Menu\" để quay lại: ");
+            Console.WriteLine("Enter Shop name to search or \"0\" to go back: ");
             string? _ShopName = Console.ReadLine();
-            if (_ShopName.ToLower() != "menu")
+            if (_ShopName.ToLower() != "0")
             {
                 List<Shop> shops = new List<Shop>();
                 shops = shopBL.GetShopsByName(_ShopName);
@@ -538,10 +413,10 @@ namespace Persistence
             }
             ConsoleTableBuilder
                 .From(tableData)
-                .WithColumn("STT", "Tên cửa hàng", "Địa chỉ")
+                .WithColumn("ID", "Shop Name", "Address")
                 .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
                 .ExportAndWriteLine();
-            Console.Write("Nhập số thứ tự tương ứng để xem cửa hàng hoặc \"0\" để tìm shop khác: ");
+            Console.Write("Enter ID to view store or \"0\" to find another shop: ");
             try
             {
                 int choice = Convert.ToInt32(Console.ReadLine());
@@ -563,8 +438,8 @@ namespace Persistence
         {
             List<Order> orders = orderBL.GetOrdersByUserID(_UserID);
             DisplayOrders(_UserID, orders);
-            Console.WriteLine("Nhập số thự tự tương ứng để xem thông tin order.");
-            Console.WriteLine("0. Quay lại.");
+            Console.WriteLine("Enter ID to view order information.");
+            Console.WriteLine("0. Back.");
             try
             {
                 int choice = Convert.ToInt32(Console.ReadLine());
@@ -583,38 +458,6 @@ namespace Persistence
             }
             
         }
-        // {
-        //     Console.WriteLine("1. Chờ xác nhận.");
-        //     Console.WriteLine("2. Chờ lấy hàng");
-        //     Console.WriteLine("3. Đã mua.");
-        //     Console.WriteLine("4. Đơn hàng hủy.");       
-        //     Console.WriteLine("0. Quay lại.");
-        //     Console.Write("Chọn: ");
-        //     string? choice = Console.ReadLine();
-        //     switch (choice)
-        //     {
-        //         case "1":
-        //             ViewOrdersProcessing(_UserID);
-        //             break;
-        //         case "2":
-        //             ViewOrdersToReceive(_UserID);
-        //             break;
-        //         case "3":
-        //             ViewOrdersFinished(_UserID);
-        //             break;
-        //         case "4":
-        //             ViewOrdersFailed(_UserID);
-        //             break;
-        //         case "0": 
-        //             ecommerce.CustomerPage(_UserID);
-        //             break;
-        //         default:
-        //             Console.WriteLine("Vui lòng chọn 0 - 4 !");
-        //             MyOrder(_UserID);
-        //             break;
-        //     }
-        // }
-        
         public void DisplayOrders(int _UserID, List<Order> orders)
         {
             Console.Clear();
@@ -630,17 +473,9 @@ namespace Persistence
             }
             ConsoleTableBuilder
                 .From(tableData)
-                .WithColumn("STT", "Tên cửa hàng", "Số lượng sản phẩm", "Tổng tiền", "Trạng Thái")
+                .WithColumn("ID", "Shop Name", "Quantity", "Into Money", "Status")
                 .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
                 .ExportAndWriteLine();
-        }
-        public void ViewOrdersProcessing(int _UserID)
-        {
-            List<Order> orders = orderBL.GetOrdersByStatusAndUserID("Processing", _UserID);
-            DisplayOrders(_UserID, orders);
-            Console.WriteLine("Nhấn phím bất kỳ để quay lại");
-            Console.ReadKey();
-            MyOrder(_UserID);
         }
         public void ViewOrdersToReceive(int _UserID)
         {
@@ -689,22 +524,6 @@ namespace Persistence
                 Console.ReadKey();
                 MyOrder(_UserID);
             }
-        }
-        public void ViewOrdersFinished(int _UserID)
-        {
-            List<Order> orders = orderBL.GetOrdersByStatusAndUserID("Finished", _UserID);
-            DisplayOrders(_UserID, orders);
-            Console.WriteLine("Nhấn phím bất kỳ để quay lại");
-            Console.ReadKey();
-            MyOrder(_UserID);
-        }
-        public void ViewOrdersFailed(int _UserID)
-        {
-            List<Order> orders = orderBL.GetOrdersByStatusAndUserID("Finished", _UserID);
-            DisplayOrders(_UserID, orders);
-            Console.WriteLine("Nhấn phím bất kỳ để quay lại");
-            Console.ReadKey();
-            MyOrder(_UserID);
         }
     }
 }
