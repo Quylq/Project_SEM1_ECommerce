@@ -68,13 +68,11 @@ namespace Persistence
             Console.WriteLine("---------- Login ---------");
             Console.Write("User Name: ");
             string? _UserName = Console.ReadLine();
-            Console.Write("Password: ");
-            string? _Password = ReadPassword();
-
             User user = userBL.GetUserByName(_UserName);
-
             if (user.UserName != null)
             {
+                Console.Write("Password: ");
+                string? _Password = ReadPassword();
                 if (_Password == user.Password)
                 {
                     Console.WriteLine($"Logged in successfully!");
@@ -96,7 +94,6 @@ namespace Persistence
                 Console.ReadKey();
                 Menu();
             }
-
         }
         public void SigUp()
         {
@@ -181,11 +178,11 @@ namespace Persistence
             DateOnly _Birthday;
             string format = "yyyy-MM-dd";
             try
-            {           
-            Console.WriteLine("Birthday (dd/MM/yyyy): ");  
-            string s = Console.ReadLine();
-            string[] result = s.Replace(" ", "").Split('/', StringSplitOptions.None);
-            _Birthday = new DateOnly(Convert.ToInt32(result[2]), Convert.ToInt32(result[1]), Convert.ToInt32(result[0]));
+            {
+                Console.WriteLine("Birthday (dd/MM/yyyy): ");
+                string s = Console.ReadLine();
+                string[] result = s.Replace(" ", "").Split('/', StringSplitOptions.None);
+                _Birthday = new DateOnly(Convert.ToInt32(result[2]), Convert.ToInt32(result[1]), Convert.ToInt32(result[0]));
             }
             catch (System.Exception)
             {
@@ -227,7 +224,7 @@ namespace Persistence
             }
             else
             {
-                Console.WriteLine("5. Sales registration."); 
+                Console.WriteLine("5. Sales registration.");
             }
             Console.WriteLine("0. Exit.");
             Console.Write("Choose: ");
@@ -293,7 +290,7 @@ namespace Persistence
                     break;
                 default:
                     Console.WriteLine("Please choose 0 - 3!");
-                    SellerPage (_ShopID);
+                    SellerPage(_ShopID);
                     break;
             }
         }
