@@ -251,22 +251,31 @@ namespace Persistence
         
         public void AddProduct(int _ShopID)
         {
-            Console.Clear();
-            Console.WriteLine("Product Name: ");
-            string? _ProductName = Console.ReadLine();
-            Console.WriteLine("Price: ");
-            int _Price = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("Quantity: ");
-            int _Quantity = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("Description: ");
-            string? _Description = Console.ReadLine();
-            Product product = new Product(productBL.ProductIDMax() + 1, _ShopID, _ProductName, _Price, _Description, _Quantity);
-            productBL.InsertProduct(product);
-            AddProductToCategory(_ShopID, product.ProductID);
-            Console.WriteLine("Add Product successfully !");
-            Console.WriteLine("Press any key to continue !");
-            Console.ReadKey();
-            ProductManagement(_ShopID);
+            try
+            {
+                Console.Clear();
+                Console.WriteLine("Product Name: ");
+                string? _ProductName = Console.ReadLine();
+                Console.WriteLine("Price: ");
+                int _Price = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("Quantity: ");
+                int _Quantity = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("Description: ");
+                string? _Description = Console.ReadLine();
+                Product product = new Product(productBL.ProductIDMax() + 1, _ShopID, _ProductName, _Price, _Description, _Quantity);
+                productBL.InsertProduct(product);
+                AddProductToCategory(_ShopID, product.ProductID);
+                Console.WriteLine("Add Product successfully !");
+                Console.WriteLine("Press any key to continue !");
+                Console.ReadKey();
+                ProductManagement(_ShopID);
+            }
+            catch (System.Exception)
+            {
+                Console.WriteLine("Invalid data !");
+                Console.ReadKey();
+                AddProduct(_ShopID);
+            }
         }
         public void DisplayOrders(int _ShopID, List<Order> orders)
         {

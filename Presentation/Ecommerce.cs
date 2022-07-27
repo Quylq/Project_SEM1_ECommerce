@@ -269,7 +269,7 @@ namespace Persistence
                     }
                     break; 
                 case "0": 
-                    Environment.Exit(0);
+                    Menu();
                     break;
                 default:
                     Console.WriteLine("Please select 0 - 4!");
