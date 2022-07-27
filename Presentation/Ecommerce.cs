@@ -63,13 +63,14 @@ namespace Persistence
             Console.WriteLine("---------- Login ---------");
             Console.Write("User Name: ");
             string? _UserName = Console.ReadLine();
-            Console.Write("Password: ");
-            string? _Password = ReadPassword();
-
             User user =  userBL.GetUserByName(_UserName);
 
             if (user.UserName != null)
             {
+                int count = 1;
+                Login1:
+                Console.Write("Password: ");
+                string? _Password = ReadPassword();
                 if (_Password == user.Password)
                 {
                     Console.WriteLine($"Logged in successfully!");
@@ -82,13 +83,30 @@ namespace Persistence
                         Console.WriteLine($"Update");
                     }
                 }
+                else
+                {
+                    Console.WriteLine($"wrong password!");
+                    count++;
+                    Console.WriteLine("Press any key to go back");
+                    Console.ReadKey();
+                    if (count <= 3)
+                    {
+                        goto Login1;
+                    }
+                    else
+                    {
+                        Console.WriteLine("You enter bad password too 3 times!");
+                        Console.ReadKey();
+                        Menu();
+                    }
+                }
             }
             else
             {
-                Console.WriteLine($"Wrong username or password");
+                Console.WriteLine($"Account name does not exist");
                 Console.WriteLine("Press any key to go back");
                 Console.ReadKey();
-                Menu();
+                Login();
             }
 
         }
@@ -209,7 +227,7 @@ namespace Persistence
         {
             CustomerPage customerPage = new CustomerPage();
             Console.Clear();
-            Console.WriteLine("---------- Home page ---------");
+            Console.WriteLine($"---------- {userBL.GetUserByID(_UserID).FullName} ---------");
             Console.WriteLine("1. Search Product.");
             Console.WriteLine("2. Search Shop.");
             Console.WriteLine("3. Cart.");

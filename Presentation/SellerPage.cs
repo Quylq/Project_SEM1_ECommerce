@@ -466,13 +466,12 @@ namespace Persistence
             List<Category> categories = categoryBL.GetCategoriesByShopID(_ShopID);
             DisplayCategories(_ShopID);
             Console.Write("Enter the order number to add the product to an existing catalog or 0 to go back : ");
-            // try
-            // {
+            try
+            {
                 ProductBL productBL = new ProductBL();
                 int choice = Convert.ToInt32(Console.ReadLine());
                 if (choice != 0)
                 {
-                    // xử lý TH đã có sẵn trong category
                     product_CategoryBL.InsertProduct_Category(_ProductID, categories[choice - 1].CategoryID);
                     Console.WriteLine("successfully added product to category !");
                     Console.WriteLine("Enter any key to continue");
@@ -482,12 +481,12 @@ namespace Persistence
                 {
                     ProductManagement(_ShopID);
                 }
-            // }
-            // catch (System.Exception)
-            // {
-            //     Console.Clear();
-            //     AddProductToCategory(_ShopID, _ProductID);
-            // }
+            }
+            catch (System.Exception)
+            {
+                Console.Clear();
+                AddProductToCategory(_ShopID, _ProductID);
+            }
         }
         public void CreateCategory(int _ShopID)
         {
