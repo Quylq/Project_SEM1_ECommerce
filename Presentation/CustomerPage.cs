@@ -100,15 +100,17 @@ namespace Persistence
                 List<object> rowData;
                 if (i == 0)
                 {
+                    Console.WriteLine($"{product.Description.Split('\n')[i]}");
                     rowData = new List<object>{"Description", product.Description.Split('\n')[i]};
                 }
                 else
                 {
+                    Console.WriteLine($"{product.Description.Split('\n')[i]}");
                     rowData = new List<object>{"", product.Description.Split('\n')[i]};
                 }
                 tableData.Add(rowData);
             } 
-            Console.Clear();
+
             ConsoleTableBuilder
                 .From(tableData)
                 .WithTitle("Product Information ", ConsoleColor.Yellow, ConsoleColor.DarkGray)
