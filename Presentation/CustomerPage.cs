@@ -100,17 +100,14 @@ namespace Persistence
                 List<object> rowData;
                 if (i == 0)
                 {
-                    Console.WriteLine($"{product.Description.Split('\n')[i]}");
                     rowData = new List<object>{"Description", product.Description.Split('\n')[i]};
                 }
                 else
                 {
-                    Console.WriteLine($"{product.Description.Split('\n')[i]}");
                     rowData = new List<object>{"", product.Description.Split('\n')[i]};
                 }
                 tableData.Add(rowData);
             } 
-
             ConsoleTableBuilder
                 .From(tableData)
                 .WithTitle("Product Information ", ConsoleColor.Yellow, ConsoleColor.DarkGray)
@@ -144,7 +141,7 @@ namespace Persistence
             {
                 if (choice != 0)
                 {
-                    List<Order> orders = orderBL.GetOrdersByStatusAndUserID("Shopping", _UserID);
+                    List<Order> orders = orderDetailsBL.GetOrdersByStatusAndUserID("Shopping", _UserID);
                     int i = CheckShopOfOrders(orders, product.ShopID);
                     if (i == -1)
                     {
@@ -310,7 +307,7 @@ namespace Persistence
         }
         public void ViewCart(int _UserID)
         {
-            List<Order> orders = orderBL.GetOrdersByStatusAndUserID("Shopping", _UserID);
+            List<Order> orders = orderDetailsBL.GetOrdersByStatusAndUserID("Shopping", _UserID);
             Console.Clear();
             if (orders.Count > 0)
             {

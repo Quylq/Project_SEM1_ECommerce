@@ -10,11 +10,7 @@ public class OrderBL
     {
         orderDAL = new OrderDAL();
     }
-    public List<Order> GetOrdersByStatusAndUserID(string _Status, int _UserID)
-    {
-        List<Order> orders = orderDAL.GetOrdersByStatusAndUserID(_Status, _UserID);
-        return orders;
-    }
+
     public List<Order> GetOrdersByStatusAndShopID(string _Status, int _ShopID)
     {
         List<Order> orders = orderDAL.GetOrdersByStatusAndShopID(_Status, _ShopID);
