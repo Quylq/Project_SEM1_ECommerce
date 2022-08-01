@@ -9,20 +9,24 @@ namespace Persistence
         private UserBL userBL;
         private ShopBL shopBL;
         private AddressBL addressBL;
+        private ReadHelper readHelper;
         public Ecommerce()
         {
             userBL = new UserBL();
             shopBL = new ShopBL();
             addressBL = new AddressBL();
+            readHelper = new ReadHelper();
         }
         public void Menu()
         {
             Console.Clear();
-            Console.WriteLine("1. Login. ");
-            Console.WriteLine("2. SigUp. ");
-            Console.WriteLine("0. Exit");
+            Console.WriteLine("══════════ VTC Shop ══════════");
+            Console.WriteLine("1. Login.");
+            Console.WriteLine("2. SigUp.");
+            Console.WriteLine("0. Exit.");
+            Console.WriteLine("══════════════════════════════");
             Console.Write("Choose: ");
-            string? choice = Console.ReadLine();
+            string? choice = readHelper.ReadString();
             switch (choice)
             {
                 case "1":
@@ -35,7 +39,7 @@ namespace Persistence
                     Console.WriteLine("You confirm you want to exit?");
                     Console.WriteLine("1. Yes       2. No");
                     Console.Write("Choose: ");
-                    string? choice1 = Console.ReadLine();
+                    string? choice1 = readHelper.ReadString();
                     switch (choice1)
                     {
                         case "1":
@@ -60,12 +64,12 @@ namespace Persistence
         public void Login()
         {
             Console.Clear();
-            Console.WriteLine("---------- Login ---------");
+            Console.WriteLine("══════════ Login ══════════");
             Console.Write("User Name: ");
-            string? _UserName = Console.ReadLine();
+            string _UserName = ReadUserName();
             User user =  userBL.GetUserByName(_UserName);
 
-            if (user.UserName != null)
+            if (user.UserName != "")
             {
                 int count = 1;
                 Login1:
@@ -87,7 +91,6 @@ namespace Persistence
                 {
                     Console.WriteLine($"wrong password!");
                     count++;
-                    Console.WriteLine("Press any key to go back");
                     Console.ReadKey();
                     if (count <= 3)
                     {
@@ -112,33 +115,46 @@ namespace Persistence
         }
         public void SigUp()
         {
-            Console.WriteLine("---------- SigUp ---------");
+            Console.Clear();
+            Console.WriteLine("══════════ SigUp ══════════");
             Console.Write("User Name: ");
-            string _UserName = Console.ReadLine();
-            Console.Write("Password: ");
-            string _Password = ReadPassword();
-            Console.Write("You Name: ");
-            string _FullName = Console.ReadLine();
-            Console.Write("Email: ");
-            string _Email = Console.ReadLine();
-            Console.Write("Phone: ");
-            string _Phone = Console.ReadLine();
-            string _Birthday = ReadBirthDay();
-            int _AddressID = ReadAddress();
-            int _UserID = userBL.UserIDMax() + 1;
-            User user = new User(_UserID, _UserName, _Password, _FullName, _Birthday, _Email, _Phone, _AddressID, "Customer");
-            userBL.InsertUser(user);
-
-            Console.WriteLine("Sign Up Success!");
-            Console.WriteLine("Press any key to continue");
-            Console.ReadKey();
-            CustomerPage(_UserID);
+            string _UserName = ReadUserName();
+            User user1 = userBL.GetUserByName(_UserName);
+            if (user1.UserName == "")
+            {
+                Console.Write("Password: ");
+                string _Password = ReadPassword();
+                Console.Write("You Name: ");
+                string _FullName = readHelper.ReadString(100);
+                Console.Write("Email: ");
+                string _Email = readHelper.ReadEmail();
+                Console.Write("Phone: ");
+                string _Phone = readHelper.ReadPhone();
+                Console.Write("Birthday: ");
+                string _Birthday = readHelper.ReadDateOnly();
+                int _AddressID = ReadAddress();
+                int _UserID = userBL.UserIDMax() + 1;
+                User user = new User(_UserID, _UserName, _Password, _FullName, _Birthday, _Email, _Phone, _AddressID, "Customer");
+                userBL.InsertUser(user);
+                Console.WriteLine("Sign Up Success!");
+                Console.WriteLine("Press any key to continue");
+                Console.ReadKey();
+                CustomerPage(_UserID);
+            }
+            else
+            {
+                Console.WriteLine("Username available!");
+                Console.ReadKey();
+                SigUp();
+            }
+            
         }
         public void SigUpShop(int _UserID)
         {
-            Console.WriteLine("---------- Register to open a store ---------");
+            Console.Clear();
+            Console.WriteLine("══════════ Register to open a store ══════════");
             Console.Write("Shop Name: ");
-            string _ShopName = Console.ReadLine();
+            string _ShopName = readHelper.ReadString(50);
             int _AddressID = ReadAddress();
             int _ShopID = shopBL.ShopIDMax() + 1;
             Shop shop = new Shop(_ShopID, _ShopName, _UserID, _AddressID);
@@ -149,6 +165,45 @@ namespace Persistence
             Console.ReadKey();
             SellerPage(_ShopID);
 
+        }
+        public string ReadUserName()
+        {
+            // string temp = "";
+            // ConsoleKeyInfo info = Console.ReadKey(true);
+            // while (info.Key != ConsoleKey.Enter)
+            // {
+            //     if (info.Key != ConsoleKey.Backspace && info.Key != ConsoleKey.Spacebar)
+            //     {
+            //         temp += info.KeyChar;
+            //         Console.Write(info.KeyChar);
+            //     }
+            //     else if (temp.Length > 0 && info.Key == ConsoleKey.Backspace)
+            //     {
+            //         Console.Write("\b");
+            //         temp = temp.Substring(0, temp.Length - 1);
+            //     }
+            //     info = Console.ReadKey(true);
+            // }
+            // Console.WriteLine();
+            string _UserName = readHelper.ReadString(50);
+            bool isSpace = false;
+            foreach (char c in _UserName)
+            {
+                if (c == ' ')
+                {
+                    Console.WriteLine("UserName cannot contain spaces!");
+                    isSpace = true;
+                    break;
+                }
+            }
+            if (isSpace)
+            {
+                return ReadUserName();
+            }
+            else
+            {
+                return _UserName;
+            }
         }
         public string ReadPassword()
         {
@@ -188,35 +243,17 @@ namespace Persistence
                 return builder.ToString();  
             }  
         }
-        public string ReadBirthDay()
-        {
-            DateOnly _Birthday;
-            string format = "yyyy-MM-dd";
-            try
-            {           
-            Console.WriteLine("Birthday (dd/MM/yyyy): ");  
-            string s = Console.ReadLine();
-            string[] result = s.Replace(" ", "").Split('/', StringSplitOptions.None);
-            _Birthday = new DateOnly(Convert.ToInt32(result[2]), Convert.ToInt32(result[1]), Convert.ToInt32(result[0]));
-            }
-            catch (System.Exception)
-            {
-                Console.WriteLine($"Invalid birthdate, please re-enter.");
-                ReadBirthDay();
-            }
-            return _Birthday.ToString(format);
-        }
         public int ReadAddress()
         {
             Console.WriteLine("--- Address ---");
             Console.Write("City: ");
-            string _City = Console.ReadLine();
+            string _City = readHelper.ReadString(30);
             Console.Write("District: ");
-            string _District = Console.ReadLine();
+            string _District = readHelper.ReadString(30);
             Console.Write("Commune: ");
-            string _Commune = Console.ReadLine();
+            string _Commune = readHelper.ReadString(30);
             Console.Write("SpecificAddress: ");
-            string _SpecificAddress = Console.ReadLine();
+            string _SpecificAddress = readHelper.ReadString(110);
             int _AddressID = addressBL.AddressIDMax() + 1;
             Address address =  new Address(_AddressID, _City, _District, _Commune, _SpecificAddress);
             addressBL.InsertAddress(address);
@@ -227,7 +264,7 @@ namespace Persistence
         {
             CustomerPage customerPage = new CustomerPage();
             Console.Clear();
-            Console.WriteLine($"---------- {userBL.GetUserByID(_UserID).FullName} ---------");
+            Console.WriteLine($"══════════ {userBL.GetUserByID(_UserID).FullName} ══════════");
             Console.WriteLine("1. Search Product.");
             Console.WriteLine("2. Search Shop.");
             Console.WriteLine("3. Cart.");
@@ -242,8 +279,13 @@ namespace Persistence
                 Console.WriteLine("5. Sales registration."); 
             }
             Console.WriteLine("0. Exit.");
+            for (int i = 0; i < userBL.GetUserByID(_UserID).FullName.Length; i++)
+            {
+                Console.Write("═");
+            }
+            Console.WriteLine($"══════════════════════");
             Console.Write("Choose: ");
-            string? choice = Console.ReadLine();
+            string? choice = readHelper.ReadString();
             switch (choice)
             {
                 case "1":
@@ -281,13 +323,18 @@ namespace Persistence
         {
             SellerPage sellerPage = new SellerPage();
             Console.Clear();
-            Console.WriteLine($"---------- {shopBL.GetShopByID(_ShopID).ShopName} ---------");
+            Console.WriteLine($"══════════ {shopBL.GetShopByID(_ShopID).ShopName} ══════════");
             Console.WriteLine("1. Order Manegement.");
             Console.WriteLine("2. Product Manegement.");
             Console.WriteLine("3. Category Manegement");
             Console.WriteLine("0. Back");
+            for (int i = 0; i < shopBL.GetShopByID(_ShopID).ShopName.Length; i++)
+            {
+                Console.Write("═");
+            }
+            Console.WriteLine($"══════════════════════");
             Console.Write("Choose: ");
-            string? choice = Console.ReadLine();
+            string? choice = readHelper.ReadString();
             switch (choice)
             {
                 case "1":

@@ -4,7 +4,7 @@ namespace Persistence
     {
         public int CategoryID{get;set;}
         public int ShopID{get;set;}
-        public string? CategoryName{get;set;}
+        public string CategoryName{get;set;}
 
         public Category(int _CategoryID, int _ShopID, string _CategoryName)
         {
@@ -17,6 +17,9 @@ namespace Persistence
             ShopID = _ShopID;
             CategoryName = _CategoryName;
         }
-        public Category(){}
+        public Category()
+        {
+            CategoryName = "";
+        }
     }
 }

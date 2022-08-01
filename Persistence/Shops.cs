@@ -5,7 +5,7 @@ namespace Persistence
         public int ShopID{get;set;}
         public int UserID{get;set;}
         public int AddressID{get;set;}
-        public string? ShopName{get;set;}
+        public string ShopName{get;set;}
         public Shop(int _ShopID, string _ShopName, int _UserID, int _AddressID)
         {
             ShopID = _ShopID;
@@ -21,6 +21,7 @@ namespace Persistence
         }
         public Shop()
         {
+            ShopName = "";
         }
     }
 }

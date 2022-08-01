@@ -20,7 +20,7 @@ namespace DAL
         // Lấy danh sách orderDetails theo OrderID
         public List<OrderDetails> GetOrderDetailsListByOrderID(int _OrderID)
         {
-            query = $"select * from OrderDetails od inner join Orders o on o.OrderID = od.OrderID where o.OrderID = {_OrderID}";
+            query = $"select * from OrderDetails where OrderID = {_OrderID}";
             DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
 
@@ -60,7 +60,16 @@ namespace DAL
         }
         public void UpdateProductNumberOfOrderDetails(OrderDetails orderDetails)
         {
-            query = $"update OrderDetails set ProductNumber = {orderDetails.ProductNumber} where OrderID = {orderDetails.OrderID} and ProductID = {orderDetails.ProductID}";
+            query = $@"update OrderDetails set ProductNumber = {orderDetails.ProductNumber} 
+            where OrderID = {orderDetails.OrderID} and ProductID = {orderDetails.ProductID}";
+
+            DbHelper.OpenConnection();
+            reader = DbHelper.ExecQuery(query);
+            DbHelper.CloseConnection();
+        }
+        public void DeleteOrderDetails()
+        {
+            query = $@"Delete from OrderDetails where ProductNumber = 0";
 
             DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);

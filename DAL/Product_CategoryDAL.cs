@@ -7,14 +7,27 @@ namespace DAL
     {
         private string? query;
         private MySqlDataReader? reader;
-        private Product_Category GetProduct_CategoryInfo(MySqlDataReader reader)
+        public bool CheckProduct_Category(int _ProductID, int _CategoryID)
         {
-            Product_Category product_Category = new Product_Category();
-
-            product_Category.CategoryID = reader.GetInt32("CategoryID");
-            product_Category.ProductID = reader.GetInt32("ProductID");
-
-            return product_Category;
+            bool result = false;
+            query = $@"select * from Product_Categories
+            where ProductID = {_ProductID} and CategoryID = {_CategoryID}";
+            DbHelper.OpenConnection();
+            reader = DbHelper.ExecQuery(query);
+            if (reader.Read())
+            {
+                try
+                {
+                    int i = reader.GetInt32("CategoryID");
+                    int j = reader.GetInt32("ProductID");
+                    result = true;
+                }
+                catch (System.Exception)
+                {
+                }
+            }
+            DbHelper.CloseConnection();
+            return result;
         }
         public void InsertProduct_Category(int _ProductID, int _CategoryID)
         {

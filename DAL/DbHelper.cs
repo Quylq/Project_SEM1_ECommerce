@@ -23,11 +23,15 @@ namespace DAL
                 GetConnection();
             }
             connection.Open();
+            
             return connection;
         }
         public static void CloseConnection()
         {
-            connection.Close();
+            if (connection != null)
+            {
+                connection.Close();
+            }
         }
 
         public static MySqlDataReader ExecQuery(string sqlCommand)

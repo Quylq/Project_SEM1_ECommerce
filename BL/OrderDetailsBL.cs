@@ -23,13 +23,14 @@ public class OrderDetailsBL
     public void UpdateProductNumberOfOrderDetails(OrderDetails orderDetails)
     {
         orderDetailsDAL.UpdateProductNumberOfOrderDetails(orderDetails);
+        orderDetailsDAL.DeleteOrderDetails();
     }
-    public int GetTotalOrderDetails(OrderDetails orderDetails)
+    public long GetTotalOrderDetails(OrderDetails orderDetails)
     {
-        int total;
+        long total;
         ProductBL productBL = new ProductBL();
         Product product = productBL.GetProductByID(orderDetails.ProductID);
-        total = orderDetails.ProductNumber * product.Price;
+        total = (long)orderDetails.ProductNumber * product.Price;
         return total;
     }
     public List<OrderDetails> GetOrderDetailsListByUserIDAndStatus(int _UserID, string _Status)

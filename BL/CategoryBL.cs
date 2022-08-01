@@ -30,5 +30,11 @@ public class CategoryBL
         
         return categories;
     }
+    public int GetProductNumberOfCategory(int _CategoryID)
+    {
+        int result = categoryDAL.GetProductNumberOfCategory(_CategoryID);
+
+        return result;
+    }
 }
 

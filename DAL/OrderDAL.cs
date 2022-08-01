@@ -94,6 +94,14 @@ namespace DAL
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();
         }
+        public void UpdateCreateDateOfOrder(int _OrderID, string _CreateDate)
+        {
+            query = $"update Orders set CreateDate = '{_CreateDate}' where OrderID = {_OrderID};";
+
+            DbHelper.OpenConnection();
+            reader = DbHelper.ExecQuery(query);
+            DbHelper.CloseConnection();
+        }
         public void InsertOrder(Order order)
         {
             query = $"Insert into Orders (OrderID, UserID, ShopID, CreateDate , Status) value ('{order.OrderID}', '{order.UserID}', '{order.ShopID}', '{order.CreateDate}', '{order.Status}')";

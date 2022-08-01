@@ -39,9 +39,9 @@ public class OrderBL
         Order order = orderDAL.GetOrderByID(_OrderID);
         return order;
     }
-    public int GetTotalOrder(int _OrderID)
+    public long GetTotalOrder(int _OrderID)
     {
-        int total = 0;
+        long total = 0;
         OrderDetailsBL orderDetailsBL = new OrderDetailsBL();
         List<OrderDetails> orderDetailsList = orderDetailsBL.GetOrderDetailsListByOrderID(_OrderID);
         foreach (OrderDetails orderDetails in orderDetailsList)
@@ -50,9 +50,9 @@ public class OrderBL
         }
         return total;
     }
-    public int GetTotalCart(int _UserID)
+    public long GetTotalCart(int _UserID)
     {
-        int total = 0;
+        long total = 0;
         OrderDetailsBL orderDetailsBL = new OrderDetailsBL();
         List<OrderDetails> orderDetailsList = orderDetailsBL.GetOrderDetailsListByUserIDAndStatus(_UserID, "Shopping");
         foreach (OrderDetails orderDetails in orderDetailsList)
@@ -72,6 +72,10 @@ public class OrderBL
         List<Order> orders = orderDAL.GetOrdersByShopIDAndNotStatus(_ShopID, _Status);
 
         return orders;
+    }
+    public void UpdateCreateDateOfOrder(int _OrderID, string _CreateDate)
+    {
+        orderDAL.UpdateCreateDateOfOrder(_OrderID, _CreateDate);
     }
 }
 

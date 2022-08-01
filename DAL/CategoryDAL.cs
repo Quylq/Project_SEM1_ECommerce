@@ -44,7 +44,7 @@ namespace DAL
         public void DeleteCategoryByID(int _CategoryID)
         {
             query = $"Delete from Categories where categoryID = {_CategoryID}";
-            // query = $"update Categories set ShopID = null where CategoryID = {_CategoryID}";
+
             DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();
@@ -66,6 +66,29 @@ namespace DAL
             }
             DbHelper.CloseConnection();
             return categories;
+        }
+        public int GetProductNumberOfCategory(int _CategoryID)
+        {
+            int result = 0;
+            query = $@"select count(*) from Categories c
+            inner join Product_Categories pc on pc.CategoryID = c.CategoryID
+            group by c.CategoryID having c.CategoryID = {_CategoryID}";
+
+            DbHelper.OpenConnection();
+            reader = DbHelper.ExecQuery(query);
+            if (reader.Read())
+            {
+                try
+                {
+                    result = reader.GetInt32("count(*)");
+                }
+                catch (System.Exception)
+                {
+                    result = 0;
+                }
+            }
+            DbHelper.CloseConnection();
+            return result;
         }
     }
 }

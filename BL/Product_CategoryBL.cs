@@ -18,4 +18,8 @@ public class Product_CategoryBL
     {
         product_CategoryDAL.DeleteProduct_CategoryByCategoryID(_CategoryID);
     }
+    public bool CheckProduct_Category(int _ProductID, int _CategoryID)
+    {
+        return product_CategoryDAL.CheckProduct_Category(_ProductID, _CategoryID);
+    }
 }

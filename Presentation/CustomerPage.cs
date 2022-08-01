@@ -15,6 +15,7 @@ namespace Persistence
         private ShopBL shopBL;
         private AddressBL addressBL;
         public Ecommerce ecommerce = new Ecommerce();
+        public ReadHelper readHelper = new ReadHelper();
         public CustomerPage()
         {
             userBL = new UserBL();
@@ -30,21 +31,21 @@ namespace Persistence
         public void SearchProduct(int _UserID)
         {
             Console.Clear();
-            Console.WriteLine($"---------- Search Product ---------");
+            Console.WriteLine($"══════════ Search Product ══════════");
             Console.WriteLine("Enter product name to search or \"0\" to go back. ");
-            string? _ProductName = Console.ReadLine();
+            string? _ProductName = readHelper.ReadString();
             if (_ProductName.ToLower() != "0")
             {
                 List<Product> products = new List<Product>();
                 products = productBL.GetProductsByName(_ProductName);
-                DisplayProducts(_UserID, products);
+                DisplayProducts(_UserID, products, "SearchProduct");
             }
             else
             {
                 ecommerce.CustomerPage(_UserID);
             }     
         }
-        public void DisplayProducts(int _UserID, List<Product> products)
+        public void DisplayProducts(int _UserID, List<Product> products, string navigate)
         {
             List<List<object>> tableData = new List<List<object>>();
             int count = 1;
@@ -57,7 +58,7 @@ namespace Persistence
             Console.Clear();
             ConsoleTableBuilder
                 .From(tableData)
-                .WithColumn("STT", "Product Name", "Price", "Status")
+                .WithColumn("ID", "Product Name", "Price", "Status")
                 .WithTextAlignment(new Dictionary < int, TextAligntment>
                     {
                         {2, TextAligntment.Right },
@@ -65,25 +66,26 @@ namespace Persistence
                     })
                 .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
                 .ExportAndWriteLine();
-            Console.Write("Enter the corresponding serial number to view product information or \"0\" to find another product:");
-            try
+            Console.Write("Enter \"ID\" to see the product information or \"0\" to back:");
+            int choice = readHelper.ReadInt(0, products.Count);
+            if (choice != 0)
             {
-                int choice = Convert.ToInt32(Console.ReadLine());
-                if (choice != 0)
-                {
-                    ProductInformation(_UserID, products[choice - 1].ProductID);
-                }
-                else
+                Product product = productBL.GetProductByID(products[choice - 1].ProductID);
+                ProductInformation(_UserID, product.ProductID, navigate, products);
+            }
+            else
+            {
+                if (navigate == "SearchProduct")
                 {
                     SearchProduct(_UserID);
                 }
-            }
-            catch (System.Exception)
-            {
-                DisplayProducts(_UserID, products);
+                else if (navigate == "SearchShop")
+                {
+                    viewShop(_UserID, products[0].ShopID);
+                }
             }
         }
-        public void ProductInformation(int _UserID, int _ProductID)
+        public void ProductInformation(int _UserID, int _ProductID, string navigate, List<Product> products)
         {
             Product product = productBL.GetProductByID(_ProductID);
             Shop shop = shopBL.GetShopByID(product.ShopID);
@@ -134,103 +136,27 @@ namespace Persistence
                     {HeaderCharMapPositions.BorderRight, '│' },
                 })
                 .ExportAndWriteLine();
+            List<Order> orders = orderBL.GetOrdersByStatusAndUserID("Shopping", _UserID);
+            List<OrderDetails> oDList = orderDetailsBL.GetOrderDetailsListByUserIDAndStatus(_UserID, "Shopping");
+            int ProductNumberOfCart = 0;
+            if (CheckProductOfOrderDetails(oDList, _ProductID) != -1)
+            {
+                ProductNumberOfCart = oDList[CheckProductOfOrderDetails(oDList, _ProductID)].ProductNumber;
+            }
             Console.WriteLine($"Enter Quantity of products to add to cart.");
             Console.WriteLine($"0. Back.");
             Console.Write($"Choose: ");
-            int choice = Convert.ToInt32(Console.ReadLine());
-            try
+            int choice = readHelper.ReadInt(0 - ProductNumberOfCart, product.Quantity);
+            if (choice != 0)
             {
-                if (choice != 0)
-                {
-                    List<Order> orders = orderBL.GetOrdersByStatusAndUserID("Shopping", _UserID);
-                    int i = CheckShopOfOrders(orders, product.ShopID);
-                    if (i == -1)
-                    {
-                        string format = "yyyy-MM-dd HH:mm:ss";
-                        DateTime now = DateTime.Now;
-                        Order order = new Order(orderBL.OrderIDMax() + 1, _UserID, product.ShopID, now.ToString(format), "Shopping");
-                        orderBL.InsertOrder(order);
-                        Console.ReadKey();
-                        OrderDetails orderDetails = new OrderDetails(order.OrderID, product.ProductID, choice);
-                        orderDetailsBL.InsertOrderDetails(orderDetails);
-                    }
-                    else
-                    {                   
-                        Order order = orderBL.GetOrderByID(orders[i].OrderID);
-                        List<OrderDetails> orderDetailsList = orderDetailsBL.GetOrderDetailsListByOrderID(order.OrderID);
-                        if (CheckProductOfOrderDetails(orderDetailsList, product.ProductID) == -1)
-                        {
-                            OrderDetails orderDetails = new OrderDetails(order.OrderID, product.ProductID, choice);
-                            orderDetailsBL.InsertOrderDetails(orderDetails);
-                        }
-                        else
-                        {
-                            int j = CheckProductOfOrderDetails(orderDetailsList, product.ProductID);
-                            orderDetailsList[j].ProductNumber += choice;
-                            orderDetailsBL.UpdateProductNumberOfOrderDetails(orderDetailsList[j]);
-                        }
-                    }
-                    Console.WriteLine($"Added {choice} products to cart successfully.");
-                    Console.WriteLine("Press any key to continue.");
-                    Console.ReadKey();
-                    ProductInformation(_UserID, _ProductID);
-                }
-                else
-                {
-                    SearchProduct(_UserID);
-                }
-            }
-            catch (System.Exception)
-            {
-                ProductInformation(_UserID, _ProductID);
-            }
-        }
-        public void ProductInformationOfCart(int _UserID, int _ProductID)
-        {
-            Product product = productBL.GetProductByID(_ProductID);
-            Shop shop = shopBL.GetShopByID(product.ShopID);
-            Console.WriteLine($"Shop: {shop.ShopName}");
-            Console.WriteLine($"---------------------------------");
-            Console.WriteLine($"Product: {product.ProductName}");
-            Console.WriteLine($"Price: {product.Price.ToString("C0")}");
-            Console.WriteLine($"Description: {product.Description}");
-            string status = product.Quantity == 0? "Out of stock" : "Stocking";
-            Console.WriteLine($"Tình trạng: {status}");
-            Console.WriteLine($"---------------------------------");
-            Console.WriteLine($"Enter \"Add + Quantity \" to add the corresponding product number to the cart.");
-            Console.WriteLine($"Enter \"Sub + Quantity \" to remove the corresponding product number from the cart.");
-            Console.WriteLine($"1. To Cart.");
-            Console.WriteLine($"2. To {shop.ShopName}.");
-            Console.WriteLine($"0. Back.");
-            Console.Write($"Choose: ");
-            string? choice = Console.ReadLine();
-            if (choice == "1")
-            {
-                ViewCart(_UserID);
-            }
-            else if (choice == "2")
-            {
-                viewShop(_UserID, shop.ShopID);
-            }
-            else if (choice == "0")
-            {
-                SearchProduct(_UserID);
-            }
-            else if (IsNumber(choice.ToLower().Replace(" ", "").Replace("add", "")))
-            {
-                List<Order> orders = orderBL.GetOrdersByStatusAndUserID("Shopping", _UserID);
-                int addNo = Convert.ToInt32(choice.ToLower().Replace(" ", "").Replace("add", "")) ;
-                int i = CheckShopOfOrders(orders, product.ShopID);
-                Console.WriteLine($"{i}");
-                    Console.ReadKey();
+                int i = CheckShopOfCart(orders, product.ShopID);
                 if (i == -1)
                 {
                     string format = "yyyy-MM-dd HH:mm:ss";
                     DateTime now = DateTime.Now;
                     Order order = new Order(orderBL.OrderIDMax() + 1, _UserID, product.ShopID, now.ToString(format), "Shopping");
                     orderBL.InsertOrder(order);
-                    Console.ReadKey();
-                    OrderDetails orderDetails = new OrderDetails(order.OrderID, product.ProductID, addNo);
+                    OrderDetails orderDetails = new OrderDetails(order.OrderID, product.ProductID, choice);
                     orderDetailsBL.InsertOrderDetails(orderDetails);
                 }
                 else
@@ -239,75 +165,35 @@ namespace Persistence
                     List<OrderDetails> orderDetailsList = orderDetailsBL.GetOrderDetailsListByOrderID(order.OrderID);
                     if (CheckProductOfOrderDetails(orderDetailsList, product.ProductID) == -1)
                     {
-                        OrderDetails orderDetails = new OrderDetails(order.OrderID, product.ProductID, addNo);
+                        OrderDetails orderDetails = new OrderDetails(order.OrderID, product.ProductID, choice);
                         orderDetailsBL.InsertOrderDetails(orderDetails);
                     }
                     else
                     {
                         int j = CheckProductOfOrderDetails(orderDetailsList, product.ProductID);
-                        orderDetailsList[j].ProductNumber += addNo;
+                        orderDetailsList[j].ProductNumber += choice;
                         orderDetailsBL.UpdateProductNumberOfOrderDetails(orderDetailsList[j]);
                     }
                 }
-                Console.Clear();
-                Console.WriteLine($"---------------------------------");
-                Console.WriteLine("Add to cart successfully.");
-                Console.WriteLine("Press any key to continue.");
-                Console.ReadKey();
-                ProductInformation(_UserID, _ProductID);
-            }
-            else if (IsNumber(choice.ToLower().Replace(" ", "").Replace("sub", "")))
-            {
-                List<Order> orders = orderBL.GetOrdersByStatusAndUserID("Shopping", _UserID);
-                if (orders == null)
+                if (choice > 0)
                 {
-                    Console.WriteLine("The product is not in the cart.");
-                    Console.WriteLine("Press any key to continue.");
-                    Console.ReadKey();
-                    ProductInformation(_UserID, _ProductID);
-                }
-                int num = Convert.ToInt32(choice.ToLower().Replace(" ", "").Replace("sub", ""));
-                int i = CheckShopOfOrders(orders, product.ShopID);
-                if (i == -1)
-                {
-                    Console.WriteLine("The product is not in the cart.");
-                    Console.WriteLine("Press any key to continue.");
-                    Console.ReadKey();
-                    ProductInformation(_UserID, _ProductID);
+                    Console.WriteLine($"Successfully added {choice} products from the cart.");
                 }
                 else
                 {
-                    Order order = orderBL.GetOrderByID(orders[i].OrderID);
-                    List<OrderDetails> orderDetailsList = orderDetailsBL.GetOrderDetailsListByOrderID(order.OrderID);
-                    if (CheckProductOfOrderDetails(orderDetailsList, product.ProductID) == -1)
-                    {
-                        Console.WriteLine("The product is not in the cart.");
-                        Console.WriteLine("Press any key to continue.");
-                        Console.ReadKey();
-                        ProductInformation(_UserID, _ProductID);
-                    }
-                    else
-                    {
-                        int j = CheckProductOfOrderDetails(orderDetailsList, product.ProductID);
-                        orderDetailsList[j].ProductNumber -= num;
-                        if (orderDetailsList[j].ProductNumber < 0)
-                        {
-                            orderDetailsList[j].ProductNumber = 0;
-                        }
-                        orderDetailsBL.UpdateProductNumberOfOrderDetails(orderDetailsList[j]);
-                        Console.WriteLine("Removed from cart successfully.");
-                        Console.WriteLine("Press any key to continue.");
-                        Console.ReadKey();
-                        ProductInformation(_UserID, _ProductID);
-                    }
+                    Console.WriteLine($"Successfully removed {choice} products from cart.");
                 }
+                Console.WriteLine("Press any key to continue.");
+                Console.ReadKey();
+            }
+            if (navigate == "ViewCart")
+            {
+                ViewCart(_UserID);
             }
             else
             {
-                Console.WriteLine("Invalid selection!");
-                Console.ReadKey();
-                ProductInformation(_UserID, _ProductID);
-            }  
+                DisplayProducts(_UserID, products, navigate);
+            }
         }
         public void ViewOrder(int _UserID, int _OrderID)
         {
@@ -317,7 +203,7 @@ namespace Persistence
             Order order = orderBL.GetOrderByID(_OrderID);
             List<OrderDetails> orderDetailsList = orderDetailsBL.GetOrderDetailsListByOrderID(_OrderID);
             Shop shop = shopBL.GetShopByID(order.ShopID);
-            int total = orderBL.GetTotalOrder(_OrderID);
+            long total = orderBL.GetTotalOrder(_OrderID);
             foreach (OrderDetails orderDetails in orderDetailsList)  
             { 
                 if (orderDetails.ProductNumber > 0)
@@ -331,7 +217,7 @@ namespace Persistence
             tableData.Add(rowTotal);
             ConsoleTableBuilder
                 .From(tableData)
-                .WithColumn("Shop", "STT", "Product", "Price", "Quantity", "Total")
+                .WithColumn("Shop", "ID", "Product", "Price", "Quantity", "Total")
                 .WithTextAlignment(new Dictionary < int, TextAligntment>
                     {
                         {4, TextAligntment.Right },
@@ -345,7 +231,7 @@ namespace Persistence
                 Console.WriteLine("1. Confirm pick up.");
                 Console.WriteLine("2. Reject orders.");
                 Console.WriteLine("0. Back.");
-                string? choice = Console.ReadLine();
+                string? choice = readHelper.ReadString();
                 if (choice == "1")
                 {
                     orderBL.UpdateStatusOfOrder(order.OrderID, "Finished");
@@ -368,16 +254,6 @@ namespace Persistence
                 Console.ReadKey();
                 MyOrder(_UserID);
             }
-            
-        }
-        public bool IsNumber(string pValue)
-        {
-            foreach (Char c in pValue)
-            {
-                if (!Char.IsDigit(c))
-                return false;
-            }
-            return true;
         }
         public int CheckProductOfOrderDetails(List<OrderDetails> orderDetailsList, int _ProductID)
         {
@@ -396,6 +272,7 @@ namespace Persistence
         public void viewShop(int _UserID, int _ShopID)
         {
             Console.Clear();
+            Console.WriteLine($"══════════ {shopBL.GetShopByID(_ShopID).ShopName} ══════════");           
             Console.WriteLine("1. Product All");
             List<Category> categories = categoryBL.GetCategoriesByShopID(_ShopID);
             int count = 2;
@@ -404,43 +281,48 @@ namespace Persistence
                 Console.WriteLine($"{count++}. {category.CategoryName}");
             }
             Console.WriteLine("0. Back.");
+            for (int i = 0; i < shopBL.GetShopByID(_ShopID).ShopName.Length; i++)
+            {
+                Console.Write("═");
+            }
+            Console.WriteLine($"══════════════════════");
             Console.Write("Choose: ");
             try
             {
-                int choice = Convert.ToInt32(Console.ReadLine());
-                if (choice != 0 && choice != 1)
+                int choice = readHelper.ReadInt(0, categories.Count + 1);
+                if (choice == 0)
                 {
-                    List<Product> products = productBL.GetProductsByCategory(categories[choice - 2].CategoryID);
-                    DisplayProducts(_UserID, products);
-                }
-                else if (choice == 0)
-                {
-                    ecommerce.CustomerPage(_UserID);
+                    SearchShop(_UserID);
                 }
                 else
                 {
-                    List<Product> products = productBL.GetProductsByShopID(_ShopID);
-                    DisplayProducts(_UserID, products);
+                    List<Product> products = new List<Product>();
+                    if (choice == 1)
+                    {
+                        products = productBL.GetProductsByShopID(_ShopID);
+                    }
+                    else
+                    {
+                        products = productBL.GetProductsByCategory(categories[choice - 2].CategoryID);
+                    }
+                    DisplayProducts(_UserID, products, "SearchShop");
                 }
             }
             catch (System.Exception)
             {
-                Console.Clear();
                 viewShop(_UserID, _ShopID);
             }
         }
         public void ViewCart(int _UserID)
         {
             List<Order> orders = orderBL.GetOrdersByStatusAndUserID("Shopping", _UserID);
+            List<OrderDetails> orderDetailsList = orderDetailsBL.GetOrderDetailsListByUserIDAndStatus(_UserID, "Shopping");
             Console.Clear();
-            if (orders.Count > 0)
+            if (orders.Count > 0 && orderDetailsList.Count > 0)
             {
                 List<List<object>> tableData = new List<List<object>>();
                 int count = 1;
-                
-                List<OrderDetails> orderDetailsList = orderDetailsBL.GetOrderDetailsListByUserIDAndStatus(_UserID, "Shopping");
-                
-                int total = orderBL.GetTotalCart(_UserID);
+                long total = orderBL.GetTotalCart(_UserID);
                 foreach (OrderDetails orderDetails in orderDetailsList)  
                 { 
                     if (orderDetails.ProductNumber > 0)
@@ -448,7 +330,7 @@ namespace Persistence
                         Order order = orderBL.GetOrderByID(orderDetails.OrderID);
                         Shop shop = shopBL.GetShopByID(order.ShopID);
                         Product product = productBL.GetProductByID(orderDetails.ProductID);
-                        List<object> rowData = new List<object>{shop.ShopName, count++, product.ProductName, product.Price.ToString("C0"), orderDetails.ProductNumber, (product.Price * orderDetails.ProductNumber).ToString("C0")};
+                        List<object> rowData = new List<object>{shop.ShopName, count++, product.ProductName, product.Price.ToString("C0"), orderDetails.ProductNumber, orderDetailsBL.GetTotalOrderDetails(orderDetails).ToString("C0")};
                         tableData.Add(rowData);
                     }
                 }
@@ -456,7 +338,7 @@ namespace Persistence
                 tableData.Add(rowTotal);
                 ConsoleTableBuilder
                     .From(tableData)
-                    .WithColumn("Shop", "STT", "Product", "Price", "Quantity", "Total")
+                    .WithColumn("Shop", "ID", "Product", "Price", "Quantity", "Total")
                     .WithTextAlignment(new Dictionary < int, TextAligntment>
                         {
                             {4, TextAligntment.Right },
@@ -465,27 +347,44 @@ namespace Persistence
                         })
                     .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
                     .ExportAndWriteLine();
-                Console.WriteLine("1. Payment");
-                Console.WriteLine("0. Back");
+                Console.WriteLine("Enter ID to view product information, 0 to return or \"Order\" to order");
                 Console.Write($"Choose: ");
-                string? choice = Console.ReadLine();
-                if (choice == "1")
+                string? choice = readHelper.ReadString();
+                if ( readHelper.IsNumber(choice))
+                {
+                    int num = Convert.ToInt32(choice);
+                    if (num == 0)
+                    {
+                        ecommerce.CustomerPage(_UserID);
+                    }
+                    else if (num > 0 && num <= orderDetailsList.Count)
+                    {
+                        List<Product> products = new List<Product>();
+                        ProductInformation(_UserID, orderDetailsList[num - 1].ProductID, "ViewCart", products);
+                    }
+                }
+                if (choice.ToLower() == "order")
                 {
                     foreach (Order order in orders)
                     {
-                        orderBL.UpdateStatusOfOrder(order.OrderID, "Processing");
+                        List<OrderDetails> orderDetailsList1 = orderDetailsBL.GetOrderDetailsListByOrderID(order.OrderID);
+                        if (orderDetailsList1.Count > 0)
+                        {
+                            string format = "yyyy-MM-dd HH:mm:ss";
+                            DateTime now = DateTime.Now;
+                            orderBL.UpdateCreateDateOfOrder(order.OrderID, now.ToString(format));
+                            orderBL.UpdateStatusOfOrder(order.OrderID, "Processing");
+                            Console.WriteLine("Order Success");
+                            Console.WriteLine("Press any key to continue.");
+                            Console.ReadKey();
+                        }
                     }
-                    Console.WriteLine("Order Success");
-                    Console.WriteLine("Press any key to continue.");
-                    Console.ReadKey();
-                    ecommerce.CustomerPage(_UserID);
-                }
-                else if (choice == "0")
-                {
                     ecommerce.CustomerPage(_UserID);
                 }
                 else
                 {
+                    Console.WriteLine("Invalid selection!");
+                    Console.ReadKey();
                     ViewCart(_UserID);
                 }
             }
@@ -497,7 +396,7 @@ namespace Persistence
                 ecommerce.CustomerPage(_UserID);
             }
         }
-        public int CheckShopOfOrders(List<Order> orders, int _ShopID)
+        public int CheckShopOfCart(List<Order> orders, int _ShopID)
         {
             int result = -1;
             for (int i = 0; i < orders.Count; i++)
@@ -513,40 +412,29 @@ namespace Persistence
         public void SearchShop(int _UserID)
         {
             Console.Clear();
-            Console.WriteLine("------------- Search Shop -----------------");
+            Console.WriteLine("══════════ Search Shop ══════════");
             Console.WriteLine("Enter Shop name to search or \"0\" to go back: ");
-            string? _ShopName = Console.ReadLine();
+            string? _ShopName = readHelper.ReadString(50);
             if (_ShopName.ToLower() != "0")
             {
                 List<Shop> shops = new List<Shop>();
                 shops = shopBL.GetShopsByName(_ShopName);
-                DisplayShops(_UserID, shops);
-            }
-            else
-            {
-                ecommerce.CustomerPage(_UserID);
-            }
-        }
-        public void DisplayShops(int _UserID, List<Shop> shops)
-        {
-            Console.Clear();
-            List<List<object>> tableData = new List<List<object>>();
-            int count = 1;
-            foreach (Shop shop in shops)  
-            { 
-                Address address = addressBL.GetAddressByID(shop.AddressID);
-                List<object> rowData = new List<object>{count++, shop.ShopName, address.City};
-                tableData.Add(rowData);
-            }
-            ConsoleTableBuilder
-                .From(tableData)
-                .WithColumn("STT", "Shop Name", "Address")
-                .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
-                .ExportAndWriteLine();
-            Console.Write("Enter ID to view store or \"0\" to find another shop: ");
-            try
-            {
-                int choice = Convert.ToInt32(Console.ReadLine());
+                Console.Clear();
+                List<List<object>> tableData = new List<List<object>>();
+                int count = 1;
+                foreach (Shop shop in shops)  
+                { 
+                    Address address = addressBL.GetAddressByID(shop.AddressID);
+                    List<object> rowData = new List<object>{count++, shop.ShopName, address.City};
+                    tableData.Add(rowData);
+                }
+                ConsoleTableBuilder
+                    .From(tableData)
+                    .WithColumn("ID", "Shop Name", "Address")
+                    .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
+                    .ExportAndWriteLine();
+                Console.Write("Enter ID to view store or \"0\" to find another shop: ");
+                int choice = readHelper.ReadInt(0, shops.Count);
                 if (choice != 0)
                 {
                     viewShop(_UserID, shops[choice - 1].ShopID);
@@ -556,54 +444,54 @@ namespace Persistence
                     SearchShop(_UserID);
                 }
             }
-            catch (System.Exception)
+            else
             {
-                DisplayShops(_UserID, shops);
+                ecommerce.CustomerPage(_UserID);
             }
         }
         public void MyOrder(int _UserID)
         {
             List<Order> orders = orderBL.GetOrdersByUserID(_UserID);
-            DisplayOrders(_UserID, orders);
-            Console.WriteLine("Enter ID to view order information.");
-            Console.WriteLine("0. Back.");
-            try
-            {
-                int choice = Convert.ToInt32(Console.ReadLine());
-                if (choice != 0)
-                {
-                    ViewOrder(_UserID, orders[choice - 1].OrderID);
-                }
-                else
-                {
-                    ecommerce.CustomerPage(_UserID);
-                }
-            }
-            catch (System.Exception)
-            {
-                MyOrder(_UserID);
-            }
-            
-        }
-        public void DisplayOrders(int _UserID, List<Order> orders)
-        {
             Console.Clear();
             List<List<object>> tableData = new List<List<object>>();
             int count = 1;
             for (int i = 0; i < orders.Count; i++)
             {
-                int total = orderBL.GetTotalOrder(orders[i].OrderID);
+                long total = orderBL.GetTotalOrder(orders[i].OrderID);
                 Shop shop = shopBL.GetShopByID(orders[i].ShopID);
                 List<OrderDetails> orderDetailsList = orderDetailsBL.GetOrderDetailsListByOrderID(orders[i].OrderID);
-                List<object> rowData = new List<object>{count++, shop.ShopName, orderDetailsList.Count, total.ToString("C0"), orders[i].Status};
-                tableData.Add(rowData);
+                int _ProductNumber = 0;
+                foreach (OrderDetails orderDetails in orderDetailsList)
+                {
+                    _ProductNumber += orderDetails.ProductNumber;
+                }
+                if (_ProductNumber != 0)
+                {
+                    List<object> rowData = new List<object>{count++, shop.ShopName, _ProductNumber, total.ToString("C0"), orders[i].Status};
+                    tableData.Add(rowData);
+                }
+                else
+                {
+                    orders.RemoveAt(i);
+                    i--;
+                }
             }
             ConsoleTableBuilder
                 .From(tableData)
-                .WithColumn("STT", "Shop Name", "Quantity", "Total", "Status")
+                .WithColumn("ID", "Shop Name", "Quantity", "Total", "Status")
                 .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
                 .ExportAndWriteLine();
+            Console.WriteLine("Enter ID to view order information.");
+            Console.WriteLine("0. Back.");
+            int choice = readHelper.ReadInt(0 , orders.Count);
+            if (choice != 0)
+            {
+                ViewOrder(_UserID, orders[choice - 1].OrderID);
+            }
+            else
+            {
+                ecommerce.CustomerPage(_UserID);
+            }
         }
-        
     }
 }

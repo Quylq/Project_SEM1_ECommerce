@@ -57,23 +57,6 @@ create table Products
     constraint pk_Products primary key (ProductID)
 );
 
-DELIMITER $$
-CREATE TRIGGER ReplaceTab
-before INSERT ON Products FOR EACH ROW
-BEGIN
-	IF NEW.ProductName like '%\t%' then
-    INSERT INTO Products
-        SET
-            ProductID = NEW.ProductID,
-            ShopID = NEW.ShopID,
-            ProductName = replace(NEW.ProductName, '\t', ' '),
-            Description = replace(NEW.Description, '\t', ' '),
-            Price = NEW.Price,
-            Quantity = NEW.Quantity;
-	End IF;
-END $$
-DELIMITER ;
-
 create table Categories
 (
     CategoryID   int not null auto_increment,
@@ -716,7 +699,7 @@ Kích thước hộp: 62 * 36 * 42cm', 160000, 100)
        (3, 'Giá Đỡ Điện Thoại Hình Thú Bằng Gỗ Dễ Thương', '- Chất liệu: gỗ phun sơn tạo hình và chống mối mọt.
 -Trọng lượng: 34g
 -Xuất xứ: Trung Quốc', 10000, 100),
-       (4, 'Set Đồ Nữ, Set Bộ Áo Thun Mặt Cười Mix Quần Kaki Ống Suông Hàng Loại 1', 'Chất liệu:
+       (4, 'Set Đồ Nữ, Set Bộ Áo Thun Mặt Cười Mix Quần Kaki Ống Suông Hàng Loại 1', 'Chất liệu:
 Màu Sắc : Đen, Xanh
 Size: Free Size < 57kg', 100000, 20),
        (4, 'Bộ Thun Cộc Tay Vico Nữ', 'Bộ cộc tay in chữ Vico form rộng nữ
@@ -963,8 +946,8 @@ CREATE user if not exists 'guest'@'localhost' identified by '123456';
 grant SELECT, INSERT, UPDATE on ecommerce.address to 'guest'@'localhost';
 grant SELECT, INSERT, UPDATE on ecommerce.users to 'guest'@'localhost';
 grant SELECT, INSERT, UPDATE on ecommerce.products to 'guest'@'localhost';
-grant SELECT, INSERT, UPDATE on ecommerce.categories to 'guest'@'localhost';
+grant SELECT, INSERT, UPDATE, DELETE on ecommerce.categories to 'guest'@'localhost';
 grant SELECT, INSERT, UPDATE on ecommerce.orders to 'guest'@'localhost';
-grant SELECT, INSERT, UPDATE on ecommerce.orderdetails to 'guest'@'localhost';
-grant SELECT, INSERT, UPDATE on ecommerce.product_categories to 'guest'@'localhost';
+grant SELECT, INSERT, UPDATE, DELETE on ecommerce.orderdetails to 'guest'@'localhost';
+grant SELECT, INSERT, UPDATE, DELETE on ecommerce.product_categories to 'guest'@'localhost';
 grant SELECT, INSERT, UPDATE on ecommerce.shops to 'guest'@'localhost';
