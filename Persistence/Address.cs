@@ -29,5 +29,9 @@ namespace Persistence
             Commune = "";
             SpecificAddress = "";
         }
+        public override string ToString()
+        {
+            return $"{SpecificAddress}, {Commune}, {District}, {City}";
+        }
     }
 }

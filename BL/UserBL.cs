@@ -30,5 +30,13 @@ public class UserBL
 
         return _UserID;
     }
+    public void UpdateUser(User user)
+    {
+        userDAL.UpdateUser(user);
+    }
+    public void UpdatePassword(int _UserID, string _Password)
+    {
+        userDAL.UpdatePassword(_UserID, _Password);
+    }
 }
 

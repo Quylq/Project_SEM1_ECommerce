@@ -22,7 +22,7 @@ namespace DAL
             {
                 GetConnection();
             }
-            connection.Open();
+            connection!.Open();
             
             return connection;
         }

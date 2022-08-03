@@ -11,10 +11,11 @@ namespace Persistence
         public string Email{get;set;}
         public string Phone{get;set;}
         public string Role{get;set;}
-        public User(string _UserName, string _Password, string _FullName, string _Birthday, string _Email, string _Phone, int _AddressID, string _Role)
+        public User(int _UserID, string _FullName, string _Birthday, string _Email, string _Phone, int _AddressID, string _Role)
         {
-            UserName = _UserName;
-            Password = _Password;
+            UserID = _UserID;
+            UserName = "";
+            Password = "";
             FullName = _FullName;
             Birthday = _Birthday;
             Email = _Email;

@@ -50,6 +50,15 @@ public class OrderBL
         }
         return total;
     }
+    public int GetProductNumberOfCart(int _UserID)
+    {
+        int ProductNumber = 0;
+        OrderDetailsBL orderDetailsBL = new OrderDetailsBL();
+        List<OrderDetails> orderDetailsList = orderDetailsBL.GetOrderDetailsListByUserIDAndStatus(_UserID, "Shopping");
+        ProductNumber = orderDetailsList.Count;
+
+        return ProductNumber;
+    }
     public long GetTotalCart(int _UserID)
     {
         long total = 0;
