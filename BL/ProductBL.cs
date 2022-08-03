@@ -42,9 +42,9 @@ public class ProductBL
     {
         productDAL.UpdateDescriptionOfProduct(_ProductID, _Description);
     }
-    public void UpdateQuantityOfProduct(int _ProductID, int _Quatity)
+    public void UpdateAmountOfProduct(int _ProductID, int _Quatity)
     {
-        productDAL.UpdateQuantityOfProduct(_ProductID, _Quatity);
+        productDAL.UpdateAmountOfProduct(_ProductID, _Quatity);
     }
     public int ProductIDMax()
     {

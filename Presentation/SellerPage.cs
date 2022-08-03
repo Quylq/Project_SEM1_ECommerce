@@ -38,18 +38,18 @@ namespace Persistence
                 long total = orderBL.GetTotalOrder(orders[i].OrderID);
                 User user = userBL.GetUserByID(orders[i].UserID);
                 List<OrderDetails> orderDetailsList = orderDetailsBL.GetOrderDetailsListByOrderID(orders[i].OrderID);
-                int _ProductNumber = 0;
+                int _Quantity = 0;
                 foreach (OrderDetails orderDetails in orderDetailsList)
                 {
-                    _ProductNumber += orderDetails.ProductNumber;
+                    _Quantity += orderDetails.Quantity;
                 }
-                List<object> rowData = new List<object>{count++, user.FullName, _ProductNumber, total.ToString("C0"), orders[i].CreateDate, orders[i].Status};
+                List<object> rowData = new List<object>{count++, user.FullName, _Quantity, total.ToString("C0"), orders[i].CreateDate, orders[i].Status};
                 tableData.Add(rowData);
             }
             ConsoleTableBuilder
                 .From(tableData)
                 .WithTitle($"Order Management ", ConsoleColor.Yellow, ConsoleColor.DarkGray)
-                .WithColumn("ID", "Customer", "Quantity", "Total", "CreateDate", "Status")
+                .WithColumn("ID", "Customer", "Amount", "Total", "CreateDate", "Status")
                 .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
                 .ExportAndWriteLine();
             Console.WriteLine("Enter \"ID\" to view corresponding order details");
@@ -176,7 +176,7 @@ namespace Persistence
             {
                 new List<object>{"Product", product.ProductName},
                 new List<object>{"Price", product.Price.ToString("C0")},
-                new List<object>{"Quantity", product.Quantity},
+                new List<object>{"Amount", product.Amount},
                 new List<object>{"Category", _ListCategory}
             };
             for (int i = 0; i < product.Description.Split('\n').Length; i++)
@@ -238,10 +238,10 @@ namespace Persistence
             else if (choice == 2)
             {
                 Console.Clear();
-                Console.WriteLine($"══════════ Update Quantity ══════════");
-                Console.Write("Quantity: ");
-                int _Quantity = readHelper.ReadInt(0, 999);
-                productBL.UpdateQuantityOfProduct(_ProductID, _Quantity);
+                Console.WriteLine($"══════════ Update Amount ══════════");
+                Console.Write("Amount: ");
+                int _Amount = readHelper.ReadInt(0, 999);
+                productBL.UpdateAmountOfProduct(_ProductID, _Amount);
                 Console.WriteLine("Update successful!");
                 Console.WriteLine("Enter any key to continue");
                 Console.ReadKey();
@@ -266,11 +266,11 @@ namespace Persistence
             string _ProductName = readHelper.ReadString(500);
             Console.WriteLine("Price: ");
             int _Price = readHelper.ReadInt(1, Int32.MaxValue);
-            Console.WriteLine("Quantity: ");
-            int _Quantity = readHelper.ReadInt(1, 999);
+            Console.WriteLine("Amount: ");
+            int _Amount = readHelper.ReadInt(1, 999);
             Console.WriteLine("Description: ");
             string _Description = readHelper.ReadString(2000);
-            Product product = new Product(productBL.ProductIDMax() + 1, _ShopID, _ProductName, _Price, _Description, _Quantity);
+            Product product = new Product(productBL.ProductIDMax() + 1, _ShopID, _ProductName, _Price, _Description, _Amount);
             productBL.InsertProduct(product);
             AddProductToCategory(_ShopID, product.ProductID);
             Console.WriteLine("Add Product successfully !");
@@ -288,10 +288,10 @@ namespace Persistence
             long total = orderBL.GetTotalOrder(_OrderID);
             foreach (OrderDetails orderDetails in orderDetailsList)  
             {
-                if (orderDetails.ProductNumber > 0)
+                if (orderDetails.Quantity > 0)
                 {
                     Product product = productBL.GetProductByID(orderDetails.ProductID);
-                    List<object> rowData = new List<object>{count++, product.ProductName, product.Price.ToString("C0"), orderDetails.ProductNumber, (product.Price * orderDetails.ProductNumber).ToString("C0")};
+                    List<object> rowData = new List<object>{count++, product.ProductName, product.Price.ToString("C0"), orderDetails.Quantity, (product.Price * orderDetails.Quantity).ToString("C0")};
                     tableData.Add(rowData);
                 }
             }
@@ -300,7 +300,7 @@ namespace Persistence
             ConsoleTableBuilder
                 .From(tableData)
                 .WithTitle($"Customer: {user.FullName} ", ConsoleColor.Yellow, ConsoleColor.DarkGray)
-                .WithColumn("ID", "Product Name", "Price", "Quantity", "Status")
+                .WithColumn("ID", "Product Name", "Price", "Amount", "Status")
                 .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
                 .ExportAndWriteLine();
             if (order.Status == "Processing")
@@ -339,12 +339,12 @@ namespace Persistence
             int count = 1;
             foreach (Product product in products)  
             {
-                List<object> rowData = new List<object>{count++, product.ProductName, product.Price.ToString("C0"), product.Quantity};
+                List<object> rowData = new List<object>{count++, product.ProductName, product.Price.ToString("C0"), product.Amount};
                 tableData.Add(rowData);
             }
             ConsoleTableBuilder
                 .From(tableData)
-                .WithColumn("ID", "Product Name", "Price", "Quantity")
+                .WithColumn("ID", "Product Name", "Price", "Amount")
                 .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
                 .ExportAndWriteLine();
             Console.Write("Enter \"ID\" to see the product information or \"0\" to back: ");
@@ -377,12 +377,12 @@ namespace Persistence
             int count = 1;
             foreach (Product product in products)  
             {
-                List<object> rowData = new List<object>{count++, product.ProductName, product.Price.ToString("C0"), product.Quantity};
+                List<object> rowData = new List<object>{count++, product.ProductName, product.Price.ToString("C0"), product.Amount};
                 tableData.Add(rowData);
             }
             ConsoleTableBuilder
                 .From(tableData)
-                .WithColumn("ID", "Product Name", "Price", "Quantity")
+                .WithColumn("ID", "Product Name", "Price", "Amount")
                 .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
                 .ExportAndWriteLine();
             Console.Write("Enter \"ID\" add the corresponding product to the category or \"0\" to go back: ");
@@ -446,7 +446,7 @@ namespace Persistence
             }
             ConsoleTableBuilder
                 .From(tableData)
-                .WithColumn("ID", "Category", "Product Number")
+                .WithColumn("ID", "Category", "Quantity")
                 .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
                 .ExportAndWriteLine();
         }

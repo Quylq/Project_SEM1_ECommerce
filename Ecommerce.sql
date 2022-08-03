@@ -6,21 +6,21 @@ use Ecommerce;
 create table Address
 (
     AddressID int not null auto_increment,
-    City      varchar(50),
-    District  varchar(50),
-    Commune   varchar(50),
-    Address   varchar(200),
+    City      varchar(30),
+    District  varchar(30),
+    Commune   varchar(30),
+    Address   varchar(110),
     constraint pk_Address primary key (AddressID)
 );
 
 create table Users
 (
-    UserID    int         not null auto_increment,
+    UserID    int not null auto_increment,
     AddressID int,
     UserName  varchar(50) not null unique,
-    Password  varchar(200),
-    FullName  varchar(100),
-    Birthday  datetime,
+    Password  varchar(200) not null,
+    FullName  varchar(100) not null,
+    Birthday  date,
     Email     varchar(100),
     Phone     varchar(20),
     Role      enum ('Customer', 'Admin'),
@@ -49,9 +49,9 @@ create table Products
     ProductID   int not null auto_increment,
     ShopID      int,
     ProductName varchar(500),
-    Description varchar(10000),
+    Description varchar(1000),
     Price       int not null,
-    Quantity    int not null,
+    Amount    int not null,
     constraint fk_Products_Shops foreign key (ShopID)
         references Shops (ShopID),
     constraint pk_Products primary key (ProductID)
@@ -91,14 +91,11 @@ create table Orders
         references Shops (ShopID),
     constraint pk_Orders primary key (OrderID)
 );
-
-
-
 create table OrderDetails
 (
-    OrderID       int,
-    ProductID     int,
-    ProductNumber int,
+    OrderID int,
+    ProductID int,
+    Quantity int,
     constraint fk_OD_Orders foreign key (OrderID)
         references Orders (OrderID),
     constraint fk_OD_Products foreign key (ProductID)
@@ -119,23 +116,23 @@ values ('Hà Nội', 'Quận Đống Đa', 'Phường Trung Liệt', 'Phố Chù
 
 INSERT INTO Users (AddressID, UserName, Password, FullName, Birthday, Email, Phone, Role)
 VALUES (1, 'User1', SHA2('123456', 256), 'Văn Đức',
-        '1992-06-02 23:58:39', 'VanDuc110@vtc.edu.vn', '0986532764', 'Customer'),
+        '1992-06-02', 'VanDuc110@vtc.edu.vn', '0986532764', 'Customer'),
        (2, 'User2', SHA2('123456', 256), 'Việt Anh',
-        '2002-02-23 00:00:00', 'Vietanh1140@vtc.edu.vn', '0987123643', 'Customer'),
+        '2002-02-23', 'Vietanh1140@vtc.edu.vn', '0987123643', 'Customer'),
        (3, 'User3', SHA2('123456', 256), 'Quang Quý',
-        '1993-07-25 00:00:00', 'Quangquy1140@vtc.edu.vn', '0981238143', 'Customer'),
+        '1993-07-25', 'Quangquy1140@vtc.edu.vn', '0981238143', 'Customer'),
        (4, 'User4', SHA2('123456', 256), 'Tuấn Anh',
-        '2003-04-12 00:00:00', 'Tuananh1140@vtc.edu.vn', '0983152643', 'Customer'),
+        '2003-04-12', 'Tuananh1140@vtc.edu.vn', '0983152643', 'Customer'),
        (5, 'User5', SHA2('123456', 256), 'Cảnh Toàn',
-        '2002-10-28 00:00:00', 'Canhtoan1140@vtc.edu.vn', '0986157443', 'Customer'),
+        '2002-10-28', 'Canhtoan1140@vtc.edu.vn', '0986157443', 'Customer'),
        (6, 'User6', SHA2('123456', 256), 'Tất Đạt',
-        '2000-07-19 23:57:04', 'Tatdat1140@vtc.edu.vn', '0981236432', 'Customer'),
+        '2000-07-19', 'Tatdat1140@vtc.edu.vn', '0981236432', 'Customer'),
        (7, 'User7', SHA2('123456', 256), 'Cao Bắc',
-        '2001-01-20 23:57:25', 'Caobac1140@vtc.edu.vn', '0986735242', 'Customer'),
+        '2001-01-20', 'Caobac1140@vtc.edu.vn', '0986735242', 'Customer'),
        (8, 'User8', SHA2('123456', 256), 'Văn Tâm',
-        '2002-11-14 23:57:39', 'Vantam1140@vtc.edu.vn', '0986135742', 'Customer'),
+        '2002-11-14', 'Vantam1140@vtc.edu.vn', '0986135742', 'Customer'),
        (9, 'User9', SHA2('123456', 256), 'Long Tân',
-        '2001-04-28 23:57:52', 'Longtan1140@vtc.edu.vn', '0985663254', 'Customer');
+        '2001-04-28', 'Longtan1140@vtc.edu.vn', '0985663254', 'Customer');
 
 INSERT INTO Shops (UserID, AddressID, ShopName)
 VALUES (1, 1, 'Shop Đồ Gia Dụng'),
@@ -143,7 +140,7 @@ VALUES (1, 1, 'Shop Đồ Gia Dụng'),
        (3, 3, 'Shop Phụ Kiện Điện Tử'),
        (4, 4, 'Shop Thời Trang');
 
-INSERT INTO ecommerce.products (ShopID, ProductName, Description, Price, Quantity)
+INSERT INTO ecommerce.products (ShopID, ProductName, Description, Price, Amount)
 VALUES (1, 'Kệ để đồ, kệ đa năng chia tầng Inochi Nhựa Dùng Để Đựng Gia Vị Nhà Bếp Đựng Đồ Thực Phẩm, Phòng ngủ KET4T', '+ Sản phẩm xuất nhật chất lượng cao
 + Dùng trong nhà bếp, phòng khách, phòng ngủ.
 + Nhựa nguyên sinh cao cấp. chắc chắn, chịu được trọng tải lớn

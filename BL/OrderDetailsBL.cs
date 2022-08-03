@@ -20,9 +20,9 @@ public class OrderDetailsBL
     {
         orderDetailsDAL.InsertOrderDetails(orderDetails);
     }
-    public void UpdateProductNumberOfOrderDetails(OrderDetails orderDetails)
+    public void UpdateQuantityOfOrderDetails(OrderDetails orderDetails)
     {
-        orderDetailsDAL.UpdateProductNumberOfOrderDetails(orderDetails);
+        orderDetailsDAL.UpdateQuantityOfOrderDetails(orderDetails);
         orderDetailsDAL.DeleteOrderDetails();
     }
     public long GetTotalOrderDetails(OrderDetails orderDetails)
@@ -30,7 +30,7 @@ public class OrderDetailsBL
         long total;
         ProductBL productBL = new ProductBL();
         Product product = productBL.GetProductByID(orderDetails.ProductID);
-        total = (long)orderDetails.ProductNumber * product.Price;
+        total = (long)orderDetails.Quantity * product.Price;
         return total;
     }
     public List<OrderDetails> GetOrderDetailsListByUserIDAndStatus(int _UserID, string _Status)

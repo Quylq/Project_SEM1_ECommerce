@@ -4,12 +4,12 @@ namespace Persistence
     {
         public int OrderID{get;set;}
         public int ProductID{get;set;}
-        public int ProductNumber{get;set;}
-        public OrderDetails(int _OrderID, int _ProductID, int _ProductNumber)
+        public int Quantity{get;set;}
+        public OrderDetails(int _OrderID, int _ProductID, int _Quantity)
         {
             OrderID = _OrderID;
             ProductID = _ProductID;
-            ProductNumber = _ProductNumber;
+            Quantity = _Quantity;
         }
         public OrderDetails(){}
     }

@@ -62,7 +62,7 @@ namespace DAL
         // Lấy danh sách sản phẩm theo ID danh mục
         public List<Product> GetProductsByCategory(int _CategoryID)
         {    
-            query = $@"select p.ProductID, p.ShopID, p.ProductName, p.Price, p.Description, p.Quantity from Products p 
+            query = $@"select p.ProductID, p.ShopID, p.ProductName, p.Price, p.Description, p.Amount from Products p 
             inner join Product_Categories pc on p.ProductID = pc.ProductID 
             where pc.CategoryID = {_CategoryID}";
             DbHelper.OpenConnection();
@@ -104,14 +104,14 @@ namespace DAL
             product.ProductName = reader.GetString("ProductName");
             product.Price = reader.GetInt32("Price");
             product.Description = reader.GetString("Description").Replace("\t", " ");
-            product.Quantity = reader.GetInt32("Quantity");
+            product.Amount = reader.GetInt32("Amount");
 
             return product;
         }
 
         public void InsertProduct(Product product)
         {
-            query = $"Insert into Products (ProductID, ShopID, ProductName, Price , Description, Quantity) value ('{product.ProductID}', '{product.ShopID}', '{product.ProductName}', '{product.Price}', '{product.Description}', '{product.Quantity}')";
+            query = $"Insert into Products (ProductID, ShopID, ProductName, Price , Description, Amount) value ('{product.ProductID}', '{product.ShopID}', '{product.ProductName}', '{product.Price}', '{product.Description}', '{product.Amount}')";
 
             DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
@@ -127,9 +127,9 @@ namespace DAL
             DbHelper.CloseConnection();
         }
         // Cập nhật số lượng
-        public void UpdateQuantityOfProduct(int _ProductID, int _Quantity)
+        public void UpdateAmountOfProduct(int _ProductID, int _Amount)
         {
-            query = $"update Products set Quantity = '{_Quantity}' where ProductID = {_ProductID}";
+            query = $"update Products set Amount = '{_Amount}' where ProductID = {_ProductID}";
             DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();

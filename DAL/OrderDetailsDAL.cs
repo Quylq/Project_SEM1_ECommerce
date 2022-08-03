@@ -13,7 +13,7 @@ namespace DAL
 
             orderDetails.OrderID = reader.GetInt32("OrderID");
             orderDetails.ProductID = reader.GetInt32("ProductID");
-            orderDetails.ProductNumber = reader.GetInt32("ProductNumber");
+            orderDetails.Quantity = reader.GetInt32("Quantity");
 
             return orderDetails;
         }
@@ -52,15 +52,15 @@ namespace DAL
         }
         public void InsertOrderDetails(OrderDetails orderDetails)
         {
-            query = $"Insert into OrderDetails (OrderID, ProductID, ProductNumber) value ('{orderDetails.OrderID}', '{orderDetails.ProductID}', '{orderDetails.ProductNumber}')";
+            query = $"Insert into OrderDetails (OrderID, ProductID, Quantity) value ('{orderDetails.OrderID}', '{orderDetails.ProductID}', '{orderDetails.Quantity}')";
 
             DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
             DbHelper.CloseConnection();
         }
-        public void UpdateProductNumberOfOrderDetails(OrderDetails orderDetails)
+        public void UpdateQuantityOfOrderDetails(OrderDetails orderDetails)
         {
-            query = $@"update OrderDetails set ProductNumber = {orderDetails.ProductNumber} 
+            query = $@"update OrderDetails set Quantity = {orderDetails.Quantity} 
             where OrderID = {orderDetails.OrderID} and ProductID = {orderDetails.ProductID}";
 
             DbHelper.OpenConnection();
@@ -69,7 +69,7 @@ namespace DAL
         }
         public void DeleteOrderDetails()
         {
-            query = $@"Delete from OrderDetails where ProductNumber = 0";
+            query = $@"Delete from OrderDetails where Quantity = 0";
 
             DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);

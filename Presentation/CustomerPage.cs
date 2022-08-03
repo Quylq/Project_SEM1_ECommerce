@@ -66,7 +66,7 @@ namespace Persistence
             int count = 1;
             foreach (Product product in products)  
             { 
-                string status = product.Quantity == 0? "Out of stock" : "Stocking";
+                string status = product.Amount == 0? "Out of stock" : "Stocking";
                 List<object> rowData = new List<object>{count++, product.ProductName, product.Price.ToString("C0"), status};
                 tableData.Add(rowData);
             }
@@ -104,13 +104,13 @@ namespace Persistence
         {
             Product product = productBL.GetProductByID(_ProductID);
             Shop shop = shopBL.GetShopByID(product.ShopID);
-            string status = product.Quantity == 0? "Out of stock" : "Stocking";
+            string status = product.Amount == 0? "Out of stock" : "Stocking";
             List<List<object>> tableData = new List<List<object>>
             {
                 new List<object>{"Shop", shop.ShopName},
                 new List<object>{"Product Name", product.ProductName},
                 new List<object>{"Price", product.Price.ToString("C0")},
-                new List<object>{"Quantity", product.Quantity}
+                new List<object>{"Amount", product.Amount}
             };
             for (int i = 0; i < product.Description.Split('\n').Length; i++)
             {
@@ -153,15 +153,15 @@ namespace Persistence
                 .ExportAndWriteLine();
             List<Order> orders = orderBL.GetOrdersByStatusAndUserID("Shopping", _UserID);
             List<OrderDetails> oDList = orderDetailsBL.GetOrderDetailsListByUserIDAndStatus(_UserID, "Shopping");
-            int ProductNumberOfCart = 0;
+            int QuantityOfCart = 0;
             if (CheckProductOfOrderDetails(oDList, _ProductID) != -1)
             {
-                ProductNumberOfCart = oDList[CheckProductOfOrderDetails(oDList, _ProductID)].ProductNumber;
+                QuantityOfCart = oDList[CheckProductOfOrderDetails(oDList, _ProductID)].Quantity;
             }
-            Console.WriteLine($"Enter Quantity of products to add to cart.");
+            Console.WriteLine($"Enter Amount of products to add to cart.");
             Console.WriteLine($"0. Back.");
             Console.Write($"Choose: ");
-            int choice = readHelper.ReadInt(0 - ProductNumberOfCart, product.Quantity);
+            int choice = readHelper.ReadInt(0 - QuantityOfCart, product.Amount);
             if (choice != 0)
             {
                 int i = CheckShopOfCart(orders, product.ShopID);
@@ -186,8 +186,8 @@ namespace Persistence
                     else
                     {
                         int j = CheckProductOfOrderDetails(orderDetailsList, product.ProductID);
-                        orderDetailsList[j].ProductNumber += choice;
-                        orderDetailsBL.UpdateProductNumberOfOrderDetails(orderDetailsList[j]);
+                        orderDetailsList[j].Quantity += choice;
+                        orderDetailsBL.UpdateQuantityOfOrderDetails(orderDetailsList[j]);
                     }
                 }
                 if (choice > 0)
@@ -221,10 +221,10 @@ namespace Persistence
             long total = orderBL.GetTotalOrder(_OrderID);
             foreach (OrderDetails orderDetails in orderDetailsList)  
             { 
-                if (orderDetails.ProductNumber > 0)
+                if (orderDetails.Quantity > 0)
                 {
                     Product product = productBL.GetProductByID(orderDetails.ProductID);
-                    List<object> rowData = new List<object>{shop.ShopName, count++, product.ProductName, product.Price.ToString("C0"), orderDetails.ProductNumber, (product.Price * orderDetails.ProductNumber).ToString("C0")};
+                    List<object> rowData = new List<object>{shop.ShopName, count++, product.ProductName, product.Price.ToString("C0"), orderDetails.Quantity, (product.Price * orderDetails.Quantity).ToString("C0")};
                     tableData.Add(rowData);
                 }
             }
@@ -232,7 +232,7 @@ namespace Persistence
             tableData.Add(rowTotal);
             ConsoleTableBuilder
                 .From(tableData)
-                .WithColumn("Shop", "ID", "Product", "Price", "Quantity", "Total")
+                .WithColumn("Shop", "ID", "Product", "Price", "Amount", "Total")
                 .WithTextAlignment(new Dictionary < int, TextAligntment>
                     {
                         {4, TextAligntment.Right },
@@ -340,12 +340,12 @@ namespace Persistence
                 long total = orderBL.GetTotalCart(_UserID);
                 foreach (OrderDetails orderDetails in orderDetailsList)  
                 { 
-                    if (orderDetails.ProductNumber > 0)
+                    if (orderDetails.Quantity > 0)
                     {
                         Order order = orderBL.GetOrderByID(orderDetails.OrderID);
                         Shop shop = shopBL.GetShopByID(order.ShopID);
                         Product product = productBL.GetProductByID(orderDetails.ProductID);
-                        List<object> rowData = new List<object>{shop.ShopName, count++, product.ProductName, product.Price.ToString("C0"), orderDetails.ProductNumber, orderDetailsBL.GetTotalOrderDetails(orderDetails).ToString("C0")};
+                        List<object> rowData = new List<object>{shop.ShopName, count++, product.ProductName, product.Price.ToString("C0"), orderDetails.Quantity, orderDetailsBL.GetTotalOrderDetails(orderDetails).ToString("C0")};
                         tableData.Add(rowData);
                     }
                 }
@@ -353,7 +353,8 @@ namespace Persistence
                 tableData.Add(rowTotal);
                 ConsoleTableBuilder
                     .From(tableData)
-                    .WithColumn("Shop", "ID", "Product", "Price", "Quantity", "Total")
+                    .WithTitle("Shopping Cart", ConsoleColor.Yellow, ConsoleColor.DarkGray)
+                    .WithColumn("Shop", "ID", "Product", "Price", "Amount", "Total")
                     .WithTextAlignment(new Dictionary < int, TextAligntment>
                         {
                             {4, TextAligntment.Right },
@@ -390,7 +391,6 @@ namespace Persistence
                             orderBL.UpdateCreateDateOfOrder(order.OrderID, now.ToString(format));
                             orderBL.UpdateStatusOfOrder(order.OrderID, "Processing");
                             Console.WriteLine("Order Success");
-                            Console.WriteLine("Press any key to continue.");
                             Console.ReadKey();
                         }
                     }
@@ -475,25 +475,13 @@ namespace Persistence
                 long total = orderBL.GetTotalOrder(orders[i].OrderID);
                 Shop shop = shopBL.GetShopByID(orders[i].ShopID);
                 List<OrderDetails> orderDetailsList = orderDetailsBL.GetOrderDetailsListByOrderID(orders[i].OrderID);
-                int _ProductNumber = 0;
-                foreach (OrderDetails orderDetails in orderDetailsList)
-                {
-                    _ProductNumber += orderDetails.ProductNumber;
-                }
-                if (_ProductNumber != 0)
-                {
-                    List<object> rowData = new List<object>{count++, shop.ShopName, _ProductNumber, total.ToString("C0"), orders[i].Status};
-                    tableData.Add(rowData);
-                }
-                else
-                {
-                    orders.RemoveAt(i);
-                    i--;
-                }
+                List<object> rowData = new List<object>{count++, shop.ShopName, orderDetailsList.Count, total.ToString("C0"), orders[i].Status};
+                tableData.Add(rowData);
             }
             ConsoleTableBuilder
                 .From(tableData)
-                .WithColumn("ID", "Shop Name", "Quantity", "Total", "Status")
+                .WithTitle("My Order", ConsoleColor.Yellow, ConsoleColor.DarkGray)
+                .WithColumn("ID", "Shop Name", "Amount", "Total", "Status")
                 .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
                 .ExportAndWriteLine();
             Console.WriteLine("Enter ID to view order information.");
