@@ -33,12 +33,27 @@ namespace Persistence
             Console.Clear();
             Console.WriteLine($"══════════ Search Product ══════════");
             Console.WriteLine("Enter product name to search or \"0\" to go back. ");
-            string? _ProductName = readHelper.ReadString();
-            if (_ProductName.ToLower() != "0")
+            string? _ProductName = readHelper.ReadString(500);
+            if (_ProductName != "0")
             {
-                List<Product> products = new List<Product>();
-                products = productBL.GetProductsByName(_ProductName);
-                DisplayProducts(_UserID, products, "SearchProduct");
+                List<Product> products = productBL.GetProductsByName(_ProductName);
+                if (products.Count > 0)
+                {
+                    DisplayProducts(_UserID, products, "SearchProduct");
+                }
+                else
+                {
+                    Console.WriteLine("Product not found, would you like to find it again? (Y/N)");
+                    string choice = readHelper.ReadString();
+                    if (choice.ToLower() == "y")
+                    {
+                        SearchProduct(_UserID);
+                    }
+                    else
+                    {
+                        ecommerce.CustomerPage(_UserID);
+                    }
+                }
             }
             else
             {
@@ -492,6 +507,96 @@ namespace Persistence
             {
                 ecommerce.CustomerPage(_UserID);
             }
+        }
+        public void PersonalInformation(int _UserID)
+        {
+            Console.Clear();
+            User user = userBL.GetUserByID(_UserID);
+            Address address = addressBL.GetAddressByID(user.AddressID);
+            List<List<object>> tableData = new List<List<object>>
+            {
+                new List<object>{"Full Name", user.FullName},
+                new List<object>{"Birthday", user.Birthday},
+                new List<object>{"Email", user.Email},
+                new List<object>{"Phone", user.Phone},
+                new List<object>{"Address", address.ToString()},
+            };
+            ConsoleTableBuilder
+                    .From(tableData)
+                    .WithTitle("Personal Information ", ConsoleColor.Yellow, ConsoleColor.DarkGray)
+                    .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
+                    .ExportAndWriteLine();
+            Console.WriteLine("1. Change Information");
+            Console.WriteLine("2. Change Password");
+            Console.WriteLine("0. Back");
+            int choice = readHelper.ReadInt(0, 2);
+            if (choice == 0)
+            {
+                ecommerce.CustomerPage(_UserID);
+            }
+            else if (choice == 1)
+            {
+                ChangeInformation(_UserID);
+            }
+            else
+            {
+                ChangePassword(_UserID);
+            }
+        }
+        public void ChangeInformation(int _UserID)
+        {
+            Console.Clear();
+            Console.WriteLine("══════════ Change Information ══════════");
+            Console.Write("You Name: ");
+            string _FullName = readHelper.ReadString(100);
+            Console.Write("Email: ");
+            string _Email = readHelper.ReadEmail();
+            Console.Write("Phone: ");
+            string _Phone = readHelper.ReadPhone();
+            Console.Write("Birthday: ");
+            string _Birthday = readHelper.ReadDateOnly();
+            int _AddressID = readHelper.ReadAddress().AddressID;
+            User user = new User(_UserID, _FullName, _Birthday, _Email, _Phone, _AddressID, "Customer");
+            userBL.UpdateUser(user);
+            Console.WriteLine("Change Information Success!");
+            Console.ReadKey();
+            PersonalInformation(_UserID);
+        }
+        public void ChangePassword(int _UserID)
+        {
+            Console.Clear();
+            Console.WriteLine("══════════ Change Password ══════════");
+            int count = 1;
+            ChangePassword1:
+            Console.Write("Old Password: ");
+            string OldPassword = readHelper.ReadPassword();
+            User user = userBL.GetUserByID(_UserID);
+            if (user.Password == OldPassword)
+            {
+                Console.Write("New Password: ");
+                string NewPassword = readHelper.ReadPassword();
+                userBL.UpdatePassword(_UserID, NewPassword);
+                Console.WriteLine("Change Password Success!");
+                Console.ReadKey();
+                ecommerce.Menu();
+            }
+            else
+            {
+                Console.WriteLine($"wrong password!");
+                count++;
+                Console.ReadKey();
+                if (count <= 3)
+                {
+                    goto ChangePassword1;
+                }
+                else
+                {
+                    Console.WriteLine("You enter bad password too 3 times!");
+                    Console.ReadKey();
+                    PersonalInformation(_UserID);
+                }
+            }
+            
         }
     }
 }

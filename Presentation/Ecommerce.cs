@@ -1,5 +1,4 @@
 using BL;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace Persistence
@@ -9,12 +8,14 @@ namespace Persistence
         private UserBL userBL;
         private ShopBL shopBL;
         private AddressBL addressBL;
+        private OrderBL orderBL;
         private ReadHelper readHelper;
         public Ecommerce()
         {
             userBL = new UserBL();
             shopBL = new ShopBL();
             addressBL = new AddressBL();
+            orderBL = new OrderBL();
             readHelper = new ReadHelper();
         }
         public void Menu()
@@ -74,7 +75,7 @@ namespace Persistence
                 int count = 1;
                 Login1:
                 Console.Write("Password: ");
-                string? _Password = ReadPassword();
+                string? _Password = readHelper.ReadPassword();
                 if (_Password == user.Password)
                 {
                     Console.WriteLine($"Logged in successfully!");
@@ -123,7 +124,7 @@ namespace Persistence
             if (user1.UserName == "")
             {
                 Console.Write("Password: ");
-                string _Password = ReadPassword();
+                string _Password = readHelper.ReadPassword();
                 Console.Write("You Name: ");
                 string _FullName = readHelper.ReadString(100);
                 Console.Write("Email: ");
@@ -132,7 +133,7 @@ namespace Persistence
                 string _Phone = readHelper.ReadPhone();
                 Console.Write("Birthday: ");
                 string _Birthday = readHelper.ReadDateOnly();
-                int _AddressID = ReadAddress();
+                int _AddressID = readHelper.ReadAddress().AddressID;
                 int _UserID = userBL.UserIDMax() + 1;
                 User user = new User(_UserID, _UserName, _Password, _FullName, _Birthday, _Email, _Phone, _AddressID, "Customer");
                 userBL.InsertUser(user);
@@ -155,7 +156,7 @@ namespace Persistence
             Console.WriteLine("══════════ Register to open a store ══════════");
             Console.Write("Shop Name: ");
             string _ShopName = readHelper.ReadString(50);
-            int _AddressID = ReadAddress();
+            int _AddressID = readHelper.ReadAddress().AddressID;
             int _ShopID = shopBL.ShopIDMax() + 1;
             Shop shop = new Shop(_ShopID, _ShopName, _UserID, _AddressID);
             shopBL.InsertShop(shop);
@@ -205,69 +206,15 @@ namespace Persistence
                 return _UserName;
             }
         }
-        public string ReadPassword()
-        {
-            string temp = "";
-            ConsoleKeyInfo info = Console.ReadKey(true);
-            while (info.Key != ConsoleKey.Enter)
-            {
-                if (info.Key != ConsoleKey.Backspace && info.Key != ConsoleKey.Spacebar)
-                {
-                    temp += info.KeyChar;
-                    Console.Write("*");
-                }
-                else if (temp.Length > 0 && info.Key == ConsoleKey.Backspace)
-                {
-                    Console.Write("\b");
-                    temp = temp.Substring(0, temp.Length - 1);
-                }
-                info = Console.ReadKey(true);
-            }
-            Console.WriteLine();
-            return Sha256Hash(temp);
-        }
-        static string Sha256Hash(string rawData)  
-        {  
-            // Create a SHA256   
-            using (SHA256 sha256Hash = SHA256.Create())  
-            {  
-                // ComputeHash - returns byte array  
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));  
-  
-                // Convert byte array to a string   
-                StringBuilder builder = new StringBuilder();  
-                for (int i = 0; i < bytes.Length; i++)  
-                {  
-                    builder.Append(bytes[i].ToString("x2"));  
-                }  
-                return builder.ToString();  
-            }  
-        }
-        public int ReadAddress()
-        {
-            Console.WriteLine("--- Address ---");
-            Console.Write("City: ");
-            string _City = readHelper.ReadString(30);
-            Console.Write("District: ");
-            string _District = readHelper.ReadString(30);
-            Console.Write("Commune: ");
-            string _Commune = readHelper.ReadString(30);
-            Console.Write("SpecificAddress: ");
-            string _SpecificAddress = readHelper.ReadString(110);
-            int _AddressID = addressBL.AddressIDMax() + 1;
-            Address address =  new Address(_AddressID, _City, _District, _Commune, _SpecificAddress);
-            addressBL.InsertAddress(address);
-
-            return _AddressID;
-        }
         public void CustomerPage(int _UserID)
         {
             CustomerPage customerPage = new CustomerPage();
+            int ProductNumber = orderBL.GetProductNumberOfCart(_UserID);
             Console.Clear();
             Console.WriteLine($"══════════ {userBL.GetUserByID(_UserID).FullName} ══════════");
             Console.WriteLine("1. Search Product.");
             Console.WriteLine("2. Search Shop.");
-            Console.WriteLine("3. Cart.");
+            Console.WriteLine($"3. Cart ({ProductNumber} Product).");
             Console.WriteLine("4. My Order.");
             Shop shop = shopBL.GetShopByUserID(_UserID);
             if (shop.UserID == _UserID)
@@ -278,7 +225,8 @@ namespace Persistence
             {
                 Console.WriteLine("5. Sales registration."); 
             }
-            Console.WriteLine("0. Exit.");
+            Console.WriteLine("6. Personal information.");
+            Console.WriteLine("0. Log out.");
             for (int i = 0; i < userBL.GetUserByID(_UserID).FullName.Length; i++)
             {
                 Console.Write("═");
@@ -309,7 +257,10 @@ namespace Persistence
                     {
                         SigUpShop(_UserID);
                     }
-                    break; 
+                    break;
+                case "6": 
+                    customerPage.PersonalInformation(_UserID);
+                    break;
                 case "0": 
                     Menu();
                     break;

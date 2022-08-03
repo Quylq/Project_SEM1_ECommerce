@@ -2,6 +2,7 @@ using BL;
 using System.Net.Mail;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Security.Cryptography;
 
 namespace Persistence
 {
@@ -150,6 +151,62 @@ namespace Persistence
                 Console.WriteLine($"Invalid Email, Please Retype.");
                 return ReadEmail();
             }
+        }
+        public Address ReadAddress()
+        {
+            AddressBL addressBL = new AddressBL();
+            Console.WriteLine("══════════ Address ══════════");
+            Console.Write("City: ");
+            string _City = ReadString(30);
+            Console.Write("District: ");
+            string _District = ReadString(30);
+            Console.Write("Commune: ");
+            string _Commune = ReadString(30);
+            Console.Write("SpecificAddress: ");
+            string _SpecificAddress = ReadString(110);
+            int _AddressID = addressBL.AddressIDMax() + 1;
+            Address address =  new Address(_AddressID, _City, _District, _Commune, _SpecificAddress);
+            addressBL.InsertAddress(address);
+
+            return address;
+        }
+        public string ReadPassword()
+        {
+            string temp = "";
+            ConsoleKeyInfo info = Console.ReadKey(true);
+            while (info.Key != ConsoleKey.Enter)
+            {
+                if (info.Key != ConsoleKey.Backspace && info.Key != ConsoleKey.Spacebar)
+                {
+                    temp += info.KeyChar;
+                    Console.Write("*");
+                }
+                else if (temp.Length > 0 && info.Key == ConsoleKey.Backspace)
+                {
+                    Console.Write("\b");
+                    temp = temp.Substring(0, temp.Length - 1);
+                }
+                info = Console.ReadKey(true);
+            }
+            Console.WriteLine();
+            return Sha256Hash(temp);
+        }
+        static string Sha256Hash(string rawData)  
+        {  
+            // Create a SHA256   
+            using (SHA256 sha256Hash = SHA256.Create())  
+            {  
+                // ComputeHash - returns byte array  
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));  
+  
+                // Convert byte array to a string   
+                StringBuilder builder = new StringBuilder();  
+                for (int i = 0; i < bytes.Length; i++)  
+                {  
+                    builder.Append(bytes[i].ToString("x2"));  
+                }  
+                return builder.ToString();  
+            }  
         }
     }
 }

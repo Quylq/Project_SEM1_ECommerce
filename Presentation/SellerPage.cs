@@ -263,13 +263,13 @@ namespace Persistence
             Console.Clear();
             Console.WriteLine($"══════════ Add Product ══════════");
             Console.WriteLine("Product Name: ");
-            string _ProductName = readHelper.ReadString();
+            string _ProductName = readHelper.ReadString(500);
             Console.WriteLine("Price: ");
             int _Price = readHelper.ReadInt(1, Int32.MaxValue);
             Console.WriteLine("Quantity: ");
             int _Quantity = readHelper.ReadInt(1, 999);
             Console.WriteLine("Description: ");
-            string _Description = readHelper.ReadString();
+            string _Description = readHelper.ReadString(2000);
             Product product = new Product(productBL.ProductIDMax() + 1, _ShopID, _ProductName, _Price, _Description, _Quantity);
             productBL.InsertProduct(product);
             AddProductToCategory(_ShopID, product.ProductID);
