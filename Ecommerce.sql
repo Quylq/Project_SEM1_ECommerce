@@ -48,7 +48,7 @@ create table Products
 (
     ProductID   int not null auto_increment,
     ShopID      int,
-    ProductName varchar(500),
+    ProductName varchar(500) not null,
     Description varchar(1000),
     Price       int not null,
     Amount    int not null,
@@ -132,7 +132,9 @@ VALUES (1, 'User1', SHA2('123456', 256), 'Văn Đức',
        (8, 'User8', SHA2('123456', 256), 'Văn Tâm',
         '2002-11-14', 'Vantam1140@vtc.edu.vn', '0986135742', 'Customer'),
        (9, 'User9', SHA2('123456', 256), 'Long Tân',
-        '2001-04-28', 'Longtan1140@vtc.edu.vn', '0985663254', 'Customer');
+        '2001-04-28', 'Longtan1140@vtc.edu.vn', '0985663254', 'Customer'),
+       (10, 'User10', '123456', 'Lê Văn Tèo',
+        '2001-04-26', 'Levanteo@vtc.edu.vn', '0985663251', 'Customer');
 
 INSERT INTO Shops (UserID, AddressID, ShopName)
 VALUES (1, 1, 'Shop Đồ Gia Dụng'),
