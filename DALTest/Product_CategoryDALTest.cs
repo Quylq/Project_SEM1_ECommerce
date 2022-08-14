@@ -12,21 +12,21 @@ public class Product_CategoryDALTest
     {
     }
     [Test]
-    public void CheckProduct_Category()
+    public void CheckProduct_CategoryTest()
     {
         var result = product_CategoryDAL.CheckProduct_Category(1, 1);
 
         Assert.IsTrue(result);
     }
     [Test]
-    public void InsertProduct_Category()
+    public void InsertProduct_CategoryTest()
     {
         var result = product_CategoryDAL.InsertProduct_Category(100, 1);
 
         Assert.IsTrue(result);
     }
     [Test]
-    public void DeleteProduct_CategoryByCategoryID()
+    public void DeleteProduct_CategoryByCategoryIDTest()
     {
         var result = product_CategoryDAL.DeleteProduct_CategoryByCategoryID(12);
 

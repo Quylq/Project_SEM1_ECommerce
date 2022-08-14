@@ -12,7 +12,7 @@ public class ProductDALTest
     {
     }
     [Test]
-    public void InsertProduct()
+    public void InsertProductTest()
     {
         Product product = new Product(200, 1, "Áo thun", 100000, "Chất liệu: 80% Cotton - 20% Recycle Polyester", 100);
         var result = productDAL.InsertProduct(product);
@@ -20,28 +20,28 @@ public class ProductDALTest
         Assert.IsTrue(result);
     }
     [Test]
-    public void UpdateDescriptionOfProduct()
+    public void UpdateDescriptionOfProductTest()
     {
         var result = productDAL.UpdateDescriptionOfProduct(200, "Chất liệu: 100% Cotton");
 
         Assert.IsTrue(result);
     }
     [Test]
-    public void UpdateAmountOfProduct()
+    public void UpdateAmountOfProductTest()
     {
         var result = productDAL.UpdateAmountOfProduct(200, 9);
 
         Assert.IsTrue(result);
     }
     [Test]
-    public void ProductIDMax()
+    public void ProductIDMaxTest()
     {
         var result = productDAL.ProductIDMax();
 
         Assert.AreEqual(result, 200);
     }
     [Test]
-    public void GetProductByID()
+    public void GetProductByIDTest()
     {
         var result = productDAL.GetProductByID(200);
         Product product = new Product(200, 1, "Áo thun", 100000, "Chất liệu: 100% Cotton", 9);

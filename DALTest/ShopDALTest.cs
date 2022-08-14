@@ -12,7 +12,7 @@ public class ShopDALTest
     {
     }
     [Test]
-    public void GetShopByID()
+    public void GetShopByIDTest()
     {
         Shop shop = new Shop(1, "Shop Đồ Gia Dụng", 1, 1);
         var result = shopDAL.GetShopByID(1);
@@ -20,7 +20,7 @@ public class ShopDALTest
         Assert.IsTrue(result.DeepEquals1(shop));
     }
     [Test]
-    public void GetShopByUserID()
+    public void GetShopByUserIDTest()
     {
         Shop shop = new Shop(1, "Shop Đồ Gia Dụng", 1, 1);
         var result = shopDAL.GetShopByUserID(1);
@@ -28,7 +28,7 @@ public class ShopDALTest
         Assert.IsTrue(result!.DeepEquals1(shop));
     }
     [Test]
-    public void InsertShop()
+    public void InsertShopTest()
     {
         Shop shop = new Shop(10, "Shop Đồ Điện Tử", 7, 2);
         var result = shopDAL.InsertShop(shop);

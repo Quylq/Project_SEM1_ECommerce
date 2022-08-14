@@ -12,35 +12,35 @@ public class OrderDetailsDALTest
     {
     }
     [Test]
-    public void CheckProductOfCart()
+    public void CheckProductOfCartTest()
     {
         var result = orderDetailsDAL.CheckProductOfCart(1, 110);
 
         Assert.IsTrue(result);
     }
     [Test]
-    public void GetQuantityInCart()
+    public void GetQuantityInCartTest()
     {
         var result = orderDetailsDAL.GetQuantityInCart(1, 107);
 
         Assert.AreEqual(result, 15);
     }
     [Test]
-    public void GetOrderIDOfCart()
+    public void GetOrderIDOfCartTest()
     {
         var result = orderDetailsDAL.GetOrderIDOfCart(1, 4);
 
         Assert.AreEqual(result, 6);
     }
     [Test]
-    public void GetProductNumberOfCart()
+    public void GetProductNumberOfCartTest()
     {
         var result = orderDetailsDAL.GetProductNumberOfCart(1);
 
         Assert.AreEqual(result, 4);
     }
     [Test]
-    public void GetQuantityOfOrderID()
+    public void GetQuantityOfOrderIDTest()
     {
         var result = orderDetailsDAL.GetQuantityOfOrderID(1);
 
@@ -48,7 +48,7 @@ public class OrderDetailsDALTest
     }
     
     [Test]
-    public void InsertOrderDetails()
+    public void InsertOrderDetailsTest()
     {
         OrderDetails orderDetails = new OrderDetails(50, 1, 2);
         var result = orderDetailsDAL.InsertOrderDetails(orderDetails);
@@ -56,7 +56,7 @@ public class OrderDetailsDALTest
         Assert.IsTrue(result);
     }
     [Test]
-    public void UpdateOrderDetails()
+    public void UpdateOrderDetailsTest()
     {
         OrderDetails orderDetails = new OrderDetails(50, 1, 6);
         var result = orderDetailsDAL.UpdateOrderDetails(orderDetails);

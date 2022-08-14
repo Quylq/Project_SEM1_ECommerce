@@ -112,14 +112,14 @@ public class UserDALTest
         Assert.IsFalse(result);
     }
     [Test]
-    public void UpdatePassword()
+    public void UpdatePasswordTest()
     {
         var result = userDAL.UpdatePassword(10, "1234567");
 
         Assert.IsTrue(result);
     }
     [Test]
-    public void UserIDMax()
+    public void UserIDMaxTest()
     {
         var result = userDAL.UserIDMax();
 
