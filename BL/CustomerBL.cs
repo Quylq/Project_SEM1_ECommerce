@@ -143,7 +143,8 @@ public static class CustomerBL
             })
             .ExportAndWriteLine();
         int QuantityInCart = orderDetailsDAL.GetQuantityInCart(user.UserID, product.ProductID);
-        Console.WriteLine($"Enter Amount of products to add to cart.");
+        Console.Write($"Enter Amount of products to add to cart ");
+        Console.WriteLine($"(Shopping cart: {QuantityInCart})");
         Console.WriteLine($"0. Back.");
         Console.Write($"Choose: ");
         int choice = ReadHelper.ReadInt(0 - QuantityInCart, product.Amount);
@@ -185,7 +186,6 @@ public static class CustomerBL
                 }
             }
             Console.ReadKey();
-            user.ProductInformation(product);
         }
     }
     public static void SearchShop(this User user)
@@ -276,6 +276,7 @@ public static class CustomerBL
                 products = productDAL.GetProductsByCategory(categories[choice - 2].CategoryID);
             }
             user.DisplayProducts(products);
+            user.ViewShop(_ShopID);
         }
     }
     public static void ViewCart(this User user)
@@ -378,8 +379,16 @@ public static class CustomerBL
             long total = bLHelper.GetTotalOrder(orders[i].OrderID);
             Shop shop = shopDAL.GetShopByID(orders[i].ShopID);
             List<OrderDetails>? orderDetailsList = orderDetailsDAL.GetOrderDetailsListByOrderID(orders[i].OrderID);
-            List<object> rowData = new List<object>{count++, shop.ShopName, orderDetailsList!.Count, total.ToString("C0"), orders[i].Status};
-            tableData.Add(rowData);
+            if (orderDetailsList != null)
+            {
+                List<object> rowData = new List<object>{count++, shop.ShopName, orderDetailsList.Count, total.ToString("C0"), orders[i].Status};
+                tableData.Add(rowData);
+            }
+            else
+            {
+                orders.RemoveAt(i);
+                i--;
+            }
         }
         ConsoleTableBuilder
             .From(tableData)
@@ -411,11 +420,14 @@ public static class CustomerBL
         Shop shop = shopDAL.GetShopByID(order.ShopID);
 
         long total = bLHelper.GetTotalOrder(_OrderID);
-        foreach (OrderDetails orderDetails in orderDetailsList!)  
-        { 
-            Product product = productDAL.GetProductByID(orderDetails.ProductID);
-            List<object> rowData = new List<object>{shop.ShopName, count++, product.ProductName, product.Price.ToString("C0"), orderDetails.Quantity, bLHelper.GetTotalOrderDetails(orderDetails).ToString("C0")};
-            tableData.Add(rowData);
+        if (orderDetailsList != null)
+        {
+            foreach (OrderDetails orderDetails in orderDetailsList)  
+            { 
+                Product product = productDAL.GetProductByID(orderDetails.ProductID);
+                List<object> rowData = new List<object>{shop.ShopName, count++, product.ProductName, product.Price.ToString("C0"), orderDetails.Quantity, bLHelper.GetTotalOrderDetails(orderDetails).ToString("C0")};
+                tableData.Add(rowData);
+            }
         }
         List<object> rowTotal = new List<object>{"", "", "", "", "", total.ToString("C0")};
         tableData.Add(rowTotal);

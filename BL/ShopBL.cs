@@ -20,17 +20,24 @@ public static class ShopBL
             int count = 1;
             for (int i = 0; i < orders.Count; i++)
             {
-                long total = bLHelper.GetTotalOrder(orders[i].OrderID);
-                User user = userDAL.GetUserByID(orders[i].UserID);
-                List<OrderDetails>? orderDetailsList = orderDetailsDAL.GetOrderDetailsListByOrderID(orders[i].OrderID);
                 int _Quantity = orderDetailsDAL.GetQuantityOfOrderID(orders[i].OrderID);
-                List<object> rowData = new List<object>{count++, user.FullName, _Quantity, total.ToString("C0"), orders[i].CreateDate, orders[i].Status};
-                tableData.Add(rowData);
+                if (_Quantity > 0)
+                {
+                    User user = userDAL.GetUserByID(orders[i].UserID);
+                    long total = bLHelper.GetTotalOrder(orders[i].OrderID);
+                    List<object> rowData = new List<object>{count++, user.FullName, _Quantity, total.ToString("C0"), orders[i].CreateDate, orders[i].Status};
+                    tableData.Add(rowData);
+                }
+                else
+                {
+                    orders.RemoveAt(i);
+                    i--;
+                }
             }
             ConsoleTableBuilder
                 .From(tableData)
                 .WithTitle($"Order Management ", ConsoleColor.Yellow, ConsoleColor.DarkGray)
-                .WithColumn("ID", "Customer", "Amount", "Total", "CreateDate", "Status")
+                .WithColumn("ID", "Customer", "Quantity", "Total", "CreateDate", "Status")
                 .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
                 .ExportAndWriteLine();
             Console.WriteLine("Enter \"ID\" to view corresponding order details");
@@ -280,14 +287,17 @@ public static class ShopBL
         List<List<object>> tableData = new List<List<object>>();
         int count = 1;
         long total = bLHelper.GetTotalOrder(_OrderID);
-        foreach (OrderDetails orderDetails in orderDetailsList!)  
+        if (orderDetailsList != null)
         {
-            Product product = productDAL.GetProductByID(orderDetails.ProductID);
-            List<object> rowData = new List<object>{count++, product.ProductName, product.Price.ToString("C0"), orderDetails.Quantity, bLHelper.GetTotalOrderDetails(orderDetails).ToString("C0")};
-            tableData.Add(rowData);
+            foreach (OrderDetails orderDetails in orderDetailsList)  
+            {
+                Product product = productDAL.GetProductByID(orderDetails.ProductID);
+                List<object> rowData = new List<object>{count++, product.ProductName, product.Price.ToString("C0"), orderDetails.Quantity, bLHelper.GetTotalOrderDetails(orderDetails).ToString("C0")};
+                tableData.Add(rowData);
+            }
+            List<object> rowData1 = new List<object>{"", "", "", "", total.ToString("C0")};
+            tableData.Add(rowData1);
         }
-        List<object> rowData1 = new List<object>{"", "", "", "", total.ToString("C0")};
-        tableData.Add(rowData1);
         ConsoleTableBuilder
             .From(tableData)
             .WithTitle($"Customer: {user.FullName} ", ConsoleColor.Yellow, ConsoleColor.DarkGray)
