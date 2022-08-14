@@ -8,7 +8,7 @@ namespace DAL
         private string? query;
         private MySqlDataReader? reader;
         // Lấy danh sách order theo ID khách hàng và trạng thái
-        public List<Order> GetOrdersByStatusAndUserID(string _Status, int _UserID)
+        public List<Order>? GetOrdersByStatusAndUserID(string _Status, int _UserID)
         {
             query = $"select * from Orders o inner join Users u on o.UserID = u.UserID where o.UserID = {_UserID} and o.Status = '{_Status}'";
             DbHelper.OpenConnection();
@@ -22,7 +22,14 @@ namespace DAL
                 orders.Add(order);
             }
             DbHelper.CloseConnection();
-            return orders;
+            if (orders.Count > 0)
+            {
+                return orders;
+            }
+            else
+            {
+                return null;
+            }
         }
         public List<Order> GetOrdersByUserID(int _UserID)
         {
@@ -57,9 +64,9 @@ namespace DAL
             DbHelper.CloseConnection();
             return orders;
         }
-        public List<Order> GetOrdersByShopIDAndNotStatus(int _ShopID, string _Status)
+        public List<Order>? GetOrdersByShopID(int _ShopID)
         {
-            query = $"select * from Orders o inner join Shops s on o.ShopID = s.ShopID where o.ShopID = {_ShopID} and o.Status != '{_Status}'";
+            query = $"select * from Orders o inner join Shops s on o.ShopID = s.ShopID where o.ShopID = {_ShopID} and o.Status != 'Shopping'";
             DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
 
@@ -71,7 +78,14 @@ namespace DAL
                 orders.Add(order);
             }
             DbHelper.CloseConnection();
-            return orders;
+            if (orders.Count > 0)
+            {
+                return orders;
+            }
+            else
+            {
+                return null;
+            }
         }
         private Order GetOrderInfo(MySqlDataReader reader)
         {
@@ -86,29 +100,57 @@ namespace DAL
             return order;
         }
         // Cập nhật status của đơn hàng
-        public void UpdateStatusOfOrder(int _OrderID, string _Status)
+        public bool UpdateStatusOfOrder(int _OrderID, string _Status)
         {
             query = $"update Orders set Status = '{_Status}' where OrderID = {_OrderID};";
 
-            DbHelper.OpenConnection();
-            reader = DbHelper.ExecQuery(query);
-            DbHelper.CloseConnection();
+            try
+            {
+                DbHelper.OpenConnection();
+                reader = DbHelper.ExecQuery(query);
+                DbHelper.CloseConnection();
+                return true;
+            }
+            catch (MySql.Data.MySqlClient.MySqlException)
+            {
+                DbHelper.CloseConnection();
+                return false;
+            }
         }
-        public void UpdateCreateDateOfOrder(int _OrderID, string _CreateDate)
+        public bool UpdateCreateDateOfOrder(int _OrderID, string _CreateDate)
         {
             query = $"update Orders set CreateDate = '{_CreateDate}' where OrderID = {_OrderID};";
 
-            DbHelper.OpenConnection();
-            reader = DbHelper.ExecQuery(query);
-            DbHelper.CloseConnection();
+            try
+            {
+                DbHelper.OpenConnection();
+                reader = DbHelper.ExecQuery(query);
+                DbHelper.CloseConnection();
+                return true;
+            }
+            catch (MySql.Data.MySqlClient.MySqlException)
+            {
+                DbHelper.CloseConnection();
+                return false;
+            }
         }
-        public void InsertOrder(Order order)
+        public bool InsertOrder(Order order)
         {
-            query = $"Insert into Orders (OrderID, UserID, ShopID, CreateDate , Status) value ('{order.OrderID}', '{order.UserID}', '{order.ShopID}', '{order.CreateDate}', '{order.Status}')";
+            query = $@"Insert into Orders (OrderID, UserID, ShopID, CreateDate , Status) 
+            value ('{order.OrderID}', '{order.UserID}', '{order.ShopID}', '{order.CreateDate}', '{order.Status}')";
 
-            DbHelper.OpenConnection();
-            reader = DbHelper.ExecQuery(query);
-            DbHelper.CloseConnection();
+            try
+            {
+                DbHelper.OpenConnection();
+                reader = DbHelper.ExecQuery(query);
+                DbHelper.CloseConnection();
+                return true;
+            }
+            catch (MySql.Data.MySqlClient.MySqlException)
+            {
+                DbHelper.CloseConnection();
+                return false;
+            }
         }
         public int OrderIDMax()
         {
@@ -124,7 +166,7 @@ namespace DAL
                     _OrderID = reader.GetInt32("max(OrderID)");
                 }
             }
-            catch (System.Exception)
+            catch (System.Data.SqlTypes.SqlNullValueException)
             {
                 _OrderID = 0;
             }

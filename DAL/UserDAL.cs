@@ -8,10 +8,25 @@ namespace DAL
         private string? query;
         private MySqlDataReader? reader;
 
-        public User GetUserByName(string _UserName)
+        public bool CheckUserName(string _UserName)
         {
             query = $"select * from Users where UserName = '{_UserName}'";
-
+            DbHelper.OpenConnection();
+            reader = DbHelper.ExecQuery(query);
+            if (reader.Read())
+            {
+                DbHelper.CloseConnection();
+                return true;
+            }
+            else
+            {
+                DbHelper.CloseConnection();
+                return false;
+            }
+        }
+        public User? Login(string _UserName, string _Password)
+        {
+            query = $"select * from Users where UserName = '{_UserName}' and Password = '{_Password}'";
             DbHelper.OpenConnection();
             reader = DbHelper.ExecQuery(query);
 
@@ -19,10 +34,14 @@ namespace DAL
             if (reader.Read())
             {
                 user = GetUserInfo(reader);
+                DbHelper.CloseConnection();
+                return user;
             }
-
-            DbHelper.CloseConnection();
-            return user;
+            else
+            {
+                DbHelper.CloseConnection();
+                return null;
+            }
         }
         public User GetUserByID(int _UserID)
         {
@@ -54,16 +73,25 @@ namespace DAL
             user.Role = reader.GetString("Role");
             return user;
         }
-        public void InsertUser(User user)
+        public bool InsertUser(User user)
         {
             query = $@"Insert into Users (UserID, UserName, Password , FullName, Birthday, Email, Phone, AddressID, Role) 
             value ('{user.UserID}', '{user.UserName}', '{user.Password}', '{user.FullName}', '{user.Birthday}', '{user.Email}', '{user.Phone}', '{user.AddressID}', '{user.Role}')";
 
-            DbHelper.OpenConnection();
-            reader = DbHelper.ExecQuery(query);
-            DbHelper.CloseConnection();
+            try
+            {
+                DbHelper.OpenConnection();
+                reader = DbHelper.ExecQuery(query);
+                DbHelper.CloseConnection();
+                return true;
+            }
+            catch (MySql.Data.MySqlClient.MySqlException)
+            {
+                DbHelper.CloseConnection();
+                return false;
+            }
         }
-        public void UpdateUser(User user)
+        public bool UpdateUser(User user)
         {
             query = $@"update Users 
                 set FullName = '{user.FullName}',
@@ -73,19 +101,44 @@ namespace DAL
                     AddressID = '{user.AddressID}'
                 where UserID = '{user.UserID}'";
 
-            DbHelper.OpenConnection();
-            reader = DbHelper.ExecQuery(query);
-            DbHelper.CloseConnection();
+            try
+            {
+                DbHelper.OpenConnection();
+                reader = DbHelper.ExecQuery(query);
+                DbHelper.CloseConnection();
+                return true;
+            }
+            catch (MySql.Data.MySqlClient.MySqlException)
+            {
+                DbHelper.CloseConnection();
+                return false;
+            }
         }
-        public void UpdatePassword(int _UserID, string _Password)
+        public bool UpdatePassword(int _UserID, string _Password)
         {
             query = $@"update Users 
                 set Password = '{_Password}'
                 where UserID = '{_UserID}'";
 
-            DbHelper.OpenConnection();
-            reader = DbHelper.ExecQuery(query);
-            DbHelper.CloseConnection();
+            if (_Password != null && _Password != "")
+            {
+                try
+                {
+                    DbHelper.OpenConnection();
+                    reader = DbHelper.ExecQuery(query);
+                    DbHelper.CloseConnection();
+                    return true;
+                }
+                catch (MySql.Data.MySqlClient.MySqlException)
+                {
+                    DbHelper.CloseConnection();
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
         }
         public int UserIDMax()
         {
@@ -101,7 +154,7 @@ namespace DAL
                     _UserID = reader.GetInt32("max(UserID)");
                 }
             }
-            catch (System.Exception)
+            catch (System.Data.SqlTypes.SqlNullValueException)
             {
                 _UserID = 0;
             }

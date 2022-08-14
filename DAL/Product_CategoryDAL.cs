@@ -29,21 +29,39 @@ namespace DAL
             DbHelper.CloseConnection();
             return result;
         }
-        public void InsertProduct_Category(int _ProductID, int _CategoryID)
+        public bool InsertProduct_Category(int _ProductID, int _CategoryID)
         {
             query = $"Insert into Product_Categories (ProductID, CategoryID) value ('{_ProductID}', '{_CategoryID}')";
 
-            DbHelper.OpenConnection();
-            reader = DbHelper.ExecQuery(query);
-            DbHelper.CloseConnection();
+            try
+            {
+                DbHelper.OpenConnection();
+                reader = DbHelper.ExecQuery(query);
+                DbHelper.CloseConnection();
+                return true;
+            }
+            catch (MySql.Data.MySqlClient.MySqlException)
+            {
+                DbHelper.CloseConnection();
+                return false;
+            }
         }
-        public void DeleteProduct_CategoryByCategoryID(int _CategoryID)
+        public bool DeleteProduct_CategoryByCategoryID(int _CategoryID)
         {
             query = $"Delete from product_categories where CategoryID = {_CategoryID}";
             
-            DbHelper.OpenConnection();
-            reader = DbHelper.ExecQuery(query);
-            DbHelper.CloseConnection();
+            try
+            {
+                DbHelper.OpenConnection();
+                reader = DbHelper.ExecQuery(query);
+                DbHelper.CloseConnection();
+                return true;
+            }
+            catch (MySql.Data.MySqlClient.MySqlException)
+            {
+                DbHelper.CloseConnection();
+                return false;
+            }
         }
     }
 }

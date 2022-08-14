@@ -8,7 +8,7 @@ namespace DAL
         private string? query;
         private MySqlDataReader? reader;
         // Lấy danh sách sản phẩm theo tên
-        public List<Product> GetProductsByName(string _ProductName)
+        public List<Product>? GetProductsByName(string _ProductName)
         {
             query = $"select * from Products where ProductName like '%{_ProductName}%'";
 
@@ -21,12 +21,21 @@ namespace DAL
             {
                 Product product = GetProductInfo(reader);
                 products.Add(product);
+                
             }
             DbHelper.CloseConnection();
-            return products;
+            if (products.Count > 0)
+            {
+                return products;
+            }
+            else
+            {
+                return null;
+            }
+            
         }
         // Lấy danh sách sản phẩm theo ID người bán
-        public List<Product> GetProductsByShopID(int _ShopID)
+        public List<Product>? GetProductsByShopID(int _ShopID)
         {          
             query = $"select * from Products where ShopID = {_ShopID}";
             DbHelper.OpenConnection();
@@ -40,7 +49,14 @@ namespace DAL
                 products.Add(product);
             }
             DbHelper.CloseConnection();
-            return products;
+            if (products.Count > 0)
+            {
+                return products;
+            }
+            else
+            {
+                return null;
+            }
         }
         // Lấy danh sách sản phẩm theo tên và ShopID
         public List<Product> GetProductsByNameAndShopID(string _ProductName, int _ShopID)
@@ -79,22 +95,6 @@ namespace DAL
             return products;
         }
         // Lấy danh sách sản phẩm theo ID đơn hàng
-        public List<Product> GetProductsByOrderID(int _OrderID)
-        {
-            query = $"select * from Products p inner join OrderDetails od on p.ProductID = od.ProductID where od.OrderID = {_OrderID};";
-            DbHelper.OpenConnection();
-            reader = DbHelper.ExecQuery(query);
-
-            List<Product>? products = new List<Product>();
-
-            while (reader.Read())
-            {
-                Product product = GetProductInfo(reader);
-                products.Add(product);
-            }
-            DbHelper.CloseConnection();
-            return products;
-        }
         private Product GetProductInfo(MySqlDataReader reader)
         {
             Product product = new Product();
@@ -109,30 +109,57 @@ namespace DAL
             return product;
         }
 
-        public void InsertProduct(Product product)
+        public bool InsertProduct(Product product)
         {
             query = $"Insert into Products (ProductID, ShopID, ProductName, Price , Description, Amount) value ('{product.ProductID}', '{product.ShopID}', '{product.ProductName}', '{product.Price}', '{product.Description}', '{product.Amount}')";
 
-            DbHelper.OpenConnection();
-            reader = DbHelper.ExecQuery(query);
-            DbHelper.CloseConnection();
+            try
+            {
+                DbHelper.OpenConnection();
+                reader = DbHelper.ExecQuery(query);
+                DbHelper.CloseConnection();
+                return true;
+            }
+            catch (MySql.Data.MySqlClient.MySqlException)
+            {
+                DbHelper.CloseConnection();
+                return false;
+            }
         }
         // Cập nhật mô tả
-        public void UpdateDescriptionOfProduct(int _ProductID, string _Description)
+        public bool UpdateDescriptionOfProduct(int _ProductID, string _Description)
         {
             query = $"update Products set Description = '{_Description}' where ProductID = {_ProductID};";
 
-            DbHelper.OpenConnection();
-            reader = DbHelper.ExecQuery(query);
-            DbHelper.CloseConnection();
+            try
+            {
+                DbHelper.OpenConnection();
+                reader = DbHelper.ExecQuery(query);
+                DbHelper.CloseConnection();
+                return true;
+            }
+            catch (MySql.Data.MySqlClient.MySqlException)
+            {
+                DbHelper.CloseConnection();
+                return false;
+            }
         }
         // Cập nhật số lượng
-        public void UpdateAmountOfProduct(int _ProductID, int _Amount)
+        public bool UpdateAmountOfProduct(int _ProductID, int _Amount)
         {
             query = $"update Products set Amount = '{_Amount}' where ProductID = {_ProductID}";
-            DbHelper.OpenConnection();
-            reader = DbHelper.ExecQuery(query);
-            DbHelper.CloseConnection();
+            try
+            {
+                DbHelper.OpenConnection();
+                reader = DbHelper.ExecQuery(query);
+                DbHelper.CloseConnection();
+                return true;
+            }
+            catch (MySql.Data.MySqlClient.MySqlException)
+            {
+                DbHelper.CloseConnection();
+                return false;
+            }
         }
         public int ProductIDMax()
         {
@@ -148,7 +175,7 @@ namespace DAL
                     _ProductID = reader.GetInt32("max(ProductID)");
                 }
             }
-            catch (System.Exception)
+            catch (System.Data.SqlTypes.SqlNullValueException)
             {
                 _ProductID = 0;
             }

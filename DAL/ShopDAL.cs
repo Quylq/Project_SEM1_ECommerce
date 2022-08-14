@@ -32,7 +32,7 @@ namespace DAL
             DbHelper.CloseConnection();
             return shop;
         }
-        public Shop GetShopByUserID(int _UserID)
+        public Shop? GetShopByUserID(int _UserID)
         {
             query = $"select * from Shops where UserID = '{_UserID}'";
 
@@ -43,11 +43,17 @@ namespace DAL
             if (reader.Read())
             {
                 shop = GetShopInfo(reader);
+                DbHelper.CloseConnection();
+                return shop;
             }
-            DbHelper.CloseConnection();
-            return shop;
+            else
+            {
+                DbHelper.CloseConnection();
+                return null;
+            }
+            
         }
-        public List<Shop> GetShopsByName(string _ShopName)
+        public List<Shop>? GetShopsByName(string _ShopName)
         {
             query = $"select * from Shops where ShopName like '%{_ShopName}%'";
 
@@ -62,15 +68,31 @@ namespace DAL
                 shops.Add(shop);
             }
             DbHelper.CloseConnection();
-            return shops;
+            if (shops.Count > 0)
+            {
+                return shops;
+            }
+            else
+            {
+                return null;
+            }
         }
-        public void InsertShop(Shop shop)
+        public bool InsertShop(Shop shop)
         {
             query = $"Insert into Shops (ShopID, UserID, AddressID, ShopName) value ('{shop.ShopID}', '{shop.UserID}', '{shop.AddressID}', '{shop.ShopName}')";
 
-            DbHelper.OpenConnection();
-            reader = DbHelper.ExecQuery(query);
-            DbHelper.CloseConnection();
+            try
+            {
+                DbHelper.OpenConnection();
+                reader = DbHelper.ExecQuery(query);
+                DbHelper.CloseConnection();
+                return true;
+            }
+            catch (MySql.Data.MySqlClient.MySqlException)
+            {
+                DbHelper.CloseConnection();
+                return false;
+            }
         }
         public int ShopIDMax()
         {

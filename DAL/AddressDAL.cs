@@ -33,13 +33,22 @@ namespace DAL
             DbHelper.CloseConnection();
             return address;
         }
-        public void InsertAddress(Address address)
+        public bool InsertAddress(Address address)
         {
             query = $"Insert into Address (AddressID, City, District, Commune, Address) value ('{address.AddressID}', '{address.City}', '{address.District}', '{address.Commune}', '{address.SpecificAddress}')";
 
-            DbHelper.OpenConnection();
-            reader = DbHelper.ExecQuery(query);
-            DbHelper.CloseConnection();
+            try
+            {
+                DbHelper.OpenConnection();
+                reader = DbHelper.ExecQuery(query);
+                DbHelper.CloseConnection();
+                return true;
+            }
+            catch (MySql.Data.MySqlClient.MySqlException)
+            {
+                DbHelper.CloseConnection();
+                return false;
+            }
         }
         public int AddressIDMax()
         {

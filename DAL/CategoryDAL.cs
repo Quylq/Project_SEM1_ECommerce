@@ -22,6 +22,7 @@ namespace DAL
             }
             DbHelper.CloseConnection();
             return categories;
+            
         }
 
         private Category GetCategoryInfo(MySqlDataReader reader)
@@ -33,21 +34,39 @@ namespace DAL
             
             return category;
         }
-        public void InsertCategory(Category category)
+        public bool InsertCategory(Category category)
         {
             query = $"Insert into Categories (ShopID, CategoryName) value ('{category.ShopID}', '{category.CategoryName}')";
 
-            DbHelper.OpenConnection();
-            reader = DbHelper.ExecQuery(query);
-            DbHelper.CloseConnection();
+            try
+            {
+                DbHelper.OpenConnection();
+                reader = DbHelper.ExecQuery(query);
+                DbHelper.CloseConnection();
+                return true;
+            }
+            catch (MySql.Data.MySqlClient.MySqlException)
+            {
+                DbHelper.CloseConnection();
+                return false;
+            }
         }
-        public void DeleteCategoryByID(int _CategoryID)
+        public bool DeleteCategoryByID(int _CategoryID)
         {
             query = $"Delete from Categories where categoryID = {_CategoryID}";
 
-            DbHelper.OpenConnection();
-            reader = DbHelper.ExecQuery(query);
-            DbHelper.CloseConnection();
+            try
+            {
+                DbHelper.OpenConnection();
+                reader = DbHelper.ExecQuery(query);
+                DbHelper.CloseConnection();
+                return true;
+            }
+            catch (MySql.Data.MySqlClient.MySqlException)
+            {
+                DbHelper.CloseConnection();
+                return false;
+            }
         }
         public List<Category> GetCategoriesByProductID(int _ProductID)
         {
