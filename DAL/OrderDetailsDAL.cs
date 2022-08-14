@@ -206,22 +206,5 @@ namespace DAL
                 return false;
             }
         }
-        public bool DeleteOrderDetails()
-        {
-            query = $@"Delete from OrderDetails where Quantity = 0";
-
-            try
-            {
-                DbHelper.OpenConnection();
-                reader = DbHelper.ExecQuery(query);
-                DbHelper.CloseConnection();
-                return true;
-            }
-            catch (MySql.Data.MySqlClient.MySqlException)
-            {
-                DbHelper.CloseConnection();
-                return false;
-            }
-        }
     }
 }

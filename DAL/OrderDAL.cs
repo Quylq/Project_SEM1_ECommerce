@@ -90,11 +90,11 @@ namespace DAL
         private Order GetOrderInfo(MySqlDataReader reader)
         {
             Order order = new Order();
-
+            string format = "yyyy-MM-dd HH:mm:ss";
             order.OrderID = reader.GetInt32("OrderID");
             order.UserID = reader.GetInt32("UserID");
             order.ShopID = reader.GetInt32("ShopID");
-            order.CreateDate = reader.GetString("CreateDate");
+            order.CreateDate = reader.GetDateTime("CreateDate").ToString(format);
             order.Status = reader.GetString("Status");
 
             return order;

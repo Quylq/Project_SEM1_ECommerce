@@ -11,20 +11,26 @@ public class AddressDALTest
     public void Setup()
     {
     }
-
-    // [TestCase(10, "Hà Nội", "Cầu Giấy", "Trung Hòa", "A14A1")]
-    // public void InsertAddress_ValueTrue_ReturnTrue(int _AddressID, string _City, string _District, string _Commune, string _SpecificAddress)
-    // {
-    //     Address address = new Address(_AddressID, _City, _District, _Commune, _SpecificAddress);
-    //     var result = addressDAL.InsertAddress(address);
-    //     Assert.IsTrue(result);
-    // }
-
-    [TestCase(8, "Hà Nội", "Cầu Giấy", "Trung Hòa", "A14A1")]
-    public void InsertAddress_ValueFasle_ReturnFalse(int _AddressID, string _City, string _District, string _Commune, string _SpecificAddress)
+    [Test]
+    public void GetAddressByIDTest()
     {
-        Address address = new Address(_AddressID, _City, _District, _Commune, _SpecificAddress);
+        var result = addressDAL.GetAddressByID(1);
+        Address address = new Address(1, "Hà Nội", "Quận Đống Đa", "Phường Trung Liệt", "Phố Chùa Bộc");
+        Assert.IsTrue(result.DeepEquals1(address));
+    }
+    [Test]
+    public void InsertAddressTest()
+    {
+        Address address = new Address(15, "Hà Nội", "Quận Cầu Giấy", "Phường Trung Hòa", "Số nhà 99");
         var result = addressDAL.InsertAddress(address);
-        Assert.IsFalse(result);
+
+        Assert.IsTrue(result);
+    }
+    [Test]
+    public void AddressIDMaxTest()
+    {
+        var result = addressDAL.AddressIDMax();
+
+        Assert.AreEqual(result, 15);
     }
 }
