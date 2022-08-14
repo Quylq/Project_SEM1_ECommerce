@@ -326,6 +326,7 @@ public static class CustomerBL
                 {
                     Product product = productDAL.GetProductByID(orderDetailsList[num - 1].ProductID);
                     user.ProductInformation(product);
+                    user.ViewCart();
                 }
                 else if (num < 0 || num > orderDetailsList.Count)
                 {
