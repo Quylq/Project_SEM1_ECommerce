@@ -7,11 +7,11 @@ public static class Menu
     {
         MainMenu1:
         Console.Clear();
-        Console.WriteLine("══════════ VTC Shop ══════════");
+        Console.WriteLine("══════════ Ecommerce ══════════");
         Console.WriteLine("1. Login.");
         Console.WriteLine("2. SigUp.");
         Console.WriteLine("0. Exit.");
-        Console.WriteLine("══════════════════════════════");
+        Console.WriteLine("═══════════════════════════════");
         Console.Write("Choose: ");
         int choice = ReadHelper.ReadInt(0, 2);
         switch (choice)

@@ -133,7 +133,7 @@ VALUES (1, 'User1', SHA2('123456', 256), 'Văn Đức',
         '2002-11-14', 'Vantam1140@vtc.edu.vn', '0986135742', 'Customer'),
        (9, 'User9', SHA2('123456', 256), 'Long Tân',
         '2001-04-28', 'Longtan1140@vtc.edu.vn', '0985663254', 'Customer'),
-       (10, 'User10', '123456', 'Lê Văn Tèo',
+       (9, 'User10', '123456', 'Lê Văn Tèo',
         '2001-04-26', 'Levanteo@vtc.edu.vn', '0985663251', 'Customer');
 
 INSERT INTO Shops (UserID, AddressID, ShopName)
@@ -950,3 +950,25 @@ grant SELECT, INSERT, UPDATE on ecommerce.orders to 'guest'@'localhost';
 grant SELECT, INSERT, UPDATE, DELETE on ecommerce.orderdetails to 'guest'@'localhost';
 grant SELECT, INSERT, UPDATE, DELETE on ecommerce.product_categories to 'guest'@'localhost';
 grant SELECT, INSERT, UPDATE on ecommerce.shops to 'guest'@'localhost';
+
+-- DELIMITER //
+-- DROP PROCEDURE IF EXISTS CheckLogin;
+-- CREATE PROCEDURE CheckLogin(
+--     IN Input_Username VARCHAR(50),
+--     IN Input_Password VARCHAR(200),
+--     OUT result int
+-- )
+-- BEGIN
+--     DECLARE check1 VARCHAR(50) DEFAULT '';
+--     DECLARE check2 VARCHAR(50) DEFAULT '';
+--     select UserName into check1 from Users where UserName = Input_Username and Password = Input_Password;
+--     select UserName into check2 from Users where UserName = Input_Username;
+--     IF (check2 = '') THEN
+--         SET result = 0;
+--     ElSEIF (check1 = '') THEN
+--         SET result = 1;
+--     ELSE
+--         SET result = 2;
+--     END IF;
+-- END //
+-- DELIMITER ;
