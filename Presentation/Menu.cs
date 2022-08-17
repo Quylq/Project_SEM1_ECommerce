@@ -74,7 +74,7 @@ public static class Menu
         }      
         else
         {
-            Console.WriteLine("5. Sales registration."); 
+            Console.WriteLine("5. Shop registration."); 
         }
         Console.WriteLine("6. Personal information.");
         Console.WriteLine("0. Log out.");

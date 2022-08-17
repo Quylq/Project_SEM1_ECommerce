@@ -84,10 +84,6 @@ public static class CustomerBL
                 user.DisplayProducts(products);
             }
         }
-        else
-        {
-            Console.WriteLine("Empty product list");
-        }
     }
     public static void ProductInformation(this User user, Product product)
     {
@@ -202,30 +198,7 @@ public static class CustomerBL
             List<Shop>? shops = shopDAL.GetShopsByName(_ShopName);
             if (shops != null)
             {
-                Console.Clear();
-                List<List<object>> tableData = new List<List<object>>();
-                int count = 1;
-                foreach (Shop shop in shops)  
-                { 
-                    Address address = addressDAL.GetAddressByID(shop.AddressID);
-                    List<object> rowData = new List<object>{count++, shop.ShopName, address.City};
-                    tableData.Add(rowData);
-                }
-                ConsoleTableBuilder
-                    .From(tableData)
-                    .WithColumn("ID", "Shop Name", "Address")
-                    .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
-                    .ExportAndWriteLine();
-                Console.Write("Enter ID to view store or \"0\" to find another shop: ");
-                int choice = ReadHelper.ReadInt(0, shops.Count);
-                if (choice != 0)
-                {
-                    user.ViewShop(shops[choice - 1].ShopID);
-                }
-                else
-                {
-                    user.SearchShop();
-                }
+                user.DisplayShops(shops);
             }
             else
             {
@@ -233,8 +206,36 @@ public static class CustomerBL
                 Console.ReadKey();
                 user.SearchShop();
             }
+        }     
+    }
+    public static void DisplayShops(this User user, List<Shop>? shops)
+    {
+        AddressDAL addressDAL = new AddressDAL();
+
+        if (shops != null)
+        {
+            Console.Clear();
+            List<List<object>> tableData = new List<List<object>>();
+            int count = 1;
+            foreach (Shop shop in shops)  
+            { 
+                Address address = addressDAL.GetAddressByID(shop.AddressID);
+                List<object> rowData = new List<object>{count++, shop.ShopName, address.City};
+                tableData.Add(rowData);
+            }
+            ConsoleTableBuilder
+                .From(tableData)
+                .WithColumn("ID", "Shop Name", "Address")
+                .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
+                .ExportAndWriteLine();
+            Console.Write("Enter ID to view store or \"0\" to find another shop: ");
+            int choice = ReadHelper.ReadInt(0, shops.Count);
+            if (choice != 0)
+            {
+                user.ViewShop(shops[choice - 1].ShopID);
+                user.DisplayShops(shops);
+            }
         }
-        
     }
     public static void ViewShop(this User user, int _ShopID)
     {
@@ -260,11 +261,7 @@ public static class CustomerBL
         Console.WriteLine($"══════════════════════");
         Console.Write("Choose: ");
         int choice = ReadHelper.ReadInt(0, categories.Count + 1);
-        if (choice == 0)
-        {
-            user.SearchShop();
-        }
-        else
+        if (choice != 0)
         {
             List<Product>? products = new List<Product>();
             if (choice == 1)

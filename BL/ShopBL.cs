@@ -72,10 +72,12 @@ public static class ShopBL
         {
             case 1: 
                 shop.SearchProductOfShop();
+                shop.ProductManagement();
                 break; 
             case 2: 
                 List<Product>? products = productDAL.GetProductsByShopID(shop.ShopID);
-                shop.DisplayProducts(products, "ProductManagement");
+                shop.DisplayProducts(products);
+                shop.ProductManagement();
                 break;
             case 3: 
                 shop.AddProduct();
@@ -103,21 +105,25 @@ public static class ShopBL
             string choice = ReadHelper.ReadString();
             if (choice == "0")
             {
+                
             }
             else if (choice == "+")
             {
                 shop.CreateCategory();
+                shop.CategoryManagement();
             }
             else if (IsNumber(choice.ToLower().Replace(" ", "").Replace("view", "")))
             {
                 int viewNo = Convert.ToInt32(choice.ToLower().Replace(" ", "").Replace("view", ""));
                 List<Product> products = productDAL.GetProductsByCategory(categories[viewNo - 1].CategoryID);
-                shop.DisplayProducts(products, "CategoryManagement");
+                shop.DisplayProducts(products);
+                shop.CategoryManagement();
             }
             else if (IsNumber(choice.ToLower().Replace(" ", "").Replace("add", "")))
             {
                 int addNo = Convert.ToInt32(choice.ToLower().Replace(" ", "").Replace("add", ""));
                 shop.AddProductsToCategory(categories[addNo - 1].CategoryID);
+                shop.CategoryManagement();
             }
             else if (IsNumber(choice.ToLower().Replace(" ", "").Replace("delete", "")))
             {
@@ -148,10 +154,10 @@ public static class ShopBL
         if (_ProductName != "0")
         {
             List<Product> products = productDAL.GetProductsByNameAndShopID(_ProductName, shop.ShopID);
-            shop.DisplayProducts(products, "SearchProduct");
+            shop.DisplayProducts(products);
         }  
     }
-    public static void ProductInformation(this Shop shop, int _ProductID, string navigate, List<Product> products)
+    public static void ProductInformation(this Shop shop, int _ProductID)
     {
         ProductDAL productDAL = new ProductDAL();
         CategoryDAL categoryDAL = new CategoryDAL();
@@ -226,7 +232,7 @@ public static class ShopBL
             Console.WriteLine("Update successful!");
             Console.WriteLine("Enter any key to continue");
             Console.ReadKey();
-            shop.ProductInformation(_ProductID, navigate, products);
+            shop.ProductInformation(_ProductID);
         }
         else if (choice == 2)
         {
@@ -238,18 +244,13 @@ public static class ShopBL
             Console.WriteLine("Update successful!");
             Console.WriteLine("Enter any key to continue");
             Console.ReadKey();
-            shop.ProductInformation(_ProductID, navigate, products);
+            shop.ProductInformation(_ProductID);
         }
         else if (choice == 3)
         {
             shop.AddProductToCategory(_ProductID);
-            shop.ProductInformation(_ProductID, navigate, products);
+            shop.ProductInformation(_ProductID);
         }
-        else
-        {
-            shop.DisplayProducts(products, navigate);
-        }
-
     }
     public static void AddProduct(this Shop shop)
     {
@@ -333,7 +334,7 @@ public static class ShopBL
         }
         shop.OrderManagement();
     }
-    public static void DisplayProducts(this Shop shop, List<Product>? products, string navigate)
+    public static void DisplayProducts(this Shop shop, List<Product>? products)
     {
         Console.Clear();
         if (products != null)
@@ -354,28 +355,9 @@ public static class ShopBL
             int choice = ReadHelper.ReadInt(0, products.Count);
             if (choice != 0)
             {
-                shop.ProductInformation(products[choice - 1].ProductID, navigate, products);
+                shop.ProductInformation(products[choice - 1].ProductID);
+                shop.DisplayProducts(products);
             }
-            else
-            {
-                if (navigate ==  "SearchProduct")
-                {
-                    shop.SearchProductOfShop();
-                }
-                else if (navigate ==  "ProductManagement")
-                {
-                    shop.ProductManagement();
-                }
-                else if (navigate ==  "CategoryManagement")
-                {
-                    shop.CategoryManagement();
-                }
-            }
-        }
-        else
-        {
-            Console.WriteLine("Products Empty!");
-            Console.ReadKey();
         }
     }
     public static void AddProductsToCategory(this Shop shop, int _CategoryID)

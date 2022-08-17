@@ -63,7 +63,7 @@ namespace BL
                 {
                     if (i == 0)
                     {
-                        if (!Char.IsDigit(value[i]) && value[i] != '-')
+                        if (!Char.IsDigit(value[i]) && (value[i] != '-' || value.Length <= 1))
                         return false;
                     }
                     else
