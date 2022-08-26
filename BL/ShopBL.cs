@@ -241,7 +241,7 @@ public static class ShopBL
         {
             Console.Clear();
             Console.WriteLine($"══════════ Update Amount ══════════");
-            Console.Write("Amount: ");
+            Console.Write("Amount         : ");
             int _Amount = ReadHelper.ReadInt(0, 999);
             productDAL.UpdateAmountOfProduct(_ProductID, _Amount);
             Console.WriteLine("Update successful!");
@@ -261,13 +261,13 @@ public static class ShopBL
 
         Console.Clear();
         Console.WriteLine($"══════════ Add Product ══════════");
-        Console.WriteLine("Product Name: ");
+        Console.WriteLine("Product Name   : ");
         string _ProductName = ReadHelper.ReadString(500);
-        Console.WriteLine("Price: ");
+        Console.WriteLine("Price          : ");
         int _Price = ReadHelper.ReadInt(1, Int32.MaxValue);
-        Console.WriteLine("Amount: ");
+        Console.WriteLine("Amount         : ");
         int _Amount = ReadHelper.ReadInt(1, 999);
-        Console.WriteLine("Description: ");
+        Console.WriteLine("Description    : ");
         string _Description = ReadHelper.ReadString(2000);
         Product product = new Product(productDAL.ProductIDMax() + 1, shop.ShopID, _ProductName, _Price, _Description, _Amount);
         productDAL.InsertProduct(product);
@@ -474,7 +474,7 @@ public static class ShopBL
 
         Console.Clear();
         Console.WriteLine($"══════════ Create Category ══════════");
-        Console.Write("Category Name: ");
+        Console.Write("Category Name  : ");
         string _CategoryName = ReadHelper.ReadString();
         Category category = new Category(shop.ShopID, _CategoryName);
         categoryDAL.InsertCategory(category);

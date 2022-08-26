@@ -13,7 +13,7 @@ public static class CustomerBL
         Console.WriteLine(title);
         Console.WriteLine();
         Console.WriteLine("══════════ Register to open a store ══════════");
-        Console.Write("Shop Name: ");
+        Console.Write("Shop Name      : ");
         string _ShopName = ReadHelper.ReadString(50);
         int _AddressID = ReadHelper.ReadAddress().AddressID;
         int _ShopID = shopDAL.ShopIDMax() + 1;
@@ -643,13 +643,13 @@ public static class CustomerBL
 
         Console.Clear();
         Console.WriteLine("══════════ Change Information ══════════");
-        Console.Write("You Name: ");
+        Console.Write("You Name       : ");
         string _FullName = ReadHelper.ReadString(100);
-        Console.Write("Email: ");
+        Console.Write("Email          : ");
         string _Email = ReadHelper.ReadEmail();
-        Console.Write("Phone: ");
+        Console.Write("Phone          : ");
         string _Phone = ReadHelper.ReadPhone();
-        Console.Write("Birthday: ");
+        Console.Write("Birthday       : ");
         string _Birthday = ReadHelper.ReadDateOnly();
         int _AddressID = ReadHelper.ReadAddress().AddressID;
         user = new User(user.UserID, _FullName, _Birthday, _Email, _Phone, _AddressID, "Customer");
@@ -666,11 +666,11 @@ public static class CustomerBL
         Console.WriteLine("══════════ Change Password ══════════");
         int count = 1;
         ChangePassword1:
-        Console.Write("Old Password: ");
+        Console.Write("Old Password   : ");
         string OldPassword = ReadHelper.ReadPassword(); 
         if (user.Password == OldPassword)
         {
-            Console.Write("New Password: ");
+            Console.Write("New Password   : ");
             string NewPassword = ReadHelper.ReadPassword();
             user.Password = NewPassword;
             userDAL.UpdatePassword(user.UserID, user.Password);

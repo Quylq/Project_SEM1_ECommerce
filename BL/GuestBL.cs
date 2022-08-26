@@ -12,14 +12,14 @@ public static class GuestBL
         Console.WriteLine(title);
         Console.WriteLine();
         Console.WriteLine("══════════ Login ══════════");
-        Console.Write("User Name: ");
+        Console.Write("User Name      : ");
         string _UserName = ReadHelper.ReadUserName();
 
         if (userDAL.CheckUserName(_UserName))
         {
             int count = 1;
             Login1:
-            Console.Write("Password: ");
+            Console.Write("Password       : ");
             string _Password = ReadHelper.ReadPassword();
             User? user = userDAL.Login(_UserName, _Password);
             if (user != null)
