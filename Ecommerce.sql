@@ -87,8 +87,8 @@ create table Orders
     Status     enum ('Shopping', 'Processing', 'Shipping', 'ToReceive', 'Finished', 'Failed'),
     constraint fk_Orders_Users foreign key (UserID)
         references Users (UserID),
-    constraint fk_Orders_Shops foreign key (ShopID)
-        references Shops (ShopID),
+--     constraint fk_Orders_Shops foreign key (ShopID)
+--         references Shops (ShopID),
     constraint pk_Orders primary key (OrderID)
 );
 create table OrderDetails
@@ -363,7 +363,8 @@ Chất liệu: gỗ tự nhiên
 Phong cách : giáng sinh, noel
 Mẫu: 6 mẫu ngẫu nhiên
 Đặc tính: bút chì có lò xo kèm icon phong cách giáng sinh ngộ nghĩnh dễ thương', 4000, 500),
-       (2, 'Hộp 10 bút chì gỗ hoạt hình con vật siêu cute nhiều màu sắc đồ dùng học tập- quà tặng học sinh', 'Bút chì được ứng dụng trong nhiều mục đích khác nhau trong lĩnh vực hội họa, nhà trường, kỳ khảo sát,...
+       (2, 'Hộp 10 bút chì gỗ hoạt hình con vật siêu cute nhiều màu sắc đồ dùng học tập- quà tặng học sinh',
+        'Bút chì được ứng dụng trong nhiều mục đích khác nhau trong lĩnh vực hội họa, nhà trường, kỳ khảo sát,...
 Thân bút chì hình lục giác, thuận tiện cho việc cầm nắm và sử dụng.
 Đầu chì than mềm, nét bút mượt mà.
 Thân bút sử dụng sơn không độc.
@@ -550,8 +551,9 @@ Thương hiệu tương thích: iPhone của Apple
 Đặc điểm: Có thể đảo ngược
 Chiều dài/Đầu ra: 0,5m / 1m: Tối đa 2,4A, 2m: Tối đa 1.5A ', 120000, 100)
         ,
-       (3, 'Dây cáp sạc IPTOPK AP15 20W dạng bện sợi Nylon chuyển đổi USB C sang cổng cho IP12 xs 11 X 8 7 6 5', 'Hỗ trợ sạc PD: Sạc thiết bị của bạn nhanh hơn và an toàn hơn. Bạn có thể sử dụng cáp Lightning này kết nối với sạc dự phòng USB-C hoặc ổ sạc USB-C để sạc thiết bị iOS của bạn
-Sạc và đồng bộ hóa: Kết nối iPhone, iPad hoặc iPod của bạn bằng đầu nối với máy Mac hỗ trợ USB-C hoặc Thunderbolt 3 (USB-C) để đồng bộ hóa và sạc, tốc độ truyền dữ liệu lên đến 480Mbps.',
+       (3, 'Dây cáp sạc IPTOPK AP15 20W dạng bện sợi Nylon chuyển đổi USB C sang cổng cho IP12 xs 11 X 8 7 6 5', 'Hỗ trợ sạc PD: Sạc thiết bị của bạn nhanh hơn và an toàn hơn.
+        Bạn có thể sử dụng cáp Lightning này kết nối với sạc dự phòng USB-C hoặc ổ sạc USB-C để sạc thiết bị iOS của bạn Sạc và đồng bộ hóa: 
+        Kết nối iPhone, iPad hoặc iPod của bạn bằng đầu nối với máy Mac hỗ trợ USB-C hoặc Thunderbolt 3 (USB-C) để đồng bộ hóa và sạc, tốc độ truyền dữ liệu lên đến 480Mbps.',
         70000, 100)
         ,
        (3, 'DÂY SẠC DÀI 3M TIỆN ÍCH', 'Nhà e cos đủ dây chân ip và chân samsung , oppp
@@ -792,7 +794,8 @@ Sét đồ nữ 3 Món Gồm Áo Gile + Áo Thun Form Rộng Tay Lỡ + Quần S
 - Tăng 4cm chiều cao, tiện dụng vô cùng
 - Thoải mái và dễ thương cho bạn nữ', 97000, 20),
        (4, 'Giày Sandal Giày Nữ Quai Ngang Nữ Giày Quai Hậu Đế Bằng Nữ Phong Cách Nữ Sinh Ngọt Ngào',
-        'Shop cam kết cả về chất liệu cũng như hình dáng (đúng với những gì được nêu bật trong phẩn mô tả sản phẩm). Nếu khách hàng có nhu cầu, Shop sẽ yêu cầu đơn vị vận chuyển cho khách kiểm tra hàng : về mẫu mã, size trước khi lấy để tạo sự thoải mái nhất cho khách hàn',
+        'Shop cam kết cả về chất liệu cũng như hình dáng (đúng với những gì được nêu bật trong phẩn mô tả sản phẩm). Nếu khách hàng có nhu cầu,
+         Shop sẽ yêu cầu đơn vị vận chuyển cho khách kiểm tra hàng : về mẫu mã, size trước khi lấy để tạo sự thoải mái nhất cho khách hàn',
         55000, 20),
        (4, 'Giày (Dép) Sandal nữ xỏ ngón LCS40 chiến binh Y đế bệt, quai chéo', '• Kiểu dáng: basic
 • Chất liệu: PU

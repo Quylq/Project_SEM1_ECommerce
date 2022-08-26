@@ -5,10 +5,13 @@ using ConsoleTableExt;
 namespace BL;
 public static class CustomerBL
 {
+    public static string title = "ECOMMERCE";
     public static Shop? SigUpShop(this User user)
     {
         ShopDAL shopDAL = new ShopDAL();
         Console.Clear();
+        Console.WriteLine(title);
+        Console.WriteLine();
         Console.WriteLine("══════════ Register to open a store ══════════");
         Console.Write("Shop Name: ");
         string _ShopName = ReadHelper.ReadString(50);
@@ -34,6 +37,8 @@ public static class CustomerBL
     {
         ProductDAL productDAL = new ProductDAL();
         Console.Clear();
+        Console.WriteLine(title);
+        Console.WriteLine();
         Console.WriteLine($"══════════ Search Product ══════════");
         Console.WriteLine("Enter product name to search or \"0\" to go back. ");
         string _ProductName = ReadHelper.ReadString(500);
@@ -52,17 +57,24 @@ public static class CustomerBL
             }
         }  
     }
-    public static void DisplayProducts(this User user, List<Product>? products)
+    public static void DisplayProducts(this User user, List<Product>? products, int page = 1)
     {
         ProductDAL productDAL = new ProductDAL();
+        Console.Clear();
+        Console.WriteLine(title);
+        Console.WriteLine();
         if (products != null)
         {
+            int size = 10;
+            int pages = (int)Math.Ceiling((double)products.Count / size);
+            var products1 = products.Skip((page - 1) * size).Take(size).ToList();
             List<List<object>> tableData = new List<List<object>>();
+
             int count = 1;
-            foreach (Product product in products)  
-            { 
-                string status = product.Amount == 0? "Out of stock" : "Stocking";
-                List<object> rowData = new List<object>{count++, product.ProductName, product.Price.ToString("C0"), status};
+            for (int i = 0; i < products1.Count; i++)
+            {
+                string status = products1[i].Amount == 0? "Out of stock" : "Stocking";
+                List<object> rowData = new List<object>{count++, products1[i].ProductName, products1[i].Price.ToString("0,0 vnđ"), status};
                 tableData.Add(rowData);
             }
             ConsoleTableBuilder
@@ -75,13 +87,79 @@ public static class CustomerBL
                     })
                 .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
                 .ExportAndWriteLine();
+            Console.WriteLine($"Page {page}/{pages} (total: {products.Count} product)");
             Console.Write("Enter \"ID\" to see the product information or \"0\" to back:");
-            int choice = ReadHelper.ReadInt(0, products.Count);
-            if (choice != 0)
+            InputKey:
+            // ConsoleKeyInfo info = Console.ReadKey(true);
+            // if (info.Key == ConsoleKey.RightArrow)
+            // {
+            //     if (page < pages)
+            //     {
+            //         user.DisplayProducts(products, ++page);
+            //     }
+            //     else
+            //     {
+            //         goto InputKey;
+            //     }
+            // }
+            // else if (info.Key == ConsoleKey.LeftArrow)
+            // {
+            //     if (page > 1)
+            //     {
+            //         user.DisplayProducts(products, --page);
+            //     }
+            //     else
+            //     {
+            //         goto InputKey;
+            //     }
+            // }
+            // else
+            // {
+            //     int choice = ReadHelper.ReadInt(0, products1.Count);
+            //     if (choice != 0)
+            //     {
+            //         Product product = productDAL.GetProductByID(products1[choice - 1].ProductID);
+            //         user.ProductInformation(product);
+            //         user.DisplayProducts(products, page);
+            //     }
+            // }
+            string choice = ReadHelper.ReadChoice();
+            if (choice == "prev")
             {
-                Product product = productDAL.GetProductByID(products[choice - 1].ProductID);
-                user.ProductInformation(product);
-                user.DisplayProducts(products);
+                if (page > 1)
+                {
+                    user.DisplayProducts(products, --page);
+                }
+                else
+                {
+                    goto InputKey;
+                }
+            }
+            else if (choice == "next")
+            {
+                if (page < pages)
+                {
+                    user.DisplayProducts(products, ++page);
+                }
+                else
+                {
+                    goto InputKey;
+                }
+            }
+            else
+            {
+                int temp = Convert.ToInt32(choice);
+                if (temp > 0 && temp <= products1.Count)
+                {
+                    Product product = productDAL.GetProductByID(products1[temp - 1].ProductID);
+                    user.ProductInformation(product);
+                    user.DisplayProducts(products, page);
+                }
+                else if (temp != 0)
+                {
+                    Console.WriteLine($"Numbers outside the range [0, {products1.Count}].");
+                    goto InputKey;
+                }
             }
         }
     }
@@ -96,7 +174,7 @@ public static class CustomerBL
         {
             new List<object>{"Shop", shop.ShopName},
             new List<object>{"Product Name", product.ProductName},
-            new List<object>{"Price", product.Price.ToString("C0")},
+            new List<object>{"Price", product.Price.ToString("0,0 vnđ")},
             new List<object>{"Amount", product.Amount}
         };
         for (int i = 0; i < product.Description.Split('\n').Length; i++)
@@ -143,7 +221,7 @@ public static class CustomerBL
         Console.WriteLine($"(Shopping cart: {QuantityInCart})");
         Console.WriteLine($"0. Back.");
         Console.Write($"Choose: ");
-        int choice = ReadHelper.ReadInt(0 - QuantityInCart, product.Amount);
+        int choice = ReadHelper.ReadInt(0 - QuantityInCart, product.Amount - QuantityInCart);
         if (choice != 0)
         {
             // Nếu trong giỏ hàng chưa có sản phẩm của shop này, tạo order mới
@@ -190,6 +268,8 @@ public static class CustomerBL
         AddressDAL addressDAL = new AddressDAL();
 
         Console.Clear();
+        Console.WriteLine(title);
+        Console.WriteLine();
         Console.WriteLine("══════════ Search Shop ══════════");
         Console.WriteLine("Enter Shop name to search or \"0\" to go back: ");
         string _ShopName = ReadHelper.ReadString(50);
@@ -287,6 +367,8 @@ public static class CustomerBL
         List<Order>? orders = orderDAL.GetOrdersByStatusAndUserID("Shopping", user.UserID);
         List<OrderDetails>? orderDetailsList = orderDetailsDAL.GetOrderDetailsListByUserIDAndStatus(user.UserID, "Shopping");
         Console.Clear();
+        Console.WriteLine(title);
+        Console.WriteLine();
         if ( orderDetailsList != null)
         {
             List<List<object>> tableData = new List<List<object>>();
@@ -297,10 +379,10 @@ public static class CustomerBL
                 Order order = orderDAL.GetOrderByID(orderDetails.OrderID);
                 Shop shop = shopDAL.GetShopByID(order.ShopID);
                 Product product = productDAL.GetProductByID(orderDetails.ProductID);
-                List<object> rowData = new List<object>{shop.ShopName, count++, product.ProductName, product.Price.ToString("C0"), orderDetails.Quantity, bLHelper.GetTotalOrderDetails(orderDetails).ToString("C0")};
+                List<object> rowData = new List<object>{shop.ShopName, count++, product.ProductName, product.Price.ToString("0,0 vnđ"), orderDetails.Quantity, bLHelper.GetTotalOrderDetails(orderDetails).ToString("0,0 vnđ")};
                 tableData.Add(rowData);
             }
-            List<object> rowTotal = new List<object>{"", "", "", "", "", total.ToString("C0")};
+            List<object> rowTotal = new List<object>{"", "", "", "", "", total.ToString("0,0 vnđ")};
             tableData.Add(rowTotal);
             ConsoleTableBuilder
                 .From(tableData)
@@ -339,12 +421,14 @@ public static class CustomerBL
                 {
                     string format = "yyyy-MM-dd HH:mm:ss";
                     DateTime now = DateTime.Now;
-                    orderDAL.UpdateCreateDateOfOrder(order.OrderID, now.ToString(format));
-                    orderDAL.UpdateStatusOfOrder(order.OrderID, "Processing");
+                    orderDAL.OrderingProcess(order.OrderID, now.ToString(format));
                 }
                 Console.WriteLine("Order Success");
                 Console.ReadKey();
-                user.MyOrder();
+                foreach (Order order in orders!)
+                {
+                    user.Invoice(order);
+                }
             }
             else
             {
@@ -360,6 +444,48 @@ public static class CustomerBL
             Console.ReadKey();
         }
     }
+    public static void Invoice(this User user, Order order)
+    {
+        OrderDetailsDAL orderDetailsDAL = new OrderDetailsDAL();
+        BLHelper bLHelper = new BLHelper();
+        ShopDAL shopDAL = new ShopDAL();
+        ProductDAL productDAL = new ProductDAL();
+        AddressDAL addressDAL = new AddressDAL();
+
+        Console.Clear();
+        Console.WriteLine(title);
+        Console.WriteLine();
+        List<OrderDetails>? orderDetailsList = orderDetailsDAL.GetOrderDetailsListByOrderID(order.OrderID);
+        Shop shop = shopDAL.GetShopByID(order.ShopID);
+        Address addressShop = addressDAL.GetAddressByID(shop.AddressID);
+        Address addressCustomer = addressDAL.GetAddressByID(user.AddressID);
+        Console.WriteLine($"Invoice");
+        Console.WriteLine($"════════════════");
+        Console.WriteLine($"Shop            : {shop.ShopName}");
+        Console.WriteLine($"Shop address    : {addressShop}");
+        Console.WriteLine($"Customer        : {user.FullName}");
+        Console.WriteLine($"Customer address: {addressCustomer}");
+        Console.WriteLine($"Invoice date    : {order.CreateDate}");
+
+        List<List<object>> tableData = new List<List<object>>();
+        int count = 1;
+        for (int i = 0; i < orderDetailsList!.Count; i++)
+        {
+            Product product = productDAL.GetProductByID(orderDetailsList[i].ProductID);
+            long total = bLHelper.GetTotalOrderDetails(orderDetailsList[i]);
+            List<object> rowData = new List<object>{count++, product.ProductName, product.Price.ToString("0,0 vnđ"), orderDetailsList[i].Quantity, total.ToString("0,0 vnđ")};
+            tableData.Add(rowData);
+        }
+        long subTotal = bLHelper.GetTotalOrder(order.OrderID);
+        List<object> rowTotal = new List<object>{"", "", "", "", subTotal.ToString("0,0 vnđ")};
+        tableData.Add(rowTotal);
+        ConsoleTableBuilder
+            .From(tableData)
+            .WithColumn("ID", "Product Name", "Unit Price", "Quantity", "Total")
+            .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
+            .ExportAndWriteLine();
+        Console.ReadKey();
+    }
     public static void MyOrder(this User user)
     {
         OrderDAL orderDAL = new OrderDAL();
@@ -369,6 +495,8 @@ public static class CustomerBL
 
         List<Order>? orders = orderDAL.GetOrdersByUserID(user.UserID);
         Console.Clear();
+        Console.WriteLine(title);
+        Console.WriteLine();
         List<List<object>> tableData = new List<List<object>>();
         int count = 1;
         for (int i = 0; i < orders.Count; i++)
@@ -378,7 +506,7 @@ public static class CustomerBL
             List<OrderDetails>? orderDetailsList = orderDetailsDAL.GetOrderDetailsListByOrderID(orders[i].OrderID);
             if (orderDetailsList != null)
             {
-                List<object> rowData = new List<object>{count++, shop.ShopName, orderDetailsList.Count, total.ToString("C0"), orders[i].Status};
+                List<object> rowData = new List<object>{count++, shop.ShopName, orderDetailsList.Count, total.ToString("0,0 vnđ"), orders[i].CreateDate, orders[i].Status};
                 tableData.Add(rowData);
             }
             else
@@ -390,7 +518,7 @@ public static class CustomerBL
         ConsoleTableBuilder
             .From(tableData)
             .WithTitle("My Order", ConsoleColor.Yellow, ConsoleColor.DarkGray)
-            .WithColumn("ID", "Shop Name", "Amount", "Total", "Status")
+            .WithColumn("ID", "Shop Name", "Quantity", "Total", "Time", "Status")
             .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
             .ExportAndWriteLine();
         Console.WriteLine("Enter ID to view order information.");
@@ -408,29 +536,34 @@ public static class CustomerBL
         ShopDAL shopDAL = new ShopDAL();
         BLHelper bLHelper = new BLHelper();
         ProductDAL productDAL = new ProductDAL();
+        AddressDAL addressDAL = new AddressDAL();
 
         Console.Clear();
+        Order order = orderDAL.GetOrderByID(_OrderID);
+        Shop shop = shopDAL.GetShopByID(order.ShopID);
+        Address addressShop = addressDAL.GetAddressByID(shop.AddressID);
+        Console.WriteLine($"Shop            : {shop.ShopName}");
+        Console.WriteLine($"Shop address    : {addressShop}");
+        Console.WriteLine($"Invoice date    : {order.CreateDate}");
         List<List<object>> tableData = new List<List<object>>();
         int count = 1;
-        Order order = orderDAL.GetOrderByID(_OrderID);
+        
         List<OrderDetails>? orderDetailsList = orderDetailsDAL.GetOrderDetailsListByOrderID(_OrderID);
-        Shop shop = shopDAL.GetShopByID(order.ShopID);
-
         long total = bLHelper.GetTotalOrder(_OrderID);
         if (orderDetailsList != null)
         {
             foreach (OrderDetails orderDetails in orderDetailsList)  
             { 
                 Product product = productDAL.GetProductByID(orderDetails.ProductID);
-                List<object> rowData = new List<object>{shop.ShopName, count++, product.ProductName, product.Price.ToString("C0"), orderDetails.Quantity, bLHelper.GetTotalOrderDetails(orderDetails).ToString("C0")};
+                List<object> rowData = new List<object>{count++, product.ProductName, product.Price.ToString("0,0 vnđ"), orderDetails.Quantity, bLHelper.GetTotalOrderDetails(orderDetails).ToString("0,0 vnđ")};
                 tableData.Add(rowData);
             }
         }
-        List<object> rowTotal = new List<object>{"", "", "", "", "", total.ToString("C0")};
+        List<object> rowTotal = new List<object>{"", "", "", "", total.ToString("0,0 vnđ")};
         tableData.Add(rowTotal);
         ConsoleTableBuilder
             .From(tableData)
-            .WithColumn("Shop", "ID", "Product", "Price", "Amount", "Total")
+            .WithColumn("ID", "Product Name", "Unit Price", "Quantity", "Total")
             .WithTextAlignment(new Dictionary < int, TextAligntment>
                 {
                     {4, TextAligntment.Right },
@@ -454,7 +587,8 @@ public static class CustomerBL
             }
             else if (choice == "2")
             {
-                orderDAL.UpdateStatusOfOrder(order.OrderID, "Failed");
+                // orderDAL.UpdateStatusOfOrder(order.OrderID, "Failed");
+                orderDAL.OrderFailed(order.OrderID);
                 Console.WriteLine("Successfully refused order");
                 Console.WriteLine("Press any key to continue.");
                 Console.ReadKey();
@@ -474,6 +608,8 @@ public static class CustomerBL
         AddressDAL addressDAL = new AddressDAL();
 
         Console.Clear();
+        Console.WriteLine(title);
+        Console.WriteLine();
         Address address = addressDAL.GetAddressByID(user.AddressID);
         List<List<object>> tableData = new List<List<object>>
         {
@@ -557,6 +693,6 @@ public static class CustomerBL
                 user.PersonalInformation();
             }
         }
-        
     }
+    
 }

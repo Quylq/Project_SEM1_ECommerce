@@ -3,15 +3,17 @@ using Persistence;
 
 public static class Menu
 {
+    static string title = "ECOMMERCE";
     public static void MainMenu()
     {
+
         MainMenu1:
         Console.Clear();
-        Console.WriteLine("══════════ Ecommerce ══════════");
+        Console.WriteLine("═════════ ECOMMERCE ═════════");
         Console.WriteLine("1. Login.");
         Console.WriteLine("2. SigUp.");
         Console.WriteLine("0. Exit.");
-        Console.WriteLine("═══════════════════════════════");
+        Console.WriteLine("═════════════════════════════");
         Console.Write("Choose: ");
         int choice = ReadHelper.ReadInt(0, 2);
         switch (choice)
@@ -28,15 +30,8 @@ public static class Menu
                 }
                 break;
             case 2:
-                User? user1 = GuestBL.SigUp();
-                if (user1 != null)
-                {
-                    user1.CustomerMenu();
-                }
-                else
-                {
-                    goto MainMenu1;
-                }
+                GuestBL.SigUp();
+                MainMenu();
                 break;
             case 0:
                 Console.WriteLine("You confirm you want to exit?");
@@ -62,6 +57,8 @@ public static class Menu
         int ProductNumber = bLHelper.GetProductNumberOfCart(user.UserID);
         Shop? shop = bLHelper.GetShopByUserID(user.UserID);
         Console.Clear();
+        Console.WriteLine(title);
+        Console.WriteLine();
         Console.WriteLine($"══════════ {user.FullName} ══════════");
         Console.WriteLine("1. Search Product.");
         Console.WriteLine("2. Search Shop.");
@@ -127,8 +124,9 @@ public static class Menu
     public static void ShopMenu(this Shop shop)
     {
         BLHelper bLHelper = new BLHelper();
-
         Console.Clear();
+        Console.WriteLine(title);
+        Console.WriteLine();
         Console.WriteLine($"══════════ {shop.ShopName} ══════════");
         Console.WriteLine("1. Order Manegement.");
         Console.WriteLine("2. Product Manegement.");
@@ -159,4 +157,5 @@ public static class Menu
                 break;
         }
     }
+
 }

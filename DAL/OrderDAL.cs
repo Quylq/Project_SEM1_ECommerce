@@ -102,7 +102,7 @@ namespace DAL
         // Cập nhật status của đơn hàng
         public bool UpdateStatusOfOrder(int _OrderID, string _Status)
         {
-            query = $"update Orders set Status = '{_Status}' where OrderID = {_OrderID};";
+            query = $"update Orders set Status = '{_Status}' where OrderID = {_OrderID}";
 
             try
             {
@@ -116,6 +116,89 @@ namespace DAL
                 DbHelper.CloseConnection();
                 return false;
             }
+        }
+        public void OrderingProcess(int _OrderID, string _CreateDate)
+        {
+            OrderDetailsDAL orderDetailsDAL = new OrderDetailsDAL();
+            List<OrderDetails>? oDList = orderDetailsDAL.GetOrderDetailsListByOrderID(_OrderID);
+            MySqlTransaction transaction;
+            MySqlConnection connection = DbHelper.OpenConnection();
+            transaction = connection.BeginTransaction();
+            MySqlCommand command = new MySqlCommand();
+            command.Connection = connection;
+            command.Transaction = transaction;
+            try
+            {
+                if (oDList != null)
+                {
+                    command.CommandText = $"update Orders set CreateDate = '{_CreateDate}' where OrderID = {_OrderID}";
+                    command.ExecuteNonQuery();
+                    command.CommandText = $"update Orders set Status = 'Processing' where OrderID = {_OrderID}";
+                    command.ExecuteNonQuery();
+                    foreach (OrderDetails orderDetails in oDList)
+                    {
+                        command.CommandText = $"update Products set Amount = Amount - {orderDetails.Quantity} where ProductID = {orderDetails.ProductID}";
+                        command.ExecuteNonQuery();
+                    }
+                    transaction.Commit();
+                }
+            }
+            catch (MySqlException ex)
+            {
+                Console.WriteLine("Commit Exception Type: {0}", ex.GetType());
+                Console.WriteLine("  Message: {0}", ex.Message);
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (MySqlException ex2)
+                {
+                    Console.WriteLine("Rollback Exception Type: {0}", ex2.GetType());
+                    Console.WriteLine("  Message: {0}", ex2.Message);
+                }
+            }
+            DbHelper.CloseConnection();
+        }
+        public void OrderFailed(int _OrderID)
+        {
+            OrderDetailsDAL orderDetailsDAL = new OrderDetailsDAL();
+            List<OrderDetails>? oDList = orderDetailsDAL.GetOrderDetailsListByOrderID(_OrderID);
+            
+            MySqlConnection connection = DbHelper.OpenConnection();
+            MySqlCommand command = connection.CreateCommand();
+            MySqlTransaction transaction = connection.BeginTransaction();
+            command.Connection = connection;
+            command.Transaction = transaction;
+            try
+            {
+                if (oDList != null)
+                {
+                    command.CommandText = $"update Orders set Status = 'Failed' where OrderID = {_OrderID}";
+                    command.ExecuteNonQuery();
+                    foreach (OrderDetails orderDetails in oDList)
+                    {
+                        command.CommandText = $"update Products set Amount = Amount + {orderDetails.Quantity} where ProductID = {orderDetails.ProductID}";
+                        command.ExecuteNonQuery();
+                    }
+                    transaction.Commit();
+                }
+            }
+            catch (MySqlException ex)
+            {
+                Console.WriteLine("Commit Exception Type: {0}", ex.GetType());
+                Console.WriteLine("  Message: {0}", ex.Message);
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (MySqlException ex2)
+                {
+                    Console.WriteLine("Rollback Exception Type: {0}", ex2.GetType());
+                    Console.WriteLine("  Message: {0}", ex2.Message);
+                }
+            }
+            
+            DbHelper.CloseConnection();
         }
         public bool UpdateCreateDateOfOrder(int _OrderID, string _CreateDate)
         {

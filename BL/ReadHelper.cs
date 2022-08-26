@@ -9,6 +9,35 @@ namespace BL
 {
     public static class ReadHelper
     {
+        public static string ReadChoice()
+        {
+            string temp = "";
+            ConsoleKeyInfo info = Console.ReadKey(true);
+            while (info.Key != ConsoleKey.Enter)
+            {
+                if (info.Key == ConsoleKey.LeftArrow)
+                {
+                    return "prev";
+                }
+                else if (info.Key == ConsoleKey.RightArrow)
+                {
+                    return "next";
+                }
+                else if (((int)info.Key) >= 48 && ((int)info.Key) <= 57)
+                {
+                    temp += info.KeyChar;
+                    Console.Write($"{info.KeyChar}");
+                    
+                }
+                else if (info.Key == ConsoleKey.Backspace && temp.Length > 0)
+                {
+                    Console.Write("\b");
+                    temp = temp.Substring(0, temp.Length - 1);
+                }
+                info = Console.ReadKey(true);
+            }
+            return temp;
+        }
         public static string ReadPassword()
         {
             string temp = "";
@@ -111,7 +140,7 @@ namespace BL
                     }
                     else
                     {
-                        Console.WriteLine($"numbers outside the range [{min}, {max}].");
+                        Console.WriteLine($"Numbers outside the range [{min}, {max}].");
                         return ReadInt(min, max);
                     }
                 }
@@ -220,11 +249,11 @@ namespace BL
         {
             AddressDAL addressDAL = new AddressDAL();
             Console.WriteLine("══════════ Address ══════════");
-            Console.Write("City: ");
+            Console.Write("City           : ");
             string _City = ReadString(30);
-            Console.Write("District: ");
+            Console.Write("District       : ");
             string _District = ReadString(30);
-            Console.Write("Commune: ");
+            Console.Write("Commune        : ");
             string _Commune = ReadString(30);
             Console.Write("SpecificAddress: ");
             string _SpecificAddress = ReadString(110);
