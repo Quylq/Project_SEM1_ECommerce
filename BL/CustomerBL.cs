@@ -88,6 +88,7 @@ public static class CustomerBL
                 .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
                 .ExportAndWriteLine();
             Console.WriteLine($"Page {page}/{pages} (total: {products.Count} product)");
+            Console.WriteLine("← : previous page\n→ : next page");
             Console.Write("Enter \"ID\" to see the product information or \"0\" to back:");
             InputKey:
             // ConsoleKeyInfo info = Console.ReadKey(true);
