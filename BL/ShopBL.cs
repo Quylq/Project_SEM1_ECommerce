@@ -262,7 +262,7 @@ public static class ShopBL
         Console.WriteLine($"══════════ Add Product ══════════");
         Console.Write("Product Name   : ");
         string _ProductName = ReadHelper.ReadString(500);
-        Console.Write("Price          : ");
+        Console.Write("Price (vnđ)    : ");
         int _Price = ReadHelper.ReadInt(1, Int32.MaxValue);
         Console.Write("Amount         : ");
         int _Amount = ReadHelper.ReadInt(1, 999);

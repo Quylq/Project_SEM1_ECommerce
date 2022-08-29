@@ -62,19 +62,19 @@ public static class GuestBL
         Console.WriteLine(title);
         Console.WriteLine();
         Console.WriteLine("══════════ SigUp ══════════");
-        Console.Write("User Name      : ");
+        Console.Write("User Name           : ");
         string _UserName = ReadHelper.ReadUserName();
         if (!userDAL.CheckUserName(_UserName))
         {
-            Console.Write("Password       : ");
+            Console.Write("Password            : ");
             string _Password = ReadHelper.ReadPassword();
-            Console.Write("You Name       : ");
+            Console.Write("You Name            : ");
             string _FullName = ReadHelper.ReadString(100);
-            Console.Write("Email          : ");
+            Console.Write("Email               : ");
             string _Email = ReadHelper.ReadEmail();
-            Console.Write("Phone          : ");
+            Console.Write("Phone               : ");
             string _Phone = ReadHelper.ReadPhone();
-            Console.Write("Birthday       : ");
+            Console.Write("Birthday(dd/MM/yyyy): ");
             string _Birthday = ReadHelper.ReadDateOnly();
             int _AddressID = ReadHelper.ReadAddress().AddressID;
             int _UserID = userDAL.UserIDMax() + 1;

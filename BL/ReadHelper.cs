@@ -249,13 +249,13 @@ namespace BL
         {
             AddressDAL addressDAL = new AddressDAL();
             Console.WriteLine("══════════ Address ══════════");
-            Console.Write("City           : ");
+            Console.Write("City                : ");
             string _City = ReadString(30);
-            Console.Write("District       : ");
+            Console.Write("District            : ");
             string _District = ReadString(30);
-            Console.Write("Commune        : ");
+            Console.Write("Commune             : ");
             string _Commune = ReadString(30);
-            Console.Write("SpecificAddress: ");
+            Console.Write("SpecificAddress     : ");
             string _SpecificAddress = ReadString(110);
             int _AddressID = addressDAL.AddressIDMax() + 1;
             Address address =  new Address(_AddressID, _City, _District, _Commune, _SpecificAddress);
