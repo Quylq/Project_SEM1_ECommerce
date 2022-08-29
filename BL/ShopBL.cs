@@ -63,7 +63,7 @@ public static class ShopBL
         Console.Clear();
         Console.WriteLine("══════════ Product Management ══════════");
         Console.WriteLine("1. Search Product.");
-        Console.WriteLine("2. Product All.");
+        Console.WriteLine("2. All Products .");
         Console.WriteLine("3. Add Product.");
         Console.WriteLine("0. Back.");
         Console.WriteLine("════════════════════════════════════════");
@@ -106,7 +106,6 @@ public static class ShopBL
             string choice = ReadHelper.ReadString();
             if (choice == "0")
             {
-                
             }
             else if (choice == "+")
             {
@@ -261,13 +260,13 @@ public static class ShopBL
 
         Console.Clear();
         Console.WriteLine($"══════════ Add Product ══════════");
-        Console.WriteLine("Product Name   : ");
+        Console.Write("Product Name   : ");
         string _ProductName = ReadHelper.ReadString(500);
-        Console.WriteLine("Price          : ");
+        Console.Write("Price          : ");
         int _Price = ReadHelper.ReadInt(1, Int32.MaxValue);
-        Console.WriteLine("Amount         : ");
+        Console.Write("Amount         : ");
         int _Amount = ReadHelper.ReadInt(1, 999);
-        Console.WriteLine("Description    : ");
+        Console.Write("Description    : ");
         string _Description = ReadHelper.ReadString(2000);
         Product product = new Product(productDAL.ProductIDMax() + 1, shop.ShopID, _ProductName, _Price, _Description, _Amount);
         productDAL.InsertProduct(product);
@@ -369,6 +368,7 @@ public static class ShopBL
                 .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
                 .ExportAndWriteLine();
             Console.WriteLine($"Page {page}/{pages} (total: {products.Count} product)");
+            Console.WriteLine("← : previous page\n→ : next page");
             Console.Write("Enter \"ID\" to see the product information or \"0\" to back: ");
             InputKey:
             string choice = ReadHelper.ReadChoice();
@@ -411,15 +411,18 @@ public static class ShopBL
             }
         }
     }
-    public static void AddProductsToCategory(this Shop shop, int _CategoryID)
+    public static void AddProductsToCategory(this Shop shop, int _CategoryID, int page = 1)
     {
         Product_CategoryDAL product_CategoryDAL = new Product_CategoryDAL();
 
         List<Product> products = shop.GetProductsNotCategory( _CategoryID);
+        int size = 10;
+        int pages = (int)Math.Ceiling((double)products.Count / size);
+        var products1 = products.Skip((page - 1) * size).Take(size).ToList();
         Console.Clear();
         List<List<object>> tableData = new List<List<object>>();
         int count = 1;
-        foreach (Product product in products)  
+        foreach (Product product in products1)  
         {
             List<object> rowData = new List<object>{count++, product.ProductName, product.Price.ToString("0,0 vnđ"), product.Amount};
             tableData.Add(rowData);
@@ -429,19 +432,49 @@ public static class ShopBL
             .WithColumn("ID", "Product Name", "Price", "Amount")
             .WithCharMapDefinition(CharMapDefinition.FrameDoublePipDefinition)
             .ExportAndWriteLine();
+        Console.WriteLine($"Page {page}/{pages} (total: {products1.Count} product)");
+        Console.WriteLine("← : previous page\n→ : next page");
         Console.Write("Enter \"ID\" add the corresponding product to the category or \"0\" to go back: ");
-        int choice = ReadHelper.ReadInt(0, products.Count);
-        if (choice != 0)
+        InputKey:
+        string choice = ReadHelper.ReadChoice();
+        if (choice == "prev")
         {
-            product_CategoryDAL.InsertProduct_Category(products[choice - 1].ProductID, _CategoryID);
-            Console.WriteLine("successfully added product to category!");
-            Console.WriteLine("Enter any key to continue");
-            Console.ReadKey();
-            shop.AddProductsToCategory(_CategoryID);
+            if (page > 1)
+            {
+                shop.AddProductsToCategory(_CategoryID, --page);
+            }
+            else
+            {
+                goto InputKey;
+            }
+        }
+        else if (choice == "next")
+        {
+            if (page < pages)
+            {
+                shop.AddProductsToCategory(_CategoryID, ++page);
+            }
+            else
+            {
+                goto InputKey;
+            }
         }
         else
         {
-            shop.CategoryManagement();
+            int temp = Convert.ToInt32(choice);
+            if (temp > 0 && temp <= products1.Count)
+            {
+                product_CategoryDAL.InsertProduct_Category(products1[temp - 1].ProductID, _CategoryID);
+                Console.WriteLine("\nSuccessfully added product to category!");
+                Console.WriteLine("Enter any key to continue");
+                Console.ReadKey();
+                shop.AddProductsToCategory(_CategoryID, page);
+            }
+            else if (temp != 0)
+            {
+                Console.WriteLine($"Numbers outside the range [0, {products1.Count}].");
+                goto InputKey;
+            }
         }
     }
     public static void AddProductToCategory(this Shop shop, int _ProductID)
@@ -480,7 +513,6 @@ public static class ShopBL
         categoryDAL.InsertCategory(category);
         Console.WriteLine("Add successful category");
         Console.ReadKey();
-        shop.CategoryManagement();
     }
     public static void DisplayCategories(this Shop shop, List<Category> categories)
     {

@@ -327,7 +327,7 @@ public static class CustomerBL
         Shop shop = shopDAL.GetShopByID(_ShopID);
         Console.Clear();
         Console.WriteLine($"══════════ {shop.ShopName} ══════════");           
-        Console.WriteLine("1. Product All");
+        Console.WriteLine("1. All Products");
         List<Category> categories = categoryDAL.GetCategoriesByShopID(_ShopID);
         int count = 2;
         foreach (Category category in categories)
@@ -653,7 +653,7 @@ public static class CustomerBL
         Console.Write("Birthday       : ");
         string _Birthday = ReadHelper.ReadDateOnly();
         int _AddressID = ReadHelper.ReadAddress().AddressID;
-        user = new User(user.UserID, _FullName, _Birthday, _Email, _Phone, _AddressID, "Customer");
+        user = new User(user.UserID, user.UserName, user.Password, _FullName, _Birthday, _Email, _Phone, _AddressID, "Customer");
         userDAL.UpdateUser(user);
         Console.WriteLine("Change Information Success!");
         Console.ReadKey();
